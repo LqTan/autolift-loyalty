@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.autolift.sandbox.domain.repository")
+@EnableJpaRepositories(basePackages = "com.autolift.sandbox.infrastructure.persistence.repository")
 @EnableJpaAuditing
 @EnableTransactionManagement
 public class SandboxInfrastructureConfiguration {

@@ -1,4 +1,4 @@
 package com.autolift.sandbox.events;
 
-public record SandboxCreatedEvent(Long id, String name) {
+public record SandboxCreatedEvent(String id, String name) {
 }
