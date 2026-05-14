@@ -4,10 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AutoliftLoyaltyApplication {
-
+public class AutoliftApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(AutoliftLoyaltyApplication.class, args);
+		SpringApplication.run(AutoliftApplication.class, args);
 	}
-
 }
