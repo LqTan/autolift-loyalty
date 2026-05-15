@@ -20,6 +20,7 @@ public class CreateSandboxCommandHandler {
     public SandboxCreatedResult handle(CreateSandboxCommand command) {
         Sandbox sandbox = new Sandbox(command.name());
         repository.save(sandbox);
+        assert sandbox.getId() != null;
         eventPublisher.publish(new SandboxCreatedEvent(
             sandbox.getId().getId().toString(), sandbox.getName()));
         return new SandboxCreatedResult(sandbox.getId().getId().toString(), sandbox.getName());

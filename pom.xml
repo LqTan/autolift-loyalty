@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.14</version>
+		<version>3.4.0</version>
 		<relativePath/>
 	</parent>
 	<groupId>com.autolift</groupId>
@@ -15,7 +15,7 @@
 
 	<properties>
 		<java.version>21</java.version>
-		<spring-modulith.version>1.4.11</spring-modulith.version>
+		<spring-modulith.version>1.3.5</spring-modulith.version>
 	</properties>
 
 	<dependencies>
@@ -156,14 +156,15 @@
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
 				<configuration>
-					<url>jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/${POSTGRES_DB}</url>
-					<user>${POSTGRES_USER}</user>
-					<password>${POSTGRES_PASSWORD}</password>
+					<url>jdbc:postgresql://${env.POSTGRES_HOST:localhost}:5432/${env.POSTGRES_DB}</url>
+					<user>${env.POSTGRES_USER}</user>
+					<password>${env.POSTGRES_PASSWORD}</password>
+					<cleanDisabled>false</cleanDisabled>
 					<schemas>
 						<schema>sandbox</schema>
 					</schemas>
 					<locations>
-						<location>classpath:db/migration</location>
+						<location>classpath:db/migration/sandbox</location>
 					</locations>
 				</configuration>
 			</plugin>
