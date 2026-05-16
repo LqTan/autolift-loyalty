@@ -5,7 +5,7 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.events.CampaignActivatedEvent;
-import com.autolift.campaign.events.DomainEventPublisher;
+import com.autolift.campaign.events.CampaignDomainEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -14,9 +14,9 @@ import java.time.Instant;
 public class ActivateCampaignCommandHandler {
 
     private final CampaignRepository repository;
-    private final DomainEventPublisher eventPublisher;
+    private final CampaignDomainEventPublisher eventPublisher;
 
-    public ActivateCampaignCommandHandler(CampaignRepository repository, DomainEventPublisher eventPublisher) {
+    public ActivateCampaignCommandHandler(CampaignRepository repository, CampaignDomainEventPublisher eventPublisher) {
         this.repository = repository;
         this.eventPublisher = eventPublisher;
     }

@@ -5,7 +5,7 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.events.CampaignActivatedEvent;
-import com.autolift.campaign.events.DomainEventPublisher;
+import com.autolift.campaign.events.CampaignDomainEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,7 @@ class ActivateCampaignCommandHandlerTest {
     private CampaignRepository repository;
 
     @Mock
-    private DomainEventPublisher eventPublisher;
+    private CampaignDomainEventPublisher eventPublisher;
 
     private ActivateCampaignCommandHandler handler;
 

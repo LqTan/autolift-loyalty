@@ -16,6 +16,10 @@ spring:
     enabled: true
     baseline-on-migrate: true
     validate-on-migrate: false
+    default-schema: sandbox
+    schemas:
+      - sandbox
+      - campaign
     locations:
       - classpath:db/migration/sandbox
       - classpath:db/migration/campaign
