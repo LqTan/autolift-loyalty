@@ -16,7 +16,9 @@ spring:
     enabled: true
     baseline-on-migrate: true
     validate-on-migrate: false
-    locations: classpath:db/migration/sandbox
+    locations:
+      - classpath:db/migration/sandbox
+      - classpath:db/migration/campaign
   modulith:
     runtime:
       flyway:

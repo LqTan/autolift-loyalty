@@ -164,14 +164,23 @@
 							<artifactId>lombok</artifactId>
 						</path>
 					</annotationProcessorPaths>
+					<testAnnotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</testAnnotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
 				<configuration>
+					<!--suppress UnresolvedMavenProperty -->
 					<url>jdbc:postgresql://${env.POSTGRES_HOST:localhost}:5432/${env.POSTGRES_DB}</url>
+					<!--suppress UnresolvedMavenProperty -->
 					<user>${env.POSTGRES_USER}</user>
+					<!--suppress UnresolvedMavenProperty -->
 					<password>${env.POSTGRES_PASSWORD}</password>
 					<cleanDisabled>false</cleanDisabled>
 					<schemas>
