@@ -7,9 +7,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.autolift.config.SecurityConfig;
+import com.autolift.promotion.application.command.ActivatePromotionCommandHandler;
 import com.autolift.promotion.application.command.CreatePromotionCommand;
 import com.autolift.promotion.application.command.CreatePromotionCommandHandler;
 import com.autolift.promotion.application.command.CreatePromotionResult;
+import com.autolift.promotion.application.command.DeactivatePromotionCommandHandler;
 import com.autolift.promotion.domain.valueobject.PromotionType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,12 +27,19 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PromotionCommandController.class)
-@Import({CreatePromotionCommandHandler.class, SecurityConfig.class})
+@Import({
+  CreatePromotionCommandHandler.class,
+  ActivatePromotionCommandHandler.class,
+  DeactivatePromotionCommandHandler.class,
+  SecurityConfig.class
+})
 class PromotionCommandControllerTest {
 
   @Autowired private MockMvc mvc;
 
   @MockBean private CreatePromotionCommandHandler createHandler;
+  @MockBean private ActivatePromotionCommandHandler activateHandler;
+  @MockBean private DeactivatePromotionCommandHandler deactivateHandler;
 
   private ObjectMapper objectMapper;
 
