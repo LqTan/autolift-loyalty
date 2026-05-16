@@ -4,15 +4,20 @@ import com.autolift.promotion.domain.exception.PromotionNotFoundException;
 import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
 import com.autolift.promotion.domain.valueobject.PromotionId;
+import com.autolift.promotion.events.DomainEventPublisher;
+import com.autolift.promotion.events.PromotionActivatedEvent;
+import java.time.Instant;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ActivatePromotionCommandHandler {
 
   private final PromotionRepository repository;
+  private final DomainEventPublisher eventPublisher;
 
-  public ActivatePromotionCommandHandler(PromotionRepository repository) {
+  public ActivatePromotionCommandHandler(PromotionRepository repository, DomainEventPublisher eventPublisher) {
     this.repository = repository;
+    this.eventPublisher = eventPublisher;
   }
 
   @org.springframework.transaction.annotation.Transactional
@@ -23,5 +28,9 @@ public class ActivatePromotionCommandHandler {
             .orElseThrow(() -> new PromotionNotFoundException(command.promotionId()));
     promotion.activate();
     repository.save(promotion);
+    eventPublisher.publish(new PromotionActivatedEvent(
+        promotion.getId().getId().toString(),
+        promotion.getName(),
+        Instant.now()));
   }
 }

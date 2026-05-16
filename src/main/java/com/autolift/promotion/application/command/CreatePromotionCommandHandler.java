@@ -2,15 +2,19 @@ package com.autolift.promotion.application.command;
 
 import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
+import com.autolift.promotion.events.DomainEventPublisher;
+import com.autolift.promotion.events.PromotionCreatedEvent;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreatePromotionCommandHandler {
 
   private final PromotionRepository repository;
+  private final DomainEventPublisher eventPublisher;
 
-  public CreatePromotionCommandHandler(PromotionRepository repository) {
+  public CreatePromotionCommandHandler(PromotionRepository repository, DomainEventPublisher eventPublisher) {
     this.repository = repository;
+    this.eventPublisher = eventPublisher;
   }
 
   @org.springframework.transaction.annotation.Transactional
@@ -26,6 +30,10 @@ public class CreatePromotionCommandHandler {
             command.startDate(),
             command.endDate());
     repository.save(promotion);
+    eventPublisher.publish(new PromotionCreatedEvent(
+        promotion.getId().getId().toString(),
+        promotion.getName(),
+        promotion.getCreatedAt()));
     return new CreatePromotionResult(
         promotion.getId().getId().toString(),
         promotion.getName(),

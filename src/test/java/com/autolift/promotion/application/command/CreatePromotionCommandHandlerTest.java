@@ -9,6 +9,8 @@ import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
 import com.autolift.promotion.domain.valueobject.PromotionStatus;
 import com.autolift.promotion.domain.valueobject.PromotionType;
+import com.autolift.promotion.events.DomainEventPublisher;
+import com.autolift.promotion.events.PromotionCreatedEvent;
 import java.math.BigDecimal;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,12 +24,37 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CreatePromotionCommandHandlerTest {
 
   @Mock private PromotionRepository repository;
+  @Mock private DomainEventPublisher eventPublisher;
 
   private CreatePromotionCommandHandler handler;
 
   @BeforeEach
   void setUp() {
-    handler = new CreatePromotionCommandHandler(repository);
+    handler = new CreatePromotionCommandHandler(repository, eventPublisher);
+  }
+
+  @Test
+  void shouldPublishPromotionCreatedEvent() {
+    CreatePromotionCommand command =
+        new CreatePromotionCommand(
+            "Summer Sale",
+            "20% off summer",
+            PromotionType.PERCENTAGE,
+            new BigDecimal("20"),
+            new BigDecimal("100000"),
+            "VIP",
+            Instant.parse("2026-06-01T00:00:00Z"),
+            Instant.parse("2026-06-30T23:59:59Z"));
+
+    when(repository.save(any(Promotion.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    handler.handle(command);
+
+    ArgumentCaptor<PromotionCreatedEvent> eventCaptor = ArgumentCaptor.forClass(PromotionCreatedEvent.class);
+    verify(eventPublisher).publish(eventCaptor.capture());
+
+    PromotionCreatedEvent event = eventCaptor.getValue();
+    assertThat(event.getName()).isEqualTo("Summer Sale");
   }
 
   @Test
