@@ -7,5 +7,4 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableJpaRepositories(basePackages = "com.autolift.campaign.infrastructure.persistence.repository")
 @EnableTransactionManagement
-public class CampaignInfrastructureConfiguration {
-}
+public class CampaignInfrastructureConfiguration {}

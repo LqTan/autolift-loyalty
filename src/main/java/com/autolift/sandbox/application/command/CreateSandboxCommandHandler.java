@@ -8,21 +8,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateSandboxCommandHandler {
-    private final SandboxRepository repository;
-    private final DomainEventPublisher eventPublisher;
+  private final SandboxRepository repository;
+  private final DomainEventPublisher eventPublisher;
 
-    public CreateSandboxCommandHandler(SandboxRepository repository, DomainEventPublisher eventPublisher) {
-        this.repository = repository;
-        this.eventPublisher = eventPublisher;
-    }
+  public CreateSandboxCommandHandler(
+      SandboxRepository repository, DomainEventPublisher eventPublisher) {
+    this.repository = repository;
+    this.eventPublisher = eventPublisher;
+  }
 
-    @org.springframework.transaction.annotation.Transactional
-    public SandboxCreatedResult handle(CreateSandboxCommand command) {
-        Sandbox sandbox = new Sandbox(command.name());
-        repository.save(sandbox);
-        assert sandbox.getId() != null;
-        eventPublisher.publish(new SandboxCreatedEvent(
-            sandbox.getId().getId().toString(), sandbox.getName()));
-        return new SandboxCreatedResult(sandbox.getId().getId().toString(), sandbox.getName());
-    }
+  @org.springframework.transaction.annotation.Transactional
+  public SandboxCreatedResult handle(CreateSandboxCommand command) {
+    Sandbox sandbox = new Sandbox(command.name());
+    repository.save(sandbox);
+    assert sandbox.getId() != null;
+    eventPublisher.publish(
+        new SandboxCreatedEvent(sandbox.getId().getId().toString(), sandbox.getName()));
+    return new SandboxCreatedResult(sandbox.getId().getId().toString(), sandbox.getName());
+  }
 }

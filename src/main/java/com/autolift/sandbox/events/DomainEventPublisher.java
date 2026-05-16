@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class DomainEventPublisher {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
-    public DomainEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
-    }
+  public DomainEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    this.applicationEventPublisher = applicationEventPublisher;
+  }
 
-    public void publish(Object event) {
-        applicationEventPublisher.publishEvent(event);
-    }
+  public void publish(Object event) {
+    applicationEventPublisher.publishEvent(event);
+  }
 }

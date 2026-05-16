@@ -20,9 +20,11 @@ spring:
     schemas:
       - sandbox
       - campaign
+      - promotion
     locations:
       - classpath:db/migration/sandbox
       - classpath:db/migration/campaign
+      - classpath:db/migration/promotion
   modulith:
     runtime:
       flyway:

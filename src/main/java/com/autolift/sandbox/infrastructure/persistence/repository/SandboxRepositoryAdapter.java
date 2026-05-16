@@ -4,41 +4,41 @@ import com.autolift.sandbox.domain.model.Sandbox;
 import com.autolift.sandbox.domain.repository.SandboxRepository;
 import com.autolift.sandbox.domain.valueobject.SandboxId;
 import com.autolift.sandbox.infrastructure.persistence.mapper.SandboxPersistenceMapper;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class SandboxRepositoryAdapter implements SandboxRepository {
 
-    private final SandboxJpaRepository jpaRepository;
-    private final SandboxPersistenceMapper mapper;
+  private final SandboxJpaRepository jpaRepository;
+  private final SandboxPersistenceMapper mapper;
 
-    public SandboxRepositoryAdapter(SandboxJpaRepository jpaRepository, SandboxPersistenceMapper mapper) {
-        this.jpaRepository = jpaRepository;
-        this.mapper = mapper;
-    }
+  public SandboxRepositoryAdapter(
+      SandboxJpaRepository jpaRepository, SandboxPersistenceMapper mapper) {
+    this.jpaRepository = jpaRepository;
+    this.mapper = mapper;
+  }
 
-    @Override
-    public Sandbox save(Sandbox sandbox) {
-        var entity = mapper.toEntity(sandbox);
-        entity = jpaRepository.save(entity);
-        return mapper.toDomain(entity);
-    }
+  @Override
+  public Sandbox save(Sandbox sandbox) {
+    var entity = mapper.toEntity(sandbox);
+    entity = jpaRepository.save(entity);
+    return mapper.toDomain(entity);
+  }
 
-    @Override
-    public Optional<Sandbox> findById(SandboxId id) {
-        return jpaRepository.findById(id.getId()).map(mapper::toDomain);
-    }
+  @Override
+  public Optional<Sandbox> findById(SandboxId id) {
+    return jpaRepository.findById(id.getId()).map(mapper::toDomain);
+  }
 
-    @Override
-    public List<Sandbox> findAll() {
-        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
-    }
+  @Override
+  public List<Sandbox> findAll() {
+    return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+  }
 
-    @Override
-    public void deleteById(SandboxId id) {
-        jpaRepository.deleteById(id.getId());
-    }
+  @Override
+  public void deleteById(SandboxId id) {
+    jpaRepository.deleteById(id.getId());
+  }
 }

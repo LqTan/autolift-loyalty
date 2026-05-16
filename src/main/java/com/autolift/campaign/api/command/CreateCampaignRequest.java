@@ -9,5 +9,4 @@ public record CreateCampaignRequest(
     Instant startDate,
     Instant endDate,
     BigDecimal budgetAmount,
-    String budgetCurrency
-) {}
+    String budgetCurrency) {}

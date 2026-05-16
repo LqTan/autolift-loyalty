@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DeleteSandboxCommandHandler {
-    private final SandboxRepository repository;
+  private final SandboxRepository repository;
 
-    public DeleteSandboxCommandHandler(SandboxRepository repository) {
-        this.repository = repository;
-    }
+  public DeleteSandboxCommandHandler(SandboxRepository repository) {
+    this.repository = repository;
+  }
 
-    @org.springframework.transaction.annotation.Transactional
-    public void handle(DeleteSandboxCommand command) {
-        repository.deleteById(SandboxId.of(command.id()));
-    }
+  @org.springframework.transaction.annotation.Transactional
+  public void handle(DeleteSandboxCommand command) {
+    repository.deleteById(SandboxId.of(command.id()));
+  }
 }

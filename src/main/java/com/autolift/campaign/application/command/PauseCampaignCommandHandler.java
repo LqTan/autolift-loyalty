@@ -9,17 +9,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class PauseCampaignCommandHandler {
 
-    private final CampaignRepository repository;
+  private final CampaignRepository repository;
 
-    public PauseCampaignCommandHandler(CampaignRepository repository) {
-        this.repository = repository;
-    }
+  public PauseCampaignCommandHandler(CampaignRepository repository) {
+    this.repository = repository;
+  }
 
-    @org.springframework.transaction.annotation.Transactional
-    public void handle(PauseCampaignCommand command) {
-        Campaign campaign = repository.findById(CampaignId.of(command.campaignId()))
+  @org.springframework.transaction.annotation.Transactional
+  public void handle(PauseCampaignCommand command) {
+    Campaign campaign =
+        repository
+            .findById(CampaignId.of(command.campaignId()))
             .orElseThrow(() -> new CampaignNotFoundException(command.campaignId()));
-        campaign.pause();
-        repository.save(campaign);
-    }
+    campaign.pause();
+    repository.save(campaign);
+  }
 }

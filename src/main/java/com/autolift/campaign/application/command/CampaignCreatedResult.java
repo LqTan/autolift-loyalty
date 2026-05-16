@@ -11,5 +11,4 @@ public record CampaignCreatedResult(
     Instant startDate,
     Instant endDate,
     BigDecimal budgetAmount,
-    String budgetCurrency
-) {}
+    String budgetCurrency) {}

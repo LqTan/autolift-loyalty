@@ -7,5 +7,4 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableJpaRepositories(basePackages = "com.autolift.sandbox.infrastructure.persistence.repository")
 @EnableTransactionManagement
-public class SandboxInfrastructureConfiguration {
-}
+public class SandboxInfrastructureConfiguration {}

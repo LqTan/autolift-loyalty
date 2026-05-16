@@ -7,7 +7,7 @@ import org.springframework.modulith.Modulithic;
 @Modulithic
 @SpringBootApplication
 public class AutoliftApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(AutoliftApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(AutoliftApplication.class, args);
+  }
 }
