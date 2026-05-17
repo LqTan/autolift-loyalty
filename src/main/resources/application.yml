@@ -23,12 +23,14 @@ spring:
       - customer
       - voucher
       - promotion
+      - loyalty
     locations:
       - classpath:db/migration/sandbox
       - classpath:db/migration/campaign
       - classpath:db/migration/customer
       - classpath:db/migration/voucher
       - classpath:db/migration/promotion
+      - classpath:db/migration/loyalty
   modulith:
     runtime:
       flyway:
