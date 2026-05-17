@@ -66,5 +66,4 @@ GET /api/vouchers/{code}
 GET /api/customers/{id}/points
 GET /api/targeting/campaigns/{id}/candidates
 GET /api/explainability/campaigns/{id}/rules
-GET /api/explainability/xor-demo/runs/{id}
 ```

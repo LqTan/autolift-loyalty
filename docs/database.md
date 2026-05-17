@@ -37,16 +37,35 @@
 ```
 src/main/resources/db/migration/
 ├── __root/                    # migrations chung (nếu cần)
-│   └── V1__init.sql
-└── sandbox/                   # migrations cho module sandbox
-    └── V1__create_table.sql
+├── sandbox/                   # migrations cho module sandbox
+│   ├── V11__create_sandbox_schema.sql
+│   └── V12__create_event_publication_table.sql
+├── campaign/                  # migrations cho module campaign
+│   └── V12__create_campaign_schema.sql
+├── customer/                  # migrations cho module customer
+│   └── V13__create_customer_schema.sql
+├── voucher/                   # migrations cho module voucher
+│   └── V14__create_voucher_schema.sql
+└── promotion/                 # migrations cho module promotion
+    └── V15__create_promotion_schema.sql
 ```
 
 ### Naming Convention
-```
-V1__create_table.sql
-V2__add_column.sql
-```
+Format: `V{migration}{module_id}__description.sql`
+
+- Digit 1 = số thứ tự migration (1, 2, 3...)
+- Digit 2 = module ID:
+  - 1 = sandbox
+  - 2 = campaign
+  - 3 = customer
+  - 4 = voucher
+  - 5 = promotion
+
+Ví dụ:
+- `V11` = migration 1 của sandbox
+- `V12` = migration 2 của sandbox
+- `V21` = migration 1 của campaign
+- `V13` = migration 1 của customer
 
 ## 4. Configuration
 
@@ -144,16 +163,4 @@ CREATE TABLE explainability.gp_rules (
 
 CREATE INDEX idx_gp_rules_campaign_f1
 ON explainability.gp_rules(campaign_id, f1_score DESC);
-
-CREATE TABLE explainability.gp_xor_demo_runs (
-    id UUID PRIMARY KEY,
-    run_name VARCHAR(255) NOT NULL,
-    best_rule_text TEXT NOT NULL,
-    best_fitness NUMERIC(10, 6),
-    generation_count INTEGER,
-    population_size INTEGER,
-    mutation_rate NUMERIC(10, 6),
-    crossover_rate NUMERIC(10, 6),
-    created_at TIMESTAMP NOT NULL
-);
 ```

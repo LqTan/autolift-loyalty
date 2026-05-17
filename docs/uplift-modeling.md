@@ -103,8 +103,7 @@ ml/
 ├── notebooks/
 │   ├── autolift_x5_materials_export_lite_chunked.ipynb
 │   ├── uplift_x5_retailhero_experiment.ipynb
-│   ├── gp_rule_extraction_experiment.ipynb
-│   └── gp_xor_demo.ipynb
+│   └── gp_rule_extraction_experiment.ipynb
 ├── src/
 │   ├── build_x5_features.py
 │   ├── train_uplift_model.py
@@ -112,17 +111,17 @@ ml/
 │   ├── batch_score_customers.py
 │   ├── export_scores.py
 │   ├── build_gp_input.py
-│   ├── train_gp_rules.py
-│   └── gp_xor_demo.py
+│   └── train_gp_rules.py
 ├── models/
 │   ├── uplift_t_learner_x5_v1.joblib
 │   └── gp_rule_model_v1.joblib
 └── outputs/
     ├── customer_uplift_scores.csv
     ├── gp_rules.csv
-    ├── economic_summary.csv
-    └── xor_gp_demo_results.csv
+    └── economic_summary.csv
 ```
+
+**Ghi chú:** XOR demo (gp_xor_demo.ipynb, gp_xor_demo.py, xor_gp_demo_results.csv) là demo học thuật riêng cho môn Các hệ cơ sở tri thức, không nằm trong bộ output chính.
 
 ## 10. CSV Output Format
 
@@ -158,31 +157,7 @@ id, campaign_id, rule_text, rule_expression, target_label, precision_value,
 recall_value, f1_score, accuracy_value, coverage_value, model_version, source_file, created_at
 ```
 
-## 12. GP XOR Demo
-
-XOR dùng để kiểm chứng Genetic Programming ở mức logic cơ bản.
-
-**Bảng chân trị XOR:**
-```
-A | B | XOR
-0 | 0 | 0
-0 | 1 | 1
-1 | 0 | 1
-1 | 1 | 0
-```
-
-**Function set:** AND, OR, NOT
-
-**Terminal set:** A, B, True, False
-
-**Fitness:** fitness(rule) = số dòng XOR được dự đoán đúng / 4
-
-**Output:** `xor_gp_demo_results.csv`
-```
-run_id, best_rule_text, best_fitness, generation_count, population_size, mutation_rate, crossover_rate
-```
-
-## 13. Tại sao X5 thay vì Criteo?
+## 12. Tại sao X5 thay vì Criteo?
 
 - Criteo có conversion rất thấp và feature ẩn danh, khó giải thích nghiệp vụ
 - Starbucks bản uplift sạch nhưng feature V1-V7 cũng ẩn danh

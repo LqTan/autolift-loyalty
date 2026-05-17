@@ -42,13 +42,12 @@
 
 ## Phase 6: Genetic Programming / Explainability
 1. Build gp_input.csv từ uplift score và feature snapshots
-2. GP XOR demo để kiểm chứng pipeline logic
-3. GP rule extraction trên dữ liệu X5
-4. Export gp_rules.csv
-5. explainability schema
-6. explainability module
-7. API get GP rules by campaign
-8. Dashboard hiển thị rule_text và metrics
+2. GP rule extraction trên dữ liệu X5 (XOR demo tách riêng nếu cần cho môn Các hệ cơ sở tri thức)
+3. Export gp_rules.csv
+4. explainability schema
+5. explainability module
+6. API get GP rules by campaign
+7. Dashboard hiển thị rule_text và metrics
 
 ## Phase 7: Production
 1. Security + JWT
