@@ -16,49 +16,66 @@ targeting
 ├── package-info.java
 ├── api
 │   ├── command
+│   │   ├── ImportUpliftScoreController.java
 │   │   └── RefreshUpliftScoreController.java
 │   └── query
 │       ├── TargetingQueryController.java
+│       ├── FeatureSnapshotQueryController.java
 │       └── TargetCustomerResponse.java
 ├── application
 │   ├── command
 │   │   ├── ImportUpliftScoresCommand.java
 │   │   ├── ImportUpliftScoresHandler.java
+│   │   ├── ImportFeatureSnapshotsCommand.java
+│   │   ├── ImportFeatureSnapshotsHandler.java
 │   │   ├── RefreshCampaignTargetingCommand.java
 │   │   └── RefreshCampaignTargetingHandler.java
 │   ├── query
 │   │   ├── GetTargetCustomersQuery.java
 │   │   ├── GetTargetCustomersHandler.java
+│   │   ├── GetCustomerFeatureSnapshotQuery.java
 │   │   └── TargetCustomerView.java
 │   └── service
 │       └── TargetingDecisionService.java
 ├── domain
 │   ├── model
 │   │   ├── CustomerUpliftScore.java
+│   │   ├── CustomerFeatureSnapshot.java
 │   │   ├── TargetingSegment.java
 │   │   └── TargetingDecision.java
 │   ├── valueobject
 │   │   ├── UpliftScore.java
 │   │   ├── ModelVersion.java
-│   │   └── ScoreTimestamp.java
+│   │   ├── ScoreTimestamp.java
+│   │   ├── RecencyDays.java
+│   │   ├── Frequency.java
+│   │   └── MonetaryValue.java
 │   ├── repository
-│   │   └── CustomerUpliftScoreRepository.java
+│   │   ├── CustomerUpliftScoreRepository.java
+│   │   └── CustomerFeatureSnapshotRepository.java
 │   └── service
 │       └── PersuadableSegmentationPolicy.java
 ├── events
 │   ├── package-info.java
 │   └── TargetCustomersSelectedEvent.java
 └── infrastructure
-    ├── persistence/
-    │   ├── entity/CustomerUpliftScoreJpaEntity.java
-    │   ├── mapper/CustomerUpliftScoreMapper.java
-    │   ├── repository/CustomerUpliftScoreJpaRepository.java
-    │   ├── repository/CustomerUpliftScoreRepositoryAdapter.java
-    │   └── readmodel/TargetingReadRepository.java
-    └── ml/
-        ├── UpliftModelClient.java
-        ├── PythonUpliftModelClient.java
-        └── UpliftScoreCsvImporter.java
+    ├── persistence
+    │   ├── entity
+    │   │   ├── CustomerUpliftScoreJpaEntity.java
+    │   │   └── CustomerFeatureSnapshotJpaEntity.java
+    │   ├── mapper
+    │   │   ├── CustomerUpliftScoreMapper.java
+    │   │   └── CustomerFeatureSnapshotMapper.java
+    │   ├── repository
+    │   │   ├── CustomerUpliftScoreJpaRepository.java
+    │   │   ├── CustomerFeatureSnapshotJpaRepository.java
+    │   │   ├── CustomerUpliftScoreRepositoryAdapter.java
+    │   │   └── CustomerFeatureSnapshotRepositoryAdapter.java
+    │   └── readmodel
+    │       └── TargetingReadRepository.java
+    └── importfile
+        ├── UpliftScoreCsvImporter.java
+        └── CustomerFeatureSnapshotCsvImporter.java
 ```
 
 ## 3. API

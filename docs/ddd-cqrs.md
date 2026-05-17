@@ -6,12 +6,12 @@
 
 | Khái niệm | Mô tả |
 |-----------|-------|
-| Bounded Context | Ranh giới nghiệp vụ, tương ứng với module |
-| Aggregate | Cụm object có consistency boundary |
+| Bounded Context | Ranh giới nghiệp vụ, tương ứng với module như campaign, voucher, loyalty, targeting, explainability |
+| Aggregate | Cụm object có consistency boundary, ví dụ Campaign, Voucher, LoyaltyAccount, CustomerUpliftScore, GpRule |
 | Aggregate Root | Object gốc được thao tác từ bên ngoài aggregate |
-| Entity | Object có identity riêng (Campaign, Voucher, Customer) |
-| Value Object | Object không có identity, so sánh bằng value |
-| Domain Event | Sự kiện nghiệp vụ đã xảy ra |
+| Entity | Object có identity riêng (Campaign, Voucher, Customer, GpRule) |
+| Value Object | Object không có identity, so sánh bằng value (CampaignId, VoucherCode, PointAmount, UpliftScore, RuleExpression) |
+| Domain Event | Sự kiện nghiệp vụ đã xảy ra (CampaignActivatedEvent, VoucherRedeemedEvent, TargetCustomersSelectedEvent, GpRulesImportedEvent) |
 | Repository Port | Interface cho domain/application làm việc với persistence |
 | Domain Service | Rule nghiệp vụ không thuộc về một aggregate cụ thể |
 
@@ -57,10 +57,14 @@ POST /api/campaigns
 POST /api/campaigns/{id}/activate
 POST /api/vouchers/{code}/redeem
 POST /api/loyalty/accounts/{id}/points
+POST /api/targeting/scores/import
+POST /api/explainability/gp-rules/import
 
 Query:
 GET /api/campaigns/{id}
 GET /api/vouchers/{code}
 GET /api/customers/{id}/points
 GET /api/targeting/campaigns/{id}/candidates
+GET /api/explainability/campaigns/{id}/rules
+GET /api/explainability/xor-demo/runs/{id}
 ```

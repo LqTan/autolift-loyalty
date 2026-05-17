@@ -28,17 +28,29 @@
 4. Use points
 5. Listen VoucherRedeemedEvent
 
-## Phase 5: Uplift Modeling / Targeting
-1. Criteo dataset experiment notebook
-2. Train T-Learner uplift model
-3. Evaluate Qini/AUUC/Uplift@K
-4. Export customer uplift score
-5. targeting schema
-6. targeting module
-7. API get target customers
-8. CampaignActivatedEvent -> TargetCustomersSelectedEvent
+## Phase 5: Uplift Modeling / Targeting với X5 RetailHero
+1. X5 RetailHero experiment notebook
+2. Build X5 feature engineering pipeline
+3. Train T-Learner uplift model
+4. Evaluate Qini/AUUC/Uplift@K
+5. Export customer_uplift_scores.csv
+6. Export customer_feature_snapshots.csv
+7. targeting schema
+8. targeting module
+9. API get target customers
+10. CampaignActivatedEvent -> TargetCustomersSelectedEvent
 
-## Phase 6: Production
+## Phase 6: Genetic Programming / Explainability
+1. Build gp_input.csv từ uplift score và feature snapshots
+2. GP XOR demo để kiểm chứng pipeline logic
+3. GP rule extraction trên dữ liệu X5
+4. Export gp_rules.csv
+5. explainability schema
+6. explainability module
+7. API get GP rules by campaign
+8. Dashboard hiển thị rule_text và metrics
+
+## Phase 7: Production
 1. Security + JWT
 2. Redis
 3. Scheduler
@@ -46,3 +58,4 @@
 5. Monitoring
 6. CI/CD
 7. Deployment
+8. ML service riêng nếu cần online scoring về sau

@@ -10,22 +10,29 @@
 
 ## Uplift Modeling
 
-3. Criteo Uplift Prediction Dataset
-   https://ailab.criteo.com/criteo-uplift-prediction-dataset/
+3. X5 RetailHero Uplift Modeling for Promotional Campaign
+   https://ods.ai/competitions/x5-retailhero-uplift-modeling
 
-4. scikit-uplift Documentation
+4. X5 RetailHero Uplift Modeling Dataset - ODS Data Page
+   https://ods.ai/competitions/x5-retailhero-uplift-modeling/data
+
+5. scikit-uplift Documentation
    https://www.uplift-modeling.com/en/latest/index.html
 
-5. scikit-uplift Criteo Dataset Loader
-   https://www.uplift-modeling.com/en/latest/api/datasets/fetch_criteo.html
+6. scikit-uplift X5 Dataset Loader
+   https://www.uplift-modeling.com/en/latest/api/datasets/fetch_x5.html
 
-6. EconML Meta-Learners Documentation
+7. EconML Meta-Learners Documentation
    https://www.pywhy.org/EconML/spec/estimation/metalearners.html
 
 ## Architecture Patterns
 
-7. Martin Fowler - CQRS
+8. Martin Fowler - CQRS
    https://martinfowler.com/bliki/CQRS.html
 
-8. Microsoft - DDD and CQRS patterns
+9. Microsoft - DDD and CQRS patterns
    https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/
+
+## Genetic Programming / Explainability
+
+10. Introduction to Genetic Algorithms, Springer, 2008

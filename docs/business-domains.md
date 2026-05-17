@@ -23,8 +23,11 @@ Ghi nhận việc khách hàng sử dụng voucher hoặc điểm thưởng.
 ## 7. Targeting / Uplift Modeling
 Tính uplift score để xác định nhóm khách hàng `Persuadable`, tức là nhóm có khả năng thay đổi hành vi mua hoặc sử dụng dịch vụ khi nhận ưu đãi.
 
-## 8. Notification
-Gửi thông báo khi có event như campaign activated, voucher redeemed, points added.
+## 8. Explainability / Genetic Programming
+Lưu và hiển thị các luật diễn giải do Genetic Programming sinh ra. Các luật này giúp giải thích đặc điểm của nhóm khách hàng được Uplift Modeling khuyến nghị.
 
-## 9. Reporting
-Tổng hợp hiệu quả campaign, voucher, redemption và uplift targeting.
+## 9. Notification
+Gửi thông báo khi có event như campaign activated, voucher redeemed, points added hoặc target customers selected.
+
+## 10. Reporting
+Tổng hợp hiệu quả campaign, voucher, redemption, uplift targeting và luật GP.

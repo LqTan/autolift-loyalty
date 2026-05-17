@@ -20,10 +20,14 @@ spring:
     schemas:
       - sandbox
       - campaign
+      - customer
+      - voucher
       - promotion
     locations:
       - classpath:db/migration/sandbox
       - classpath:db/migration/campaign
+      - classpath:db/migration/customer
+      - classpath:db/migration/voucher
       - classpath:db/migration/promotion
   modulith:
     runtime:

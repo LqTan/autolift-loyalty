@@ -23,6 +23,7 @@ src/main/java/com/autolift/
 ├── loyalty/          # Quản lý điểm thưởng
 ├── redemption/       # Ghi nhận redeem
 ├── targeting/       # Chọn khách hàng mục tiêu (Uplift Modeling)
+├── explainability/  # GP rule diễn giải nhóm khách hàng
 ├── notification/    # Gửi thông báo
 └── shared/          # Shared kernel tối thiểu
 ```
@@ -39,6 +40,7 @@ src/main/java/com/autolift/
 | loyalty | Quản lý điểm thưởng |
 | redemption | Ghi nhận redeem |
 | targeting | Chọn khách hàng mục tiêu (Uplift Modeling) |
+| explainability | GP rule diễn giải nhóm khách hàng |
 | notification | Gửi thông báo |
 | shared | Shared kernel tối thiểu |
 
