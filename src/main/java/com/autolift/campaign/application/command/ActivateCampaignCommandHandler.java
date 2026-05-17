@@ -5,18 +5,18 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.events.CampaignActivatedEvent;
-import com.autolift.campaign.events.CampaignDomainEventPublisher;
 import java.time.Instant;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ActivateCampaignCommandHandler {
 
   private final CampaignRepository repository;
-  private final CampaignDomainEventPublisher eventPublisher;
+  private final ApplicationEventPublisher eventPublisher;
 
   public ActivateCampaignCommandHandler(
-      CampaignRepository repository, CampaignDomainEventPublisher eventPublisher) {
+      CampaignRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
@@ -32,7 +32,7 @@ public class ActivateCampaignCommandHandler {
     CampaignActivatedEvent event =
         new CampaignActivatedEvent(
             campaign.getId().getId().toString(), campaign.getName(), Instant.now());
-    eventPublisher.publish(event);
+    eventPublisher.publishEvent(event);
     return event;
   }
 }

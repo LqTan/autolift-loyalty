@@ -3,17 +3,17 @@ package com.autolift.voucher.application.command;
 import com.autolift.voucher.domain.exception.VoucherNotFoundException;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
-import com.autolift.voucher.events.DomainEventPublisher;
 import com.autolift.voucher.events.VoucherRedeemedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RedeemVoucherCommandHandler {
 
   private final VoucherRepository repository;
-  private final DomainEventPublisher eventPublisher;
+  private final ApplicationEventPublisher eventPublisher;
 
-  public RedeemVoucherCommandHandler(VoucherRepository repository, DomainEventPublisher eventPublisher) {
+  public RedeemVoucherCommandHandler(VoucherRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
@@ -24,7 +24,7 @@ public class RedeemVoucherCommandHandler {
         .orElseThrow(() -> VoucherNotFoundException.withCode(command.code()));
     voucher.redeem();
     repository.save(voucher);
-    eventPublisher.publish(new VoucherRedeemedEvent(
+    eventPublisher.publishEvent(new VoucherRedeemedEvent(
         voucher.getId().getId().toString(),
         voucher.getCode(),
         voucher.getCampaignId(),

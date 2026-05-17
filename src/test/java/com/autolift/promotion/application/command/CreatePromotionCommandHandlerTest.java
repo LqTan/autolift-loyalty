@@ -9,7 +9,6 @@ import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
 import com.autolift.promotion.domain.valueobject.PromotionStatus;
 import com.autolift.promotion.domain.valueobject.PromotionType;
-import com.autolift.promotion.events.DomainEventPublisher;
 import com.autolift.promotion.events.PromotionCreatedEvent;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -19,12 +18,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePromotionCommandHandlerTest {
 
   @Mock private PromotionRepository repository;
-  @Mock private DomainEventPublisher eventPublisher;
+  @Mock private ApplicationEventPublisher eventPublisher;
 
   private CreatePromotionCommandHandler handler;
 
@@ -51,7 +51,7 @@ class CreatePromotionCommandHandlerTest {
     handler.handle(command);
 
     ArgumentCaptor<PromotionCreatedEvent> eventCaptor = ArgumentCaptor.forClass(PromotionCreatedEvent.class);
-    verify(eventPublisher).publish(eventCaptor.capture());
+    verify(eventPublisher).publishEvent(eventCaptor.capture());
 
     PromotionCreatedEvent event = eventCaptor.getValue();
     assertThat(event.getName()).isEqualTo("Summer Sale");

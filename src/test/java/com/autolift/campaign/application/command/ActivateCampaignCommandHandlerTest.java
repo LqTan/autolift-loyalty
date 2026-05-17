@@ -11,7 +11,6 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.events.CampaignActivatedEvent;
-import com.autolift.campaign.events.CampaignDomainEventPublisher;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,13 +18,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class ActivateCampaignCommandHandlerTest {
 
   @Mock private CampaignRepository repository;
 
-  @Mock private CampaignDomainEventPublisher eventPublisher;
+  @Mock private ApplicationEventPublisher eventPublisher;
 
   private ActivateCampaignCommandHandler handler;
 
@@ -47,7 +47,7 @@ class ActivateCampaignCommandHandlerTest {
 
     assertThat(event.campaignId()).isEqualTo(campaign.getId().getId().toString());
     assertThat(event.name()).isEqualTo("Test");
-    verify(eventPublisher).publish(any(CampaignActivatedEvent.class));
+    verify(eventPublisher).publishEvent(any(CampaignActivatedEvent.class));
   }
 
   @Test
@@ -74,6 +74,6 @@ class ActivateCampaignCommandHandlerTest {
     ActivateCampaignCommand command = new ActivateCampaignCommand(campaignId);
     handler.handle(command);
 
-    verify(eventPublisher).publish(any(CampaignActivatedEvent.class));
+    verify(eventPublisher).publishEvent(any(CampaignActivatedEvent.class));
   }
 }

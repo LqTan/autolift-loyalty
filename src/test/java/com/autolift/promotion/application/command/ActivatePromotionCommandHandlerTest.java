@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import com.autolift.promotion.domain.exception.PromotionNotFoundException;
 import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
-import com.autolift.promotion.events.DomainEventPublisher;
 import com.autolift.promotion.events.PromotionActivatedEvent;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,12 +18,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class ActivatePromotionCommandHandlerTest {
 
   @Mock private PromotionRepository repository;
-  @Mock private DomainEventPublisher eventPublisher;
+  @Mock private ApplicationEventPublisher eventPublisher;
 
   private ActivatePromotionCommandHandler handler;
 
@@ -59,7 +59,7 @@ class ActivatePromotionCommandHandlerTest {
     handler.handle(command);
 
     ArgumentCaptor<PromotionActivatedEvent> eventCaptor = ArgumentCaptor.forClass(PromotionActivatedEvent.class);
-    verify(eventPublisher).publish(eventCaptor.capture());
+    verify(eventPublisher).publishEvent(eventCaptor.capture());
 
     PromotionActivatedEvent event = eventCaptor.getValue();
     assertThat(event.getName()).isEqualTo("Test");

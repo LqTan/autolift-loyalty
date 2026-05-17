@@ -2,17 +2,17 @@ package com.autolift.sandbox.application.command;
 
 import com.autolift.sandbox.domain.model.Sandbox;
 import com.autolift.sandbox.domain.repository.SandboxRepository;
-import com.autolift.sandbox.events.DomainEventPublisher;
 import com.autolift.sandbox.events.SandboxCreatedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreateSandboxCommandHandler {
   private final SandboxRepository repository;
-  private final DomainEventPublisher eventPublisher;
+  private final ApplicationEventPublisher eventPublisher;
 
   public CreateSandboxCommandHandler(
-      SandboxRepository repository, DomainEventPublisher eventPublisher) {
+      SandboxRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
@@ -22,7 +22,7 @@ public class CreateSandboxCommandHandler {
     Sandbox sandbox = new Sandbox(command.name());
     repository.save(sandbox);
     assert sandbox.getId() != null;
-    eventPublisher.publish(
+    eventPublisher.publishEvent(
         new SandboxCreatedEvent(sandbox.getId().getId().toString(), sandbox.getName()));
     return new SandboxCreatedResult(sandbox.getId().getId().toString(), sandbox.getName());
   }

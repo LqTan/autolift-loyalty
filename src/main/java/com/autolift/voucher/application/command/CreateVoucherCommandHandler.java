@@ -3,17 +3,17 @@ package com.autolift.voucher.application.command;
 import com.autolift.voucher.application.command.CreateVoucherResult;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
-import com.autolift.voucher.events.DomainEventPublisher;
 import com.autolift.voucher.events.VoucherCreatedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreateVoucherCommandHandler {
 
   private final VoucherRepository repository;
-  private final DomainEventPublisher eventPublisher;
+  private final ApplicationEventPublisher eventPublisher;
 
-  public CreateVoucherCommandHandler(VoucherRepository repository, DomainEventPublisher eventPublisher) {
+  public CreateVoucherCommandHandler(VoucherRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
@@ -30,7 +30,7 @@ public class CreateVoucherCommandHandler {
         command.validFrom(),
         command.validUntil());
     repository.save(voucher);
-    eventPublisher.publish(new VoucherCreatedEvent(
+    eventPublisher.publishEvent(new VoucherCreatedEvent(
         voucher.getId().getId().toString(),
         voucher.getCode(),
         voucher.getCampaignId()));
