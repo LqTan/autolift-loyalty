@@ -28,6 +28,7 @@ public class RedeemVoucherCommandHandler {
         voucher.getId().getId().toString(),
         voucher.getCode(),
         voucher.getCampaignId(),
+        command.customerId(),
         voucher.getValue()));
   }
 }

@@ -5,6 +5,7 @@ import com.autolift.voucher.application.command.CreateVoucherCommandHandler;
 import com.autolift.voucher.application.command.CreateVoucherResult;
 import com.autolift.voucher.application.command.RedeemVoucherCommand;
 import com.autolift.voucher.application.command.RedeemVoucherCommandHandler;
+import com.autolift.voucher.api.command.RedeemVoucherRequest;
 import java.net.URI;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +46,8 @@ public class VoucherCommandController {
   }
 
   @PostMapping("/{code}/redeem")
-  public ResponseEntity<Void> redeem(@PathVariable String code) {
-    redeemHandler.handle(new RedeemVoucherCommand(code));
+  public ResponseEntity<Void> redeem(@PathVariable String code, @RequestBody RedeemVoucherRequest request) {
+    redeemHandler.handle(new RedeemVoucherCommand(code, request.customerId()));
     return ResponseEntity.noContent().build();
   }
 }
