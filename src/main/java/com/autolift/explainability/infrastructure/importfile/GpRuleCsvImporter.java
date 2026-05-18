@@ -34,13 +34,13 @@ public class GpRuleCsvImporter {
             parts[1].trim(),
             parts[2].trim(),
             "PERSUADABLE",
-            parseBigDecimal(parts[3]),
             parseBigDecimal(parts[4]),
             parseBigDecimal(parts[5]),
             parseBigDecimal(parts[6]),
             parseBigDecimal(parts[7]),
-            parts[8].trim(),
-            parts[9].trim()
+            parseBigDecimal(parts[8]),
+            parts[9].trim(),
+            parts[10].trim()
         );
         batch.add(rule);
         if (batch.size() >= 500) {
