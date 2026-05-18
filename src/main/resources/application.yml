@@ -24,6 +24,7 @@ spring:
       - voucher
       - promotion
       - loyalty
+      - targeting
     locations:
       - classpath:db/migration/sandbox
       - classpath:db/migration/campaign
@@ -31,6 +32,7 @@ spring:
       - classpath:db/migration/voucher
       - classpath:db/migration/promotion
       - classpath:db/migration/loyalty
+      - classpath:db/migration/targeting
   modulith:
     runtime:
       flyway:
