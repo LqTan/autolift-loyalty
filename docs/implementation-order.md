@@ -48,15 +48,21 @@
 4. explainability schema
 5. explainability module
 6. API get GP rules by campaign
-7. Dashboard hiển thị rule_text và metrics
-8. Python worker cho ML job queue
+7. Python worker cho ML job queue
 
 ## Phase 7: Production
 1. Security + JWT
 2. Redis
 3. Scheduler
-4. Kafka externalization
-5. Monitoring
-6. CI/CD
-7. Deployment
-8. ML service riêng nếu cần online scoring về sau
+4. Monitoring
+5. CI/CD
+6. Deployment
+7. ML service riêng nếu cần online scoring về sau
+
+## Phase 8: Dashboard
+1. Dashboard REST API endpoints
+2. Frontend dashboard UI hiển thị:
+   - Campaign metrics
+   - Uplift targeting results
+   - GP rules và metrics
+   - Loyalty points summary
