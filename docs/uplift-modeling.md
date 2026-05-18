@@ -101,9 +101,7 @@ Bước 9: Chọn top K% khách hàng làm nhóm ưu tiên
 ```
 ml/
 ├── notebooks/
-│   ├── autolift_x5_materials_export_lite_chunked.ipynb
-│   ├── uplift_x5_retailhero_experiment.ipynb
-│   └── gp_rule_extraction_experiment.ipynb
+│   └── autolift_x5_materials_export_lite_chunked.ipynb
 ├── src/
 │   ├── build_x5_features.py
 │   ├── train_uplift_model.py
