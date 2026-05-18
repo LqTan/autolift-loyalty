@@ -24,6 +24,7 @@ src/main/java/com/autolift/
 ├── redemption/       # Ghi nhận redeem
 ├── targeting/       # Chọn khách hàng mục tiêu (Uplift Modeling)
 ├── explainability/  # GP rule diễn giải nhóm khách hàng
+├── ml/              # ML job queue và orchestration
 ├── notification/    # Gửi thông báo
 └── shared/          # Shared kernel tối thiểu
 ```
@@ -41,6 +42,7 @@ src/main/java/com/autolift/
 | redemption | Ghi nhận redeem |
 | targeting | Chọn khách hàng mục tiêu (Uplift Modeling) |
 | explainability | GP rule diễn giải nhóm khách hàng |
+| ml | ML job queue và orchestration |
 | notification | Gửi thông báo |
 | shared | Shared kernel tối thiểu |
 

@@ -6,7 +6,7 @@
 - Mỗi module sở hữu một schema riêng
 
 | Module | Schema |
-|--------|--------|
+|--------|---------|
 | sandbox | sandbox |
 | campaign | campaign |
 | promotion | promotion |
@@ -16,6 +16,7 @@
 | redemption | redemption |
 | targeting | targeting |
 | explainability | explainability |
+| ml | ml |
 | notification | notification |
 
 ## 2. Cross-Schema Rules
@@ -46,8 +47,16 @@ src/main/resources/db/migration/
 │   └── V13__create_customer_schema.sql
 ├── voucher/                   # migrations cho module voucher
 │   └── V14__create_voucher_schema.sql
-└── promotion/                 # migrations cho module promotion
-    └── V15__create_promotion_schema.sql
+├── promotion/                 # migrations cho module promotion
+│   └── V15__create_promotion_schema.sql
+├── loyalty/                   # migrations cho module loyalty
+│   └── V16__create_loyalty_schema.sql
+├── targeting/                 # migrations cho module targeting
+│   └── V17__create_targeting_schema.sql
+├── explainability/            # migrations cho module explainability
+│   └── V18__create_explainability_schema.sql
+└── ml/                        # migrations cho module ml
+    └── V19__create_ml_schema.sql
 ```
 
 ### Naming Convention
@@ -163,4 +172,28 @@ CREATE TABLE explainability.gp_rules (
 
 CREATE INDEX idx_gp_rules_campaign_f1
 ON explainability.gp_rules(campaign_id, f1_score DESC);
+```
+
+### ml schema
+```sql
+CREATE SCHEMA IF NOT EXISTS ml;
+
+CREATE TABLE ml.ml_jobs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    job_type VARCHAR(50) NOT NULL,           -- UPLIFT_SCORING, GP_RULE_EXTRACTION
+    campaign_id VARCHAR(255),
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',  -- PENDING, RUNNING, COMPLETED, FAILED
+    model_version VARCHAR(100),
+    input_params JSONB,
+    result_path VARCHAR(500),
+    error_message TEXT,
+    uplift_score_job_id UUID REFERENCES ml.ml_jobs(id),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    started_at TIMESTAMP,
+    completed_at TIMESTAMP
+);
+
+CREATE INDEX idx_ml_jobs_status ON ml.ml_jobs(status);
+CREATE INDEX idx_ml_jobs_campaign ON ml.ml_jobs(campaign_id);
+CREATE INDEX idx_ml_jobs_type_status ON ml.ml_jobs(job_type, status);
 ```

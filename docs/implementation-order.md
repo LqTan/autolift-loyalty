@@ -39,6 +39,7 @@
 8. targeting module
 9. API get target customers
 10. CampaignActivatedEvent -> TargetCustomersSelectedEvent
+11. ML job queue (ml schema + ml module)
 
 ## Phase 6: Genetic Programming / Explainability
 1. Build gp_input.csv từ uplift score và feature snapshots
@@ -48,6 +49,7 @@
 5. explainability module
 6. API get GP rules by campaign
 7. Dashboard hiển thị rule_text và metrics
+8. Python worker cho ML job queue
 
 ## Phase 7: Production
 1. Security + JWT
