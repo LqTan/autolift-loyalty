@@ -193,6 +193,7 @@
 						<targeting>targeting</targeting>
 						<explainability>explainability</explainability>
 						<notification>notification</notification>
+						<ml>ml</ml>
 					</schemas>
 					<locations>
 						<location>classpath:db/migration/sandbox</location>
@@ -204,6 +205,7 @@
 						<location>classpath:db/migration/targeting</location>
 						<location>classpath:db/migration/explainability</location>
 						<location>classpath:db/migration/notification</location>
+						<location>classpath:db/migration/ml</location>
 					</locations>
 				</configuration>
 			</plugin>

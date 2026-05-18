@@ -13,7 +13,6 @@
 | customer | customer |
 | voucher | voucher |
 | loyalty | loyalty |
-| redemption | redemption |
 | targeting | targeting |
 | explainability | explainability |
 | ml | ml |

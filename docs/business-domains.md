@@ -17,17 +17,14 @@ Phát hành voucher, khóa voucher, redeem voucher, kiểm tra hạn sử dụng
 ## 5. Loyalty Management
 Quản lý tài khoản điểm, cộng điểm, trừ điểm, lịch sử giao dịch điểm, hết hạn điểm.
 
-## 6. Redemption Management
-Ghi nhận việc khách hàng sử dụng voucher hoặc điểm thưởng.
-
-## 7. Targeting / Uplift Modeling
+## 6. Targeting / Uplift Modeling
 Tính uplift score để xác định nhóm khách hàng `Persuadable`, tức là nhóm có khả năng thay đổi hành vi mua hoặc sử dụng dịch vụ khi nhận ưu đãi.
 
-## 8. Explainability / Genetic Programming
+## 7. Explainability / Genetic Programming
 Lưu và hiển thị các luật diễn giải do Genetic Programming sinh ra. Các luật này giúp giải thích đặc điểm của nhóm khách hàng được Uplift Modeling khuyến nghị.
 
-## 9. Notification
+## 8. Notification
 Gửi thông báo khi có event như campaign activated, voucher redeemed, points added hoặc target customers selected.
 
-## 10. Reporting
+## 9. Reporting
 Tổng hợp hiệu quả campaign, voucher, redemption, uplift targeting và luật GP.

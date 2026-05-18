@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS targeting;
 CREATE TABLE targeting.customer_uplift_scores (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer_id VARCHAR(255) NOT NULL,
-    campaign_id UUID,
+    campaign_id VARCHAR(255),
     uplift_score NUMERIC(10, 6) NOT NULL,
     treatment_probability NUMERIC(10, 6),
     control_probability NUMERIC(10, 6),
@@ -16,7 +16,7 @@ CREATE TABLE targeting.customer_uplift_scores (
 CREATE TABLE targeting.customer_feature_snapshots (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer_id VARCHAR(255) NOT NULL,
-    campaign_id UUID,
+    campaign_id VARCHAR(255),
     recency_days INTEGER,
     frequency_90d INTEGER,
     monetary_90d NUMERIC(14, 2),
