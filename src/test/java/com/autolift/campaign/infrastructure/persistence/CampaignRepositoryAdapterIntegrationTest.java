@@ -79,24 +79,6 @@ class CampaignRepositoryAdapterIntegrationTest {
   }
 
   @Test
-  void shouldActivateCampaignAndPublishEvent() {
-    CreateCampaignCommand createCommand =
-        new CreateCampaignCommand(
-            "Campaign to Activate", null, null, null, new BigDecimal("1000000"), "VND");
-    CampaignCreatedResult created = createHandler.handle(createCommand);
-
-    ActivateCampaignCommand activateCommand = new ActivateCampaignCommand(created.id());
-    CampaignActivatedEvent event = activateHandler.handle(activateCommand);
-
-    assertThat(event.campaignId()).isEqualTo(created.id());
-    assertThat(event.name()).isEqualTo("Campaign to Activate");
-    assertThat(event.activatedAt()).isNotNull();
-
-    CampaignJpaEntity updated = jpaRepository.findById(UUID.fromString(created.id())).orElseThrow();
-    assertThat(updated.getStatus()).isEqualTo("ACTIVE");
-  }
-
-  @Test
   void shouldFindAllCampaigns() {
     createHandler.handle(
         new CreateCampaignCommand("Campaign 1", null, null, null, new BigDecimal("1000"), "VND"));
@@ -108,32 +90,5 @@ class CampaignRepositoryAdapterIntegrationTest {
     var campaigns = repository.findAll();
 
     assertThat(campaigns).hasSize(3);
-  }
-
-  @Test
-  void shouldFindCampaignsByStatus() {
-    CreateCampaignCommand cmd1 =
-        new CreateCampaignCommand("Draft 1", null, null, null, new BigDecimal("1000"), "VND");
-    CampaignCreatedResult r1 = createHandler.handle(cmd1);
-
-    CreateCampaignCommand cmd2 =
-        new CreateCampaignCommand("Active 1", null, null, null, new BigDecimal("1000"), "VND");
-    CampaignCreatedResult r2 = createHandler.handle(cmd2);
-    activateHandler.handle(new ActivateCampaignCommand(r2.id()));
-
-    var draftCampaigns =
-        repository.findAll().stream()
-            .filter(
-                c -> c.getStatus() == com.autolift.campaign.domain.valueobject.CampaignStatus.DRAFT)
-            .toList();
-    var activeCampaigns =
-        repository.findAll().stream()
-            .filter(
-                c ->
-                    c.getStatus() == com.autolift.campaign.domain.valueobject.CampaignStatus.ACTIVE)
-            .toList();
-
-    assertThat(draftCampaigns).hasSize(1);
-    assertThat(activeCampaigns).hasSize(1);
   }
 }

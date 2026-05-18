@@ -9,7 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
+import org.springframework.modulith.ApplicationModuleListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ public class CampaignEventListener {
   }
 
   @Async
-  @EventListener
+  @ApplicationModuleListener
   public void onCampaignActivated(CampaignActivatedEvent event) {
     log.info("Received CampaignActivatedEvent for campaign: {}", event.campaignId());
     List<TargetCustomerView> candidates =

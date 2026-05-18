@@ -2,10 +2,9 @@ package com.autolift.loyalty.events;
 
 import com.autolift.loyalty.domain.valueobject.LoyaltyAccountId;
 import java.math.BigDecimal;
-import lombok.Getter;
+import org.springframework.context.ApplicationEvent;
 
-@Getter
-public class PointsDeductedEvent {
+public class PointsDeductedEvent extends ApplicationEvent {
 
   private final LoyaltyAccountId loyaltyAccountId;
   private final BigDecimal points;
@@ -13,6 +12,7 @@ public class PointsDeductedEvent {
 
   public PointsDeductedEvent(
       LoyaltyAccountId loyaltyAccountId, BigDecimal points, String referenceId) {
+    super(loyaltyAccountId);
     this.loyaltyAccountId = loyaltyAccountId;
     this.points = points;
     this.referenceId = referenceId;

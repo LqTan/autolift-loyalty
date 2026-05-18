@@ -60,10 +60,14 @@ public class CampaignCommandController {
   }
 
   @PostMapping("/{id}/activate")
-  public ResponseEntity<CampaignActivatedEvent> activate(@PathVariable String id) {
+  public ResponseEntity<CampaignActivatedResponse> activate(@PathVariable String id) {
     ActivateCampaignCommand command = new ActivateCampaignCommand(id);
     CampaignActivatedEvent event = activateHandler.handle(command);
-    return ResponseEntity.ok(event);
+    CampaignActivatedResponse response = new CampaignActivatedResponse(
+        event.campaignId(),
+        event.name(),
+        event.activatedAt());
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/{id}/pause")

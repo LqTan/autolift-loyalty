@@ -11,7 +11,7 @@ import java.math.RoundingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
+import org.springframework.modulith.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +30,7 @@ public class VoucherRedeemedEventListener {
     this.eventPublisher = eventPublisher;
   }
 
-  @EventListener
-  @Transactional
+  @ApplicationModuleListener
   public void onVoucherRedeemed(VoucherRedeemedEvent event) {
     log.info("Voucher redeemed event received: voucherId={}, customerId={}, value={}",
         event.getVoucherId(), event.getCustomerId(), event.getValue());

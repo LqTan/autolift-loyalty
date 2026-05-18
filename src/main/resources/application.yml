@@ -41,3 +41,7 @@ spring:
     runtime:
       flyway:
         enabled: false
+    events:
+      jpa:
+        persistence:
+          enabled: false

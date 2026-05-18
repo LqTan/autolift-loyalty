@@ -1,10 +1,9 @@
 package com.autolift.voucher.events;
 
 import java.time.Instant;
-import lombok.Getter;
+import org.springframework.context.ApplicationEvent;
 
-@Getter
-public class VoucherCreatedEvent {
+public class VoucherCreatedEvent extends ApplicationEvent {
 
   private final String voucherId;
   private final String code;
@@ -12,6 +11,7 @@ public class VoucherCreatedEvent {
   private final Instant createdAt;
 
   public VoucherCreatedEvent(String voucherId, String code, String campaignId) {
+    super(voucherId);
     this.voucherId = voucherId;
     this.code = code;
     this.campaignId = campaignId;
