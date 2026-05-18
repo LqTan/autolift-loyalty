@@ -1,2 +1,2 @@
 #!/bin/bash
-cd "$(dirname "$0")/.." && ./mvnw test
+cd "$(dirname "$0")/.." && ./mvnw test -q
