@@ -178,10 +178,24 @@
 					<password>${env.POSTGRES_PASSWORD}</password>
 					<cleanDisabled>false</cleanDisabled>
 					<schemas>
-						<schema>sandbox</schema>
+						<sandbox>sandbox</sandbox>
+						<campaign>campaign</campaign>
+						<customer>customer</customer>
+						<voucher>voucher</voucher>
+						<promotion>promotion</promotion>
+						<loyalty>loyalty</loyalty>
+						<targeting>targeting</targeting>
+						<explainability>explainability</explainability>
 					</schemas>
 					<locations>
 						<location>classpath:db/migration/sandbox</location>
+						<location>classpath:db/migration/campaign</location>
+						<location>classpath:db/migration/customer</location>
+						<location>classpath:db/migration/voucher</location>
+						<location>classpath:db/migration/promotion</location>
+						<location>classpath:db/migration/loyalty</location>
+						<location>classpath:db/migration/targeting</location>
+						<location>classpath:db/migration/explainability</location>
 					</locations>
 				</configuration>
 			</plugin>
