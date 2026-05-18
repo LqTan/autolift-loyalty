@@ -59,21 +59,27 @@ class GPModel:
 
     def _parse_rule(self, rule_str: str) -> pd.Series:
         df = self.df
-        for feat_name, threshold_gen in TERMINALS:
-            if feat_name in rule_str:
-                for comp_op, comp_sym in COMPARATORS:
-                    if comp_sym in rule_str:
-                        parts = rule_str.split(comp_sym)
-                        if len(parts) == 2:
+        result = pd.Series([True] * len(df))
+
+        parts = rule_str.split(" AND ")
+        for part in parts:
+            part = part.strip()
+            for feat_name, threshold_gen in TERMINALS:
+                if feat_name in part:
+                    for comp_op, comp_sym in COMPARATORS:
+                        if comp_sym in part:
                             try:
-                                threshold = float(parts[1].strip().rstrip(")"))
+                                threshold_part = part.split(comp_sym)[1].strip()
+                                threshold = float(threshold_part)
                                 if comp_op == operator.lt:
-                                    return df[feat_name] < threshold
+                                    result = result & (df[feat_name] < threshold)
                                 elif comp_op == operator.gt:
-                                    return df[feat_name] > threshold
-                            except ValueError:
+                                    result = result & (df[feat_name] > threshold)
+                                break
+                            except (ValueError, IndexError):
                                 pass
-        return pd.Series([False] * len(df))
+                    break
+        return result
 
     def _individual_to_str(self, individual) -> str:
         nodes = [self._node_to_str(node) for node in individual]
@@ -111,14 +117,11 @@ def build_gp_model(
 
     toolbox.register("individual", lambda: creator.Individual([gen_terminal() for _ in range(3)]))
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-    toolbox.register("evaluate", lambda ind: (gp_model.evaluate_rule(ind)[0],))
     toolbox.register("mate", tools.cxOnePoint)
-    toolbox.register("mutate", lambda ind: [gen_terminal() for _ in ind])
+    toolbox.register("mutate", lambda ind: (creator.Individual([gen_terminal() for _ in ind]),))
     toolbox.register("select", tools.selTournament, tournsize=3)
 
     gp_model = GPModel(train_df, feature_cols)
-    global gp_model
-    gp_model = gp_model
 
     def eval_with_model(ind):
         return gp_model.evaluate_rule(ind)[0],

@@ -45,7 +45,7 @@ if __name__ == "__main__":
     BASE_DIR = Path("/home/archer/Projects/java_projects/autolift-loyalty/ml")
     ARTIFACTS_DIR = BASE_DIR / "artifacts" / "outputs"
 
-    sample_rules = [
+    rules = [
         {
             "rule_text": "(recency_days < 14) AND (frequency_total > 5)",
             "rule_expression": "(recency_days < 14) AND (frequency_total > 5)",
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     ]
 
     export_gp_rules(
-        rules=sample_rules,
+        rules=rules,
         campaign_id="x5-campaign-v1",
         model_version="v1",
         output_path=ARTIFACTS_DIR / "gp_rules.csv",
