@@ -192,6 +192,7 @@
 						<loyalty>loyalty</loyalty>
 						<targeting>targeting</targeting>
 						<explainability>explainability</explainability>
+						<notification>notification</notification>
 					</schemas>
 					<locations>
 						<location>classpath:db/migration/sandbox</location>
@@ -202,6 +203,7 @@
 						<location>classpath:db/migration/loyalty</location>
 						<location>classpath:db/migration/targeting</location>
 						<location>classpath:db/migration/explainability</location>
+						<location>classpath:db/migration/notification</location>
 					</locations>
 				</configuration>
 			</plugin>

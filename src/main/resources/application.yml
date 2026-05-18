@@ -27,6 +27,7 @@ spring:
       - targeting
       - explainability
       - ml
+      - notification
     locations:
       - classpath:db/migration/sandbox
       - classpath:db/migration/campaign
@@ -37,6 +38,7 @@ spring:
       - classpath:db/migration/targeting
       - classpath:db/migration/explainability
       - classpath:db/migration/ml
+      - classpath:db/migration/notification
   modulith:
     runtime:
       flyway:
