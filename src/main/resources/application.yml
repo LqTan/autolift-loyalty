@@ -26,6 +26,7 @@ spring:
       - loyalty
       - targeting
       - explainability
+      - ml
     locations:
       - classpath:db/migration/sandbox
       - classpath:db/migration/campaign
@@ -35,6 +36,7 @@ spring:
       - classpath:db/migration/loyalty
       - classpath:db/migration/targeting
       - classpath:db/migration/explainability
+      - classpath:db/migration/ml
   modulith:
     runtime:
       flyway:

@@ -96,3 +96,25 @@ model:
 evaluation:
   top_k_rates: [0.10, 0.20, 0.30]
 ```
+
+## ML Job Worker
+
+The worker polls `ml.ml_jobs` table and executes ML pipelines.
+
+```bash
+# Set DATABASE_URL once (or add to .env)
+export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/autolift_db
+
+# Run worker
+conda activate autolift-ml
+python ml/scripts/run_ml_worker.py
+
+# Or inline
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/autolift_db python ml/scripts/run_ml_worker.py
+```
+
+## GP Pipeline
+
+```bash
+python ml/scripts/run_gp_pipeline.py
+```
