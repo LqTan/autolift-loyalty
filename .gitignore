@@ -35,3 +35,10 @@ build/
 .env
 AGENTS.md
 opencode.json
+
+# ML artifacts and data
+ml/artifacts/
+ml/data/
+ml/**/__pycache__/
+ml/**/*.pyc
+ml/**/.pytest_cache/
