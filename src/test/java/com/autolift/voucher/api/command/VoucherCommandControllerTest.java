@@ -124,7 +124,11 @@ class VoucherCommandControllerTest {
 
   @Test
   void shouldRedeemVoucher() throws Exception {
-    mvc.perform(post("/api/vouchers/VCHR001/redeem"))
+    RedeemVoucherRequest request = new RedeemVoucherRequest("customer-123");
+    mvc.perform(
+            post("/api/vouchers/VCHR001/redeem")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isNoContent());
   }
 }
