@@ -1,0 +1,35 @@
+dataset:
+  name: x5_retailhero
+  base_dir: /home/archer/Projects/java_projects/autolift-loyalty/ml/data
+  train_file: uplift_train.csv.gz
+  clients_file: clients.csv.gz
+  purchases_file: purchases.csv.gz
+
+features:
+  purchase_features:
+    - recency_days
+    - frequency_total
+    - monetary_total
+    - avg_basket_value
+    - total_quantity
+    - unique_product_count
+    - unique_category_count
+  client_features:
+    - age
+    - gender
+    - first_issue_date
+    - first_redeem_date
+
+model:
+  type: t_learner
+  base_model: RandomForestClassifier
+  n_estimators: 100
+  random_state: 42
+
+evaluation:
+  top_k_rates: [0.10, 0.20, 0.30]
+
+output:
+  uplift_scores_file: customer_uplift_scores.csv
+  feature_snapshots_file: customer_feature_snapshots.csv
+  model_version: v1
