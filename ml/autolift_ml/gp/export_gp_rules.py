@@ -14,7 +14,6 @@ def export_gp_rules(
     rows = []
     for rule in rules:
         rows.append({
-            "id": None,
             "campaign_id": campaign_id,
             "rule_text": rule.get("rule_text", ""),
             "rule_expression": rule.get("rule_expression", ""),
