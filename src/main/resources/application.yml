@@ -113,3 +113,24 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+  logging:
+    level:
+      root: INFO
+      com.autolift: INFO
+    file:
+      name: /var/log/autolift/autolift.log

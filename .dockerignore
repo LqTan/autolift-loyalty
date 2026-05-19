@@ -1,0 +1,13 @@
+.git
+.github
+.idea
+.vscode
+target/
+src/test/
+*.md
+docs/
+ml/
+.env
+*.log
+*.class
+*.jar.original
