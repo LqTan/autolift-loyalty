@@ -26,4 +26,6 @@ public interface MlJobRepository {
   Optional<MlJob> findFirstPendingByJobTypeOrderByCreatedAtAsc(MlJobType jobType);
 
   List<MlJob> findByCompletedAtBefore(Instant before);
+
+  long countByStatus(MlJobStatus status);
 }

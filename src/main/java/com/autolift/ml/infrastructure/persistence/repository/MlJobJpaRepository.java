@@ -32,4 +32,6 @@ public interface MlJobJpaRepository extends JpaRepository<MlJobJpaEntity, UUID> 
   Optional<MlJobJpaEntity> findFirstPendingByJobTypeOrderByCreatedAtAsc(
       @Param("jobType") MlJobType jobType,
       @Param("status") MlJobStatus status);
+
+  long countByStatus(MlJobStatus status);
 }

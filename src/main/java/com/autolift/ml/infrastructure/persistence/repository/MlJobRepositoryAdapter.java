@@ -72,4 +72,9 @@ public class MlJobRepositoryAdapter implements MlJobRepository {
         .map(MlJobMapper::toDomain)
         .collect(Collectors.toList());
   }
+
+  @Override
+  public long countByStatus(MlJobStatus status) {
+    return jpaRepository.countByStatus(status);
+  }
 }
