@@ -1,17 +1,14 @@
 package com.autolift.notification.application.query;
 
-import com.autolift.notification.application.command.CreateNotificationHandler;
 import com.autolift.notification.domain.model.Notification;
 import com.autolift.notification.domain.repository.NotificationRepository;
-import com.autolift.notification.domain.valueobject.NotificationEventType;
 import com.autolift.notification.domain.valueobject.NotificationStatus;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GetNotificationsHandler {

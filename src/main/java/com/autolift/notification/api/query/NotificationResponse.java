@@ -14,5 +14,4 @@ public record NotificationResponse(
     Map<String, Object> payload,
     String errorMessage,
     Instant sentAt,
-    Instant createdAt
-) {}
+    Instant createdAt) {}

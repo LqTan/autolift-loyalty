@@ -14,7 +14,8 @@ public class GetCustomerFeatureHandler {
   }
 
   public CustomerFeatureView handle(GetCustomerFeatureQuery query) {
-    return repository.findByCustomerIdAndCampaignId(query.customerId(), query.campaignId())
+    return repository
+        .findByCustomerIdAndCampaignId(query.customerId(), query.campaignId())
         .map(this::toView)
         .orElse(null);
   }

@@ -4,8 +4,6 @@ import com.autolift.targeting.domain.model.CustomerUpliftScore;
 import com.autolift.targeting.domain.valueobject.TargetingSegment;
 import com.autolift.targeting.domain.valueobject.UpliftScoreId;
 import com.autolift.targeting.infrastructure.persistence.entity.CustomerUpliftScoreJpaEntity;
-import java.math.BigDecimal;
-import java.time.Instant;
 
 public class CustomerUpliftScoreMapper {
 

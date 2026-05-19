@@ -28,7 +28,8 @@ public class NotificationQueryController {
       @RequestParam(defaultValue = "50") int limit,
       @RequestParam(defaultValue = "0") int offset) {
 
-    GetNotificationsQuery query = new GetNotificationsQuery(null, null, null, null, null, limit, offset);
+    GetNotificationsQuery query =
+        new GetNotificationsQuery(null, null, null, null, null, limit, offset);
     List<NotificationView> result = getNotificationsHandler.handle(query);
     return ResponseEntity.ok(result);
   }

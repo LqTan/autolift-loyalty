@@ -43,36 +43,45 @@ public class CacheConfig {
 
   @Bean
   public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-    log.info("Creating RedisCacheManager with connectionFactory: {}", connectionFactory.getClass().getName());
-    RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofHours(1))
-        .serializeKeysWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
-        .disableCachingNullValues();
+    log.info(
+        "Creating RedisCacheManager with connectionFactory: {}",
+        connectionFactory.getClass().getName());
+    RedisCacheConfiguration config =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(1))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
 
-    RedisCacheConfiguration upliftCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofHours(24))
-        .serializeKeysWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
-        .disableCachingNullValues();
+    RedisCacheConfiguration upliftCacheConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(24))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
 
-    RedisCacheConfiguration campaignCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofMinutes(30))
-        .serializeKeysWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
-        .disableCachingNullValues();
+    RedisCacheConfiguration campaignCacheConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofMinutes(30))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
 
-    RedisCacheManager manager = RedisCacheManager.builder(connectionFactory)
-        .cacheDefaults(config)
-        .withCacheConfiguration("upliftScores", upliftCacheConfig)
-        .withCacheConfiguration("campaigns", campaignCacheConfig)
-        .build();
+    RedisCacheManager manager =
+        RedisCacheManager.builder(connectionFactory)
+            .cacheDefaults(config)
+            .withCacheConfiguration("upliftScores", upliftCacheConfig)
+            .withCacheConfiguration("campaigns", campaignCacheConfig)
+            .build();
     log.info("RedisCacheManager created with caches: {}", manager.getCacheNames());
     return manager;
   }

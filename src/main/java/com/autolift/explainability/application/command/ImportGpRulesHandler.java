@@ -15,20 +15,23 @@ public class ImportGpRulesHandler {
 
   public int handle(ImportGpRulesCommand command) {
     var items = command.items();
-    var gpRules = items.stream()
-        .map(item -> GpRule.create(
-            item.campaignId(),
-            item.ruleText(),
-            item.ruleExpression(),
-            item.targetLabel(),
-            item.precisionValue(),
-            item.recallValue(),
-            item.f1Score(),
-            item.accuracyValue(),
-            item.coverageValue(),
-            item.modelVersion(),
-            item.sourceFile()))
-        .toList();
+    var gpRules =
+        items.stream()
+            .map(
+                item ->
+                    GpRule.create(
+                        item.campaignId(),
+                        item.ruleText(),
+                        item.ruleExpression(),
+                        item.targetLabel(),
+                        item.precisionValue(),
+                        item.recallValue(),
+                        item.f1Score(),
+                        item.accuracyValue(),
+                        item.coverageValue(),
+                        item.modelVersion(),
+                        item.sourceFile()))
+            .toList();
     repository.saveAll(gpRules);
     return gpRules.size();
   }

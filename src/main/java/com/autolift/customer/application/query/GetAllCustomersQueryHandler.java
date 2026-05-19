@@ -3,9 +3,8 @@ package com.autolift.customer.application.query;
 import com.autolift.customer.api.query.CustomerResponse;
 import com.autolift.customer.domain.model.Customer;
 import com.autolift.customer.domain.repository.CustomerRepository;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class GetAllCustomersQueryHandler {
@@ -18,9 +17,7 @@ public class GetAllCustomersQueryHandler {
 
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public List<CustomerResponse> handle(GetAllCustomersQuery query) {
-    return repository.findAll().stream()
-        .map(this::toResponse)
-        .toList();
+    return repository.findAll().stream().map(this::toResponse).toList();
   }
 
   private CustomerResponse toResponse(Customer customer) {

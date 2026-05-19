@@ -14,20 +14,23 @@ public class CustomerFeatureSnapshotRepositoryAdapter implements CustomerFeature
 
   private final CustomerFeatureSnapshotJpaRepository jpaRepository;
 
-  public CustomerFeatureSnapshotRepositoryAdapter(CustomerFeatureSnapshotJpaRepository jpaRepository) {
+  public CustomerFeatureSnapshotRepositoryAdapter(
+      CustomerFeatureSnapshotJpaRepository jpaRepository) {
     this.jpaRepository = jpaRepository;
   }
 
   @Override
   public CustomerFeatureSnapshot save(CustomerFeatureSnapshot snapshot) {
-    return CustomerFeatureSnapshotMapper.toDomain(jpaRepository.save(CustomerFeatureSnapshotMapper.toEntity(snapshot)));
+    return CustomerFeatureSnapshotMapper.toDomain(
+        jpaRepository.save(CustomerFeatureSnapshotMapper.toEntity(snapshot)));
   }
 
   @Override
   public void saveAll(List<CustomerFeatureSnapshot> snapshots) {
-    jpaRepository.saveAll(snapshots.stream()
-        .map(CustomerFeatureSnapshotMapper::toEntity)
-        .collect(Collectors.toList()));
+    jpaRepository.saveAll(
+        snapshots.stream()
+            .map(CustomerFeatureSnapshotMapper::toEntity)
+            .collect(Collectors.toList()));
   }
 
   @Override
@@ -43,7 +46,8 @@ public class CustomerFeatureSnapshotRepositoryAdapter implements CustomerFeature
   }
 
   @Override
-  public Optional<CustomerFeatureSnapshot> findByCustomerIdAndCampaignId(String customerId, String campaignId) {
+  public Optional<CustomerFeatureSnapshot> findByCustomerIdAndCampaignId(
+      String customerId, String campaignId) {
     return Optional.ofNullable(jpaRepository.findByCustomerIdAndCampaignId(customerId, campaignId))
         .map(CustomerFeatureSnapshotMapper::toDomain);
   }

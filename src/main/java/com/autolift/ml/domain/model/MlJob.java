@@ -66,7 +66,8 @@ public class MlJob {
     this.completedAt = completedAt;
   }
 
-  public static MlJob createUpliftScoringJob(String campaignId, String modelVersion, Map<String, Object> inputParams) {
+  public static MlJob createUpliftScoringJob(
+      String campaignId, String modelVersion, Map<String, Object> inputParams) {
     return new MlJob(
         MlJobId.random(),
         MlJobType.UPLIFT_SCORING,

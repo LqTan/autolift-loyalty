@@ -3,9 +3,8 @@ package com.autolift.customer.domain.model;
 import com.autolift.customer.domain.valueobject.CustomerId;
 import com.autolift.customer.domain.valueobject.CustomerSegment;
 import com.autolift.customer.domain.valueobject.CustomerStatus;
-import lombok.Getter;
-
 import java.time.Instant;
+import lombok.Getter;
 
 @Getter
 public class Customer {
@@ -49,15 +48,10 @@ public class Customer {
     this.updatedAt = updatedAt;
   }
 
-  public static Customer create(
-      String name,
-      String email,
-      String phone,
-      CustomerSegment segment) {
+  public static Customer create(String name, String email, String phone, CustomerSegment segment) {
     CustomerId id = CustomerId.random();
     Instant now = Instant.now();
-    return new Customer(
-        id, name, email, phone, segment, CustomerStatus.ACTIVE, now, now);
+    return new Customer(id, name, email, phone, segment, CustomerStatus.ACTIVE, now, now);
   }
 
   public static Customer of(

@@ -29,19 +29,19 @@ public class GpRuleCsvImporter {
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(",", -1);
         if (parts.length < 11) continue;
-        GpRule rule = GpRule.create(
-            parts[0].trim(),
-            parts[1].trim(),
-            parts[2].trim(),
-            "PERSUADABLE",
-            parseBigDecimal(parts[4]),
-            parseBigDecimal(parts[5]),
-            parseBigDecimal(parts[6]),
-            parseBigDecimal(parts[7]),
-            parseBigDecimal(parts[8]),
-            parts[9].trim(),
-            parts[10].trim()
-        );
+        GpRule rule =
+            GpRule.create(
+                parts[0].trim(),
+                parts[1].trim(),
+                parts[2].trim(),
+                "PERSUADABLE",
+                parseBigDecimal(parts[4]),
+                parseBigDecimal(parts[5]),
+                parseBigDecimal(parts[6]),
+                parseBigDecimal(parts[7]),
+                parseBigDecimal(parts[8]),
+                parts[9].trim(),
+                parts[10].trim());
         batch.add(rule);
         if (batch.size() >= 500) {
           repository.saveAll(batch);

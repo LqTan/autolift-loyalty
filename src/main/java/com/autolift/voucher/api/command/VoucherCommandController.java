@@ -5,7 +5,6 @@ import com.autolift.voucher.application.command.CreateVoucherCommandHandler;
 import com.autolift.voucher.application.command.CreateVoucherResult;
 import com.autolift.voucher.application.command.RedeemVoucherCommand;
 import com.autolift.voucher.application.command.RedeemVoucherCommandHandler;
-import com.autolift.voucher.api.command.RedeemVoucherRequest;
 import java.net.URI;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
@@ -24,29 +23,30 @@ public class VoucherCommandController {
   private final RedeemVoucherCommandHandler redeemHandler;
 
   public VoucherCommandController(
-      CreateVoucherCommandHandler createHandler,
-      RedeemVoucherCommandHandler redeemHandler) {
+      CreateVoucherCommandHandler createHandler, RedeemVoucherCommandHandler redeemHandler) {
     this.createHandler = createHandler;
     this.redeemHandler = redeemHandler;
   }
 
   @PostMapping
   public ResponseEntity<CreateVoucherResult> create(@RequestBody CreateVoucherRequest request) {
-    CreateVoucherCommand command = new CreateVoucherCommand(
-        request.code(),
-        request.campaignId(),
-        request.voucherType(),
-        request.value(),
-        request.minOrderAmount(),
-        request.maxUsage(),
-        request.validFrom(),
-        request.validUntil());
+    CreateVoucherCommand command =
+        new CreateVoucherCommand(
+            request.code(),
+            request.campaignId(),
+            request.voucherType(),
+            request.value(),
+            request.minOrderAmount(),
+            request.maxUsage(),
+            request.validFrom(),
+            request.validUntil());
     CreateVoucherResult result = createHandler.handle(command);
     return ResponseEntity.created(URI.create("/api/vouchers/" + result.code())).body(result);
   }
 
   @PostMapping("/{code}/redeem")
-  public ResponseEntity<Void> redeem(@PathVariable String code, @RequestBody RedeemVoucherRequest request) {
+  public ResponseEntity<Void> redeem(
+      @PathVariable String code, @RequestBody RedeemVoucherRequest request) {
     redeemHandler.handle(new RedeemVoucherCommand(code, request.customerId()));
     return ResponseEntity.noContent().build();
   }

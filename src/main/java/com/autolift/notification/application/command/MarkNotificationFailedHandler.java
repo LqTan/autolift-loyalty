@@ -16,8 +16,10 @@ public class MarkNotificationFailedHandler {
 
   @Transactional
   public Notification handle(String notificationId, String errorMessage) {
-    return repository.findById(notificationId)
+    return repository
+        .findById(notificationId)
         .map(n -> repository.save(n.markFailed(errorMessage)))
-        .orElseThrow(() -> new IllegalArgumentException("Notification not found: " + notificationId));
+        .orElseThrow(
+            () -> new IllegalArgumentException("Notification not found: " + notificationId));
   }
 }

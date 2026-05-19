@@ -20,7 +20,8 @@ public class CustomerQueryController {
   private final GetCustomerQueryHandler getHandler;
   private final GetAllCustomersQueryHandler getAllHandler;
 
-  public CustomerQueryController(GetCustomerQueryHandler getHandler, GetAllCustomersQueryHandler getAllHandler) {
+  public CustomerQueryController(
+      GetCustomerQueryHandler getHandler, GetAllCustomersQueryHandler getAllHandler) {
     this.getHandler = getHandler;
     this.getAllHandler = getAllHandler;
   }

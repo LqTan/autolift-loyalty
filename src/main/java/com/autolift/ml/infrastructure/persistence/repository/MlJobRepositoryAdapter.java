@@ -62,7 +62,8 @@ public class MlJobRepositoryAdapter implements MlJobRepository {
 
   @Override
   public Optional<MlJob> findFirstPendingByJobTypeOrderByCreatedAtAsc(MlJobType jobType) {
-    return jpaRepository.findFirstPendingByJobTypeOrderByCreatedAtAsc(jobType, MlJobStatus.PENDING)
+    return jpaRepository
+        .findFirstPendingByJobTypeOrderByCreatedAtAsc(jobType, MlJobStatus.PENDING)
         .map(MlJobMapper::toDomain);
   }
 

@@ -2,13 +2,11 @@ package com.autolift.campaign.infrastructure.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.autolift.campaign.application.command.ActivateCampaignCommand;
 import com.autolift.campaign.application.command.ActivateCampaignCommandHandler;
 import com.autolift.campaign.application.command.CampaignCreatedResult;
 import com.autolift.campaign.application.command.CreateCampaignCommand;
 import com.autolift.campaign.application.command.CreateCampaignCommandHandler;
 import com.autolift.campaign.domain.repository.CampaignRepository;
-import com.autolift.campaign.events.CampaignActivatedEvent;
 import com.autolift.campaign.infrastructure.persistence.entity.CampaignJpaEntity;
 import com.autolift.campaign.infrastructure.persistence.mapper.CampaignPersistenceMapper;
 import com.autolift.campaign.infrastructure.persistence.repository.CampaignJpaRepository;

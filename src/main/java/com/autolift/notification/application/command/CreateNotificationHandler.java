@@ -20,17 +20,21 @@ public class CreateNotificationHandler {
 
   @Transactional
   public Notification handle(CreateNotificationCommand command) {
-    Notification notification = Notification.create(
-        command.eventType(),
-        command.channel(),
-        command.recipient(),
-        command.subject(),
-        command.body(),
-        command.payload());
+    Notification notification =
+        Notification.create(
+            command.eventType(),
+            command.channel(),
+            command.recipient(),
+            command.subject(),
+            command.body(),
+            command.payload());
 
     Notification saved = repository.save(notification);
-    log.info("Notification created: id={}, eventType={}, channel={}",
-        saved.getId().getId(), saved.getEventType(), saved.getChannel());
+    log.info(
+        "Notification created: id={}, eventType={}, channel={}",
+        saved.getId().getId(),
+        saved.getEventType(),
+        saved.getChannel());
     return saved;
   }
 }

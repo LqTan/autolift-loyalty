@@ -28,7 +28,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CustomerCommandController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Import({CreateCustomerCommandHandler.class, SuspendCustomerCommandHandler.class, SecurityConfig.class})
+@Import({
+  CreateCustomerCommandHandler.class,
+  SuspendCustomerCommandHandler.class,
+  SecurityConfig.class
+})
 class CustomerCommandControllerTest {
 
   @Autowired private MockMvc mvc;
@@ -78,7 +82,8 @@ class CustomerCommandControllerTest {
   @Test
   void shouldCreateCustomerWithVipSegment() throws Exception {
     CreateCustomerRequest request =
-        new CreateCustomerRequest("VIP Customer", "vip@example.com", "0987654321", CustomerSegment.VIP);
+        new CreateCustomerRequest(
+            "VIP Customer", "vip@example.com", "0987654321", CustomerSegment.VIP);
 
     CreateCustomerResult result =
         new CreateCustomerResult(

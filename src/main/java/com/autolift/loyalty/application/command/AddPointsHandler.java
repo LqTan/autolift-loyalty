@@ -7,7 +7,6 @@ import com.autolift.loyalty.domain.model.PointTransaction.TransactionType;
 import com.autolift.loyalty.domain.repository.LoyaltyAccountRepository;
 import com.autolift.loyalty.domain.valueobject.LoyaltyAccountId;
 import com.autolift.loyalty.domain.valueobject.PointTransactionId;
-import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,9 +20,10 @@ public class AddPointsHandler {
 
   @org.springframework.transaction.annotation.Transactional
   public void handle(AddPointsCommand command) {
-    LoyaltyAccount account = repository
-        .findById(LoyaltyAccountId.of(command.accountId()))
-        .orElseThrow(() -> new LoyaltyAccountNotFoundException(command.accountId()));
+    LoyaltyAccount account =
+        repository
+            .findById(LoyaltyAccountId.of(command.accountId()))
+            .orElseThrow(() -> new LoyaltyAccountNotFoundException(command.accountId()));
     account.addPoints(command.amount());
     repository.save(account);
     PointTransaction transaction =

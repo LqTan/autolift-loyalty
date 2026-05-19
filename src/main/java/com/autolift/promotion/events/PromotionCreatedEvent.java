@@ -16,7 +16,15 @@ public class PromotionCreatedEvent extends ApplicationEvent {
     this.createdAt = createdAt;
   }
 
-  public String getPromotionId() { return promotionId; }
-  public String getName() { return name; }
-  public Instant getCreatedAt() { return createdAt; }
+  public String getPromotionId() {
+    return promotionId;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
 }

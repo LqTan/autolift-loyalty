@@ -22,8 +22,7 @@ public class CampaignEventListener {
   private final ApplicationEventPublisher eventPublisher;
 
   public CampaignEventListener(
-      GetTargetCustomersHandler targetCustomersHandler,
-      ApplicationEventPublisher eventPublisher) {
+      GetTargetCustomersHandler targetCustomersHandler, ApplicationEventPublisher eventPublisher) {
     this.targetCustomersHandler = targetCustomersHandler;
     this.eventPublisher = eventPublisher;
   }
@@ -34,15 +33,13 @@ public class CampaignEventListener {
     log.info("Received CampaignActivatedEvent for campaign: {}", event.campaignId());
     List<TargetCustomerView> candidates =
         targetCustomersHandler.handle(new GetTargetCustomersQuery(event.campaignId(), 1000));
-    List<String> customerIds = candidates.stream()
-        .map(TargetCustomerView::customerId)
-        .toList();
-    TargetCustomersSelectedEvent selectedEvent = new TargetCustomersSelectedEvent(
-        event.campaignId(),
-        customerIds,
-        Instant.now());
+    List<String> customerIds = candidates.stream().map(TargetCustomerView::customerId).toList();
+    TargetCustomersSelectedEvent selectedEvent =
+        new TargetCustomersSelectedEvent(event.campaignId(), customerIds, Instant.now());
     eventPublisher.publishEvent(selectedEvent);
-    log.info("Published TargetCustomersSelectedEvent with {} customers for campaign {}",
-        customerIds.size(), event.campaignId());
+    log.info(
+        "Published TargetCustomersSelectedEvent with {} customers for campaign {}",
+        customerIds.size(),
+        event.campaignId());
   }
 }

@@ -17,7 +17,8 @@ public class GetCustomerQueryHandler {
 
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public CustomerResponse handle(GetCustomerQuery query) {
-    return repository.findById(CustomerId.of(query.customerId()))
+    return repository
+        .findById(CustomerId.of(query.customerId()))
         .map(this::toResponse)
         .orElseThrow(() -> CustomerNotFoundException.withId(query.customerId()));
   }

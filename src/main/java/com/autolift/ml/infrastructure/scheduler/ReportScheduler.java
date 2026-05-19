@@ -2,7 +2,6 @@ package com.autolift.ml.infrastructure.scheduler;
 
 import com.autolift.ml.domain.model.ScheduledTaskLog;
 import com.autolift.ml.domain.repository.ScheduledTaskLogRepository;
-import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;

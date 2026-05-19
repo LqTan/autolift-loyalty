@@ -3,10 +3,9 @@ package com.autolift.voucher.domain.model;
 import com.autolift.voucher.domain.valueobject.VoucherId;
 import com.autolift.voucher.domain.valueobject.VoucherStatus;
 import com.autolift.voucher.domain.valueobject.VoucherType;
-import lombok.Getter;
-
 import java.math.BigDecimal;
 import java.time.Instant;
+import lombok.Getter;
 
 @Getter
 public class Voucher {
@@ -78,8 +77,18 @@ public class Voucher {
     VoucherId id = VoucherId.random();
     Instant now = Instant.now();
     return new Voucher(
-        id, code, campaignId, type, value, minOrderAmount, maxUsage, 0,
-        VoucherStatus.ACTIVE, validFrom, validUntil, now);
+        id,
+        code,
+        campaignId,
+        type,
+        value,
+        minOrderAmount,
+        maxUsage,
+        0,
+        VoucherStatus.ACTIVE,
+        validFrom,
+        validUntil,
+        now);
   }
 
   public static Voucher of(
@@ -95,8 +104,19 @@ public class Voucher {
       Instant validFrom,
       Instant validUntil,
       Instant createdAt) {
-    return new Voucher(id, code, campaignId, type, value, minOrderAmount, maxUsage,
-        usedCount, status, validFrom, validUntil, createdAt);
+    return new Voucher(
+        id,
+        code,
+        campaignId,
+        type,
+        value,
+        minOrderAmount,
+        maxUsage,
+        usedCount,
+        status,
+        validFrom,
+        validUntil,
+        createdAt);
   }
 
   public void redeem() {

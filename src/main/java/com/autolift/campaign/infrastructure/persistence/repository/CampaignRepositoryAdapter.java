@@ -4,7 +4,6 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.infrastructure.persistence.mapper.CampaignPersistenceMapper;
-import java.util.List;
 import org.springframework.stereotype.Repository;
 
 @Repository

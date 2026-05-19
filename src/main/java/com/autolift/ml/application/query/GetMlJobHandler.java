@@ -1,6 +1,5 @@
 package com.autolift.ml.application.query;
 
-import com.autolift.ml.domain.model.MlJob;
 import com.autolift.ml.domain.repository.MlJobRepository;
 import com.autolift.ml.domain.valueobject.MlJobId;
 import java.util.List;
@@ -19,8 +18,7 @@ public class GetMlJobHandler {
 
   public Optional<MlJobView> handleByJobId(GetMlJobQuery query) {
     if (query.getJobId() != null) {
-      return mlJobRepository.findById(MlJobId.of(query.getJobId()))
-          .map(MlJobView::from);
+      return mlJobRepository.findById(MlJobId.of(query.getJobId())).map(MlJobView::from);
     }
     return Optional.empty();
   }

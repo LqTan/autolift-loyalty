@@ -29,18 +29,19 @@ public class CustomerFeatureSnapshotCsvImporter {
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(",");
         if (parts.length < 10) continue;
-        CustomerFeatureSnapshot snapshot = CustomerFeatureSnapshot.create(
-            parts[0].trim(),
-            campaignId,
-            parseIntOrNull(parts[1]),
-            parseIntOrNull(parts[2]),
-            parseBigDecimalOrNull(parts[3]),
-            parseBigDecimalOrNull(parts[4]),
-            parseBigDecimalOrNull(parts[5]),
-            parseIntOrNull(parts[6]),
-            parseIntOrNull(parts[7]),
-            parts.length > 8 ? parts[8].trim() : null,
-            parts.length > 9 ? parts[9].trim() : "v1");
+        CustomerFeatureSnapshot snapshot =
+            CustomerFeatureSnapshot.create(
+                parts[0].trim(),
+                campaignId,
+                parseIntOrNull(parts[1]),
+                parseIntOrNull(parts[2]),
+                parseBigDecimalOrNull(parts[3]),
+                parseBigDecimalOrNull(parts[4]),
+                parseBigDecimalOrNull(parts[5]),
+                parseIntOrNull(parts[6]),
+                parseIntOrNull(parts[7]),
+                parts.length > 8 ? parts[8].trim() : null,
+                parts.length > 9 ? parts[9].trim() : "v1");
         batch.add(snapshot);
         if (batch.size() >= 500) {
           repository.saveAll(batch);

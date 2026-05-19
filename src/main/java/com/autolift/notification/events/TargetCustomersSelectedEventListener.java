@@ -12,9 +12,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component("notificationTargetCustomersListener")
-public class TargetCustomersSelectedEventListener implements ApplicationListener<TargetCustomersSelectedEvent> {
+public class TargetCustomersSelectedEventListener
+    implements ApplicationListener<TargetCustomersSelectedEvent> {
 
-  private static final Logger log = LoggerFactory.getLogger(TargetCustomersSelectedEventListener.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(TargetCustomersSelectedEventListener.class);
 
   private final CreateNotificationHandler createNotificationHandler;
 
@@ -26,13 +28,14 @@ public class TargetCustomersSelectedEventListener implements ApplicationListener
   public void onApplicationEvent(TargetCustomersSelectedEvent event) {
     log.info("Received TargetCustomersSelectedEvent");
 
-    CreateNotificationCommand command = new CreateNotificationCommand(
-        NotificationEventType.TARGET_CUSTOMERS_SELECTED,
-        NotificationChannel.IN_APP,
-        null,
-        "Target Customers Selected",
-        "Target customers selected event received",
-        Map.of("event", "TargetCustomersSelectedEvent"));
+    CreateNotificationCommand command =
+        new CreateNotificationCommand(
+            NotificationEventType.TARGET_CUSTOMERS_SELECTED,
+            NotificationChannel.IN_APP,
+            null,
+            "Target Customers Selected",
+            "Target customers selected event received",
+            Map.of("event", "TargetCustomersSelectedEvent"));
 
     createNotificationHandler.handle(command);
   }

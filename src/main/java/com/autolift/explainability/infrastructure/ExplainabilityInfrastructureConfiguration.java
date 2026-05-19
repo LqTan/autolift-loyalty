@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.autolift.explainability.infrastructure.persistence.repository")
+@EnableJpaRepositories(
+    basePackages = "com.autolift.explainability.infrastructure.persistence.repository")
 @EntityScan(basePackages = "com.autolift.explainability.infrastructure.persistence.entity")
 public class ExplainabilityInfrastructureConfiguration {
 

@@ -26,16 +26,17 @@ public class CampaignActivatedEventListener implements ApplicationListener<Campa
   public void onApplicationEvent(CampaignActivatedEvent event) {
     log.info("Received CampaignActivatedEvent: campaignId={}", event.campaignId());
 
-    CreateNotificationCommand command = new CreateNotificationCommand(
-        NotificationEventType.CAMPAIGN_ACTIVATED,
-        NotificationChannel.IN_APP,
-        null,
-        "Campaign Activated: " + event.name(),
-        "Campaign " + event.campaignId() + " has been activated at " + event.activatedAt(),
-        Map.of(
-            "campaignId", event.campaignId(),
-            "name", event.name(),
-            "activatedAt", event.activatedAt().toString()));
+    CreateNotificationCommand command =
+        new CreateNotificationCommand(
+            NotificationEventType.CAMPAIGN_ACTIVATED,
+            NotificationChannel.IN_APP,
+            null,
+            "Campaign Activated: " + event.name(),
+            "Campaign " + event.campaignId() + " has been activated at " + event.activatedAt(),
+            Map.of(
+                "campaignId", event.campaignId(),
+                "name", event.name(),
+                "activatedAt", event.activatedAt().toString()));
 
     createNotificationHandler.handle(command);
   }

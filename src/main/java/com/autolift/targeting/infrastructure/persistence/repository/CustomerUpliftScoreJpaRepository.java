@@ -9,13 +9,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerUpliftScoreJpaRepository extends JpaRepository<CustomerUpliftScoreJpaEntity, UUID> {
+public interface CustomerUpliftScoreJpaRepository
+    extends JpaRepository<CustomerUpliftScoreJpaEntity, UUID> {
 
   List<CustomerUpliftScoreJpaEntity> findByCampaignId(String campaignId);
 
   List<CustomerUpliftScoreJpaEntity> findByCustomerId(String customerId);
 
-  @Query("SELECT e FROM CustomerUpliftScoreJpaEntity e WHERE e.campaignId = :campaignId ORDER BY e.upliftScore DESC LIMIT :limit")
+  @Query(
+      "SELECT e FROM CustomerUpliftScoreJpaEntity e WHERE e.campaignId = :campaignId ORDER BY e.upliftScore DESC LIMIT :limit")
   List<CustomerUpliftScoreJpaEntity> findTopByCampaignIdOrderByUpliftScoreDesc(
       @Param("campaignId") String campaignId, @Param("limit") int limit);
 

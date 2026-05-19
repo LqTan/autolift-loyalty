@@ -2,9 +2,7 @@ package com.autolift.explainability.application.command;
 
 import java.util.List;
 
-public record ImportGpRulesCommand(
-    List<GpRuleImportItem> items
-) {
+public record ImportGpRulesCommand(List<GpRuleImportItem> items) {
   public record GpRuleImportItem(
       String campaignId,
       String ruleText,
@@ -16,6 +14,5 @@ public record ImportGpRulesCommand(
       java.math.BigDecimal accuracyValue,
       java.math.BigDecimal coverageValue,
       String modelVersion,
-      String sourceFile
-  ) {}
+      String sourceFile) {}
 }

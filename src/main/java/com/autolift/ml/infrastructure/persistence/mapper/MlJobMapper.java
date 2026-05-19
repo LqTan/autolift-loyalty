@@ -2,15 +2,11 @@ package com.autolift.ml.infrastructure.persistence.mapper;
 
 import com.autolift.ml.domain.model.MlJob;
 import com.autolift.ml.domain.valueobject.MlJobId;
-import com.autolift.ml.domain.valueobject.MlJobStatus;
-import com.autolift.ml.domain.valueobject.MlJobType;
 import com.autolift.ml.infrastructure.persistence.entity.MlJobJpaEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.Instant;
 import java.util.Map;
-import java.util.UUID;
 
 public class MlJobMapper {
 

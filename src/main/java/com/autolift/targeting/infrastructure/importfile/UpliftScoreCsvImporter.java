@@ -29,13 +29,14 @@ public class UpliftScoreCsvImporter {
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split(",");
         if (parts.length < 8) continue;
-        CustomerUpliftScore score = CustomerUpliftScore.create(
-            parts[0].trim(),
-            campaignId,
-            new BigDecimal(parts[1].trim()),
-            new BigDecimal(parts[2].trim()),
-            new BigDecimal(parts[3].trim()),
-            parts[6].trim());
+        CustomerUpliftScore score =
+            CustomerUpliftScore.create(
+                parts[0].trim(),
+                campaignId,
+                new BigDecimal(parts[1].trim()),
+                new BigDecimal(parts[2].trim()),
+                new BigDecimal(parts[3].trim()),
+                parts[6].trim());
         batch.add(score);
         if (batch.size() >= 500) {
           repository.saveAll(batch);

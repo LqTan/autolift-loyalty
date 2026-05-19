@@ -23,19 +23,16 @@ public class CustomerCommandController {
   private final SuspendCustomerCommandHandler suspendHandler;
 
   public CustomerCommandController(
-      CreateCustomerCommandHandler createHandler,
-      SuspendCustomerCommandHandler suspendHandler) {
+      CreateCustomerCommandHandler createHandler, SuspendCustomerCommandHandler suspendHandler) {
     this.createHandler = createHandler;
     this.suspendHandler = suspendHandler;
   }
 
   @PostMapping
   public ResponseEntity<CreateCustomerResult> create(@RequestBody CreateCustomerRequest request) {
-    CreateCustomerCommand command = new CreateCustomerCommand(
-        request.name(),
-        request.email(),
-        request.phone(),
-        request.segment());
+    CreateCustomerCommand command =
+        new CreateCustomerCommand(
+            request.name(), request.email(), request.phone(), request.segment());
     CreateCustomerResult result = createHandler.handle(command);
     return ResponseEntity.created(URI.create("/api/customers/" + result.id())).body(result);
   }

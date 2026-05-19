@@ -50,32 +50,17 @@ public class ScheduledTaskLog {
 
   public static ScheduledTaskLog start(String taskName) {
     return new ScheduledTaskLog(
-        ScheduledTaskLogId.random(),
-        taskName,
-        "RUNNING",
-        Instant.now(),
-        null,
-        null);
+        ScheduledTaskLogId.random(), taskName, "RUNNING", Instant.now(), null, null);
   }
 
   public ScheduledTaskLog markCompleted() {
     return new ScheduledTaskLog(
-        this.id,
-        this.taskName,
-        "COMPLETED",
-        this.startedAt,
-        Instant.now(),
-        this.errorMessage);
+        this.id, this.taskName, "COMPLETED", this.startedAt, Instant.now(), this.errorMessage);
   }
 
   public ScheduledTaskLog markFailed(String errorMessage) {
     return new ScheduledTaskLog(
-        this.id,
-        this.taskName,
-        "FAILED",
-        this.startedAt,
-        Instant.now(),
-        errorMessage);
+        this.id, this.taskName, "FAILED", this.startedAt, Instant.now(), errorMessage);
   }
 
   public ScheduledTaskLogId getId() {

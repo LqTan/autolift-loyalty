@@ -63,10 +63,8 @@ public class CampaignCommandController {
   public ResponseEntity<CampaignActivatedResponse> activate(@PathVariable String id) {
     ActivateCampaignCommand command = new ActivateCampaignCommand(id);
     CampaignActivatedEvent event = activateHandler.handle(command);
-    CampaignActivatedResponse response = new CampaignActivatedResponse(
-        event.campaignId(),
-        event.name(),
-        event.activatedAt());
+    CampaignActivatedResponse response =
+        new CampaignActivatedResponse(event.campaignId(), event.name(), event.activatedAt());
     return ResponseEntity.ok(response);
   }
 

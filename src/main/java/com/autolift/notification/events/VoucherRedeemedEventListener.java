@@ -24,19 +24,22 @@ public class VoucherRedeemedEventListener implements ApplicationListener<Voucher
 
   @Override
   public void onApplicationEvent(VoucherRedeemedEvent event) {
-    log.info("Received VoucherRedeemedEvent: voucherId={}, customerId={}",
-        event.getVoucherId(), event.getCustomerId());
+    log.info(
+        "Received VoucherRedeemedEvent: voucherId={}, customerId={}",
+        event.getVoucherId(),
+        event.getCustomerId());
 
-    CreateNotificationCommand command = new CreateNotificationCommand(
-        NotificationEventType.VOUCHER_REDEEMED,
-        NotificationChannel.IN_APP,
-        event.getCustomerId(),
-        "Voucher Redeemed",
-        "Voucher " + event.getVoucherId() + " has been redeemed",
-        Map.of(
-            "voucherId", event.getVoucherId(),
-            "customerId", event.getCustomerId(),
-            "redeemedAt", event.getRedeemedAt().toString()));
+    CreateNotificationCommand command =
+        new CreateNotificationCommand(
+            NotificationEventType.VOUCHER_REDEEMED,
+            NotificationChannel.IN_APP,
+            event.getCustomerId(),
+            "Voucher Redeemed",
+            "Voucher " + event.getVoucherId() + " has been redeemed",
+            Map.of(
+                "voucherId", event.getVoucherId(),
+                "customerId", event.getCustomerId(),
+                "redeemedAt", event.getRedeemedAt().toString()));
 
     createNotificationHandler.handle(command);
   }

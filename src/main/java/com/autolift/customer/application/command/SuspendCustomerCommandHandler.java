@@ -17,8 +17,10 @@ public class SuspendCustomerCommandHandler {
 
   @org.springframework.transaction.annotation.Transactional
   public void handle(SuspendCustomerCommand command) {
-    Customer customer = repository.findById(CustomerId.of(command.customerId()))
-        .orElseThrow(() -> CustomerNotFoundException.withId(command.customerId()));
+    Customer customer =
+        repository
+            .findById(CustomerId.of(command.customerId()))
+            .orElseThrow(() -> CustomerNotFoundException.withId(command.customerId()));
     customer.suspend();
     repository.save(customer);
   }

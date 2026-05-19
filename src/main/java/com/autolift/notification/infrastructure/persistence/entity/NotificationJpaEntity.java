@@ -32,11 +32,14 @@ public class NotificationJpaEntity {
   @Column(name = "channel")
   private NotificationChannel channel;
 
-  @Column(name = "recipient") private String recipient;
+  @Column(name = "recipient")
+  private String recipient;
 
-  @Column(name = "subject") private String subject;
+  @Column(name = "subject")
+  private String subject;
 
-  @Column(name = "body", columnDefinition = "TEXT") private String body;
+  @Column(name = "body", columnDefinition = "TEXT")
+  private String body;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
@@ -46,11 +49,14 @@ public class NotificationJpaEntity {
   @Column(name = "payload", columnDefinition = "jsonb")
   private String payload;
 
-  @Column(name = "error_message", columnDefinition = "TEXT") private String errorMessage;
+  @Column(name = "error_message", columnDefinition = "TEXT")
+  private String errorMessage;
 
-  @Column(name = "sent_at") private Instant sentAt;
+  @Column(name = "sent_at")
+  private Instant sentAt;
 
-  @Column(name = "created_at") private Instant createdAt;
+  @Column(name = "created_at")
+  private Instant createdAt;
 
   public NotificationJpaEntity(
       UUID id,

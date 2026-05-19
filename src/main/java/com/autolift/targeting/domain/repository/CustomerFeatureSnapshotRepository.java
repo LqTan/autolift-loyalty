@@ -15,5 +15,6 @@ public interface CustomerFeatureSnapshotRepository {
 
   List<CustomerFeatureSnapshot> findByCustomerId(String customerId);
 
-  Optional<CustomerFeatureSnapshot> findByCustomerIdAndCampaignId(String customerId, String campaignId);
+  Optional<CustomerFeatureSnapshot> findByCustomerIdAndCampaignId(
+      String customerId, String campaignId);
 }

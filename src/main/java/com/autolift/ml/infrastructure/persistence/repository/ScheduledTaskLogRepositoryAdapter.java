@@ -2,7 +2,6 @@ package com.autolift.ml.infrastructure.persistence.repository;
 
 import com.autolift.ml.domain.model.ScheduledTaskLog;
 import com.autolift.ml.domain.repository.ScheduledTaskLogRepository;
-import com.autolift.ml.domain.valueobject.ScheduledTaskLogId;
 import com.autolift.ml.infrastructure.persistence.mapper.ScheduledTaskLogMapper;
 import java.time.Instant;
 import java.util.List;
@@ -21,7 +20,8 @@ public class ScheduledTaskLogRepositoryAdapter implements ScheduledTaskLogReposi
 
   @Override
   public ScheduledTaskLog save(ScheduledTaskLog log) {
-    return ScheduledTaskLogMapper.toDomain(jpaRepository.save(ScheduledTaskLogMapper.toEntity(log)));
+    return ScheduledTaskLogMapper.toDomain(
+        jpaRepository.save(ScheduledTaskLogMapper.toEntity(log)));
   }
 
   @Override

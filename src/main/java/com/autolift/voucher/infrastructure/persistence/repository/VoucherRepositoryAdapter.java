@@ -4,10 +4,9 @@ import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
 import com.autolift.voucher.domain.valueobject.VoucherId;
 import com.autolift.voucher.infrastructure.persistence.mapper.VoucherPersistenceMapper;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class VoucherRepositoryAdapter implements VoucherRepository {
@@ -15,7 +14,8 @@ public class VoucherRepositoryAdapter implements VoucherRepository {
   private final VoucherJpaRepository jpaRepository;
   private final VoucherPersistenceMapper mapper;
 
-  public VoucherRepositoryAdapter(VoucherJpaRepository jpaRepository, VoucherPersistenceMapper mapper) {
+  public VoucherRepositoryAdapter(
+      VoucherJpaRepository jpaRepository, VoucherPersistenceMapper mapper) {
     this.jpaRepository = jpaRepository;
     this.mapper = mapper;
   }

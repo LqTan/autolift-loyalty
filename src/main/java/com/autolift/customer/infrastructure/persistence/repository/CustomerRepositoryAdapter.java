@@ -4,10 +4,9 @@ import com.autolift.customer.domain.model.Customer;
 import com.autolift.customer.domain.repository.CustomerRepository;
 import com.autolift.customer.domain.valueobject.CustomerId;
 import com.autolift.customer.infrastructure.persistence.mapper.CustomerPersistenceMapper;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CustomerRepositoryAdapter implements CustomerRepository {
@@ -15,7 +14,8 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
   private final CustomerJpaRepository jpaRepository;
   private final CustomerPersistenceMapper mapper;
 
-  public CustomerRepositoryAdapter(CustomerJpaRepository jpaRepository, CustomerPersistenceMapper mapper) {
+  public CustomerRepositoryAdapter(
+      CustomerJpaRepository jpaRepository, CustomerPersistenceMapper mapper) {
     this.jpaRepository = jpaRepository;
     this.mapper = mapper;
   }

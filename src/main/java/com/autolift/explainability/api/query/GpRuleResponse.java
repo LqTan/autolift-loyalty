@@ -16,5 +16,4 @@ public record GpRuleResponse(
     BigDecimal coverageValue,
     String modelVersion,
     String sourceFile,
-    Instant createdAt
-) {}
+    Instant createdAt) {}

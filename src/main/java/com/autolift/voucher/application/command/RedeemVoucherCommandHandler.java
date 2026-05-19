@@ -13,22 +13,26 @@ public class RedeemVoucherCommandHandler {
   private final VoucherRepository repository;
   private final ApplicationEventPublisher eventPublisher;
 
-  public RedeemVoucherCommandHandler(VoucherRepository repository, ApplicationEventPublisher eventPublisher) {
+  public RedeemVoucherCommandHandler(
+      VoucherRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
 
   @org.springframework.transaction.annotation.Transactional
   public void handle(RedeemVoucherCommand command) {
-    Voucher voucher = repository.findByCode(command.code())
-        .orElseThrow(() -> VoucherNotFoundException.withCode(command.code()));
+    Voucher voucher =
+        repository
+            .findByCode(command.code())
+            .orElseThrow(() -> VoucherNotFoundException.withCode(command.code()));
     voucher.redeem();
     repository.save(voucher);
-    eventPublisher.publishEvent(new VoucherRedeemedEvent(
-        voucher.getId().getId().toString(),
-        voucher.getCode(),
-        voucher.getCampaignId(),
-        command.customerId(),
-        voucher.getValue()));
+    eventPublisher.publishEvent(
+        new VoucherRedeemedEvent(
+            voucher.getId().getId().toString(),
+            voucher.getCode(),
+            voucher.getCampaignId(),
+            command.customerId(),
+            voucher.getValue()));
   }
 }

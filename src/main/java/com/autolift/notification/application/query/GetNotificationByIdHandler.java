@@ -16,7 +16,8 @@ public class GetNotificationByIdHandler {
 
   @Transactional(readOnly = true)
   public NotificationView handle(String id) {
-    return repository.findById(id)
+    return repository
+        .findById(id)
         .map(this::toView)
         .orElseThrow(() -> new IllegalArgumentException("Notification not found: " + id));
   }

@@ -3,12 +3,11 @@ package com.autolift.customer.infrastructure.persistence.entity;
 import com.autolift.customer.domain.valueobject.CustomerSegment;
 import com.autolift.customer.domain.valueobject.CustomerStatus;
 import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "customers", schema = "customer")
@@ -28,7 +27,8 @@ public class CustomerJpaEntity {
   private CustomerSegment segment;
 
   @Enumerated(EnumType.STRING)
-  @Column private CustomerStatus status;
+  @Column
+  private CustomerStatus status;
 
   @Column(name = "created_at")
   private Instant createdAt;

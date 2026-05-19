@@ -1,10 +1,10 @@
 package com.autolift.notification.events;
 
+import com.autolift.loyalty.events.PointsAddedEvent;
 import com.autolift.notification.application.command.CreateNotificationCommand;
 import com.autolift.notification.application.command.CreateNotificationHandler;
 import com.autolift.notification.domain.valueobject.NotificationChannel;
 import com.autolift.notification.domain.valueobject.NotificationEventType;
-import com.autolift.loyalty.events.PointsAddedEvent;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +26,14 @@ public class PointsAddedEventListener implements ApplicationListener<PointsAdded
   public void onApplicationEvent(PointsAddedEvent event) {
     log.info("Received PointsAddedEvent");
 
-    CreateNotificationCommand command = new CreateNotificationCommand(
-        NotificationEventType.POINTS_ADDED,
-        NotificationChannel.IN_APP,
-        null,
-        "Points Added",
-        "Points added to loyalty account",
-        Map.of("event", "PointsAddedEvent"));
+    CreateNotificationCommand command =
+        new CreateNotificationCommand(
+            NotificationEventType.POINTS_ADDED,
+            NotificationChannel.IN_APP,
+            null,
+            "Points Added",
+            "Points added to loyalty account",
+            Map.of("event", "PointsAddedEvent"));
 
     createNotificationHandler.handle(command);
   }

@@ -31,7 +31,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(VoucherCommandController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Import({CreateVoucherCommandHandler.class, RedeemVoucherCommandHandler.class, SecurityConfig.class})
+@Import({
+  CreateVoucherCommandHandler.class,
+  RedeemVoucherCommandHandler.class,
+  SecurityConfig.class
+})
 class VoucherCommandControllerTest {
 
   @Autowired private MockMvc mvc;

@@ -18,29 +18,41 @@ public class CustomerFeatureSnapshotJpaEntity {
 
   @Id private UUID id;
 
-  @Column(name = "customer_id") private String customerId;
+  @Column(name = "customer_id")
+  private String customerId;
 
-  @Column(name = "campaign_id") private String campaignId;
+  @Column(name = "campaign_id")
+  private String campaignId;
 
-  @Column(name = "recency_days") private Integer recencyDays;
+  @Column(name = "recency_days")
+  private Integer recencyDays;
 
-  @Column(name = "frequency_90d") private Integer frequency90d;
+  @Column(name = "frequency_90d")
+  private Integer frequency90d;
 
-  @Column(name = "monetary_90d", precision = 14, scale = 2) private BigDecimal monetary90d;
+  @Column(name = "monetary_90d", precision = 14, scale = 2)
+  private BigDecimal monetary90d;
 
-  @Column(name = "avg_basket_value", precision = 14, scale = 2) private BigDecimal avgBasketValue;
+  @Column(name = "avg_basket_value", precision = 14, scale = 2)
+  private BigDecimal avgBasketValue;
 
-  @Column(name = "total_quantity_90d", precision = 14, scale = 2) private BigDecimal totalQuantity90d;
+  @Column(name = "total_quantity_90d", precision = 14, scale = 2)
+  private BigDecimal totalQuantity90d;
 
-  @Column(name = "unique_product_count") private Integer uniqueProductCount;
+  @Column(name = "unique_product_count")
+  private Integer uniqueProductCount;
 
-  @Column(name = "unique_category_count") private Integer uniqueCategoryCount;
+  @Column(name = "unique_category_count")
+  private Integer uniqueCategoryCount;
 
-  @Column(name = "favorite_category") private String favoriteCategory;
+  @Column(name = "favorite_category")
+  private String favoriteCategory;
 
-  @Column(name = "feature_version") private String featureVersion;
+  @Column(name = "feature_version")
+  private String featureVersion;
 
-  @Column(name = "created_at") private Instant createdAt;
+  @Column(name = "created_at")
+  private Instant createdAt;
 
   public CustomerFeatureSnapshotJpaEntity(
       UUID id,

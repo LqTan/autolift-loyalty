@@ -18,29 +18,41 @@ public class GpRuleJpaEntity {
 
   @Id private UUID id;
 
-  @Column(name = "campaign_id") private String campaignId;
+  @Column(name = "campaign_id")
+  private String campaignId;
 
-  @Column(name = "rule_text", columnDefinition = "TEXT") private String ruleText;
+  @Column(name = "rule_text", columnDefinition = "TEXT")
+  private String ruleText;
 
-  @Column(name = "rule_expression", columnDefinition = "TEXT") private String ruleExpression;
+  @Column(name = "rule_expression", columnDefinition = "TEXT")
+  private String ruleExpression;
 
-  @Column(name = "target_label") private String targetLabel;
+  @Column(name = "target_label")
+  private String targetLabel;
 
-  @Column(name = "precision_value", precision = 10, scale = 6) private BigDecimal precisionValue;
+  @Column(name = "precision_value", precision = 10, scale = 6)
+  private BigDecimal precisionValue;
 
-  @Column(name = "recall_value", precision = 10, scale = 6) private BigDecimal recallValue;
+  @Column(name = "recall_value", precision = 10, scale = 6)
+  private BigDecimal recallValue;
 
-  @Column(name = "f1_score", precision = 10, scale = 6) private BigDecimal f1Score;
+  @Column(name = "f1_score", precision = 10, scale = 6)
+  private BigDecimal f1Score;
 
-  @Column(name = "accuracy_value", precision = 10, scale = 6) private BigDecimal accuracyValue;
+  @Column(name = "accuracy_value", precision = 10, scale = 6)
+  private BigDecimal accuracyValue;
 
-  @Column(name = "coverage_value", precision = 10, scale = 6) private BigDecimal coverageValue;
+  @Column(name = "coverage_value", precision = 10, scale = 6)
+  private BigDecimal coverageValue;
 
-  @Column(name = "model_version") private String modelVersion;
+  @Column(name = "model_version")
+  private String modelVersion;
 
-  @Column(name = "source_file") private String sourceFile;
+  @Column(name = "source_file")
+  private String sourceFile;
 
-  @Column(name = "created_at") private Instant createdAt;
+  @Column(name = "created_at")
+  private Instant createdAt;
 
   public GpRuleJpaEntity(
       UUID id,

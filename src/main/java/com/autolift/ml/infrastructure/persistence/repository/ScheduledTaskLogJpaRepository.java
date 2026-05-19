@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ScheduledTaskLogJpaRepository extends JpaRepository<ScheduledTaskLogJpaEntity, UUID> {
+public interface ScheduledTaskLogJpaRepository
+    extends JpaRepository<ScheduledTaskLogJpaEntity, UUID> {
 
   List<ScheduledTaskLogJpaEntity> findByTaskNameOrderByStartedAtDesc(String taskName);
 
