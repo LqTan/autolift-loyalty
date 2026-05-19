@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.autolift.auth.ApplicationUserDetailsService;
+import com.autolift.auth.JwtTokenProvider;
 import com.autolift.config.SecurityConfig;
 import com.autolift.promotion.application.query.GetAllPromotionsQueryHandler;
 import com.autolift.promotion.application.query.GetPromotionQuery;
@@ -16,12 +18,14 @@ import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PromotionQueryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import({GetPromotionQueryHandler.class, GetAllPromotionsQueryHandler.class, SecurityConfig.class})
 class PromotionQueryControllerTest {
 
@@ -30,6 +34,12 @@ class PromotionQueryControllerTest {
   @MockBean private GetPromotionQueryHandler getByIdHandler;
 
   @MockBean private GetAllPromotionsQueryHandler getAllHandler;
+
+  @MockBean private JwtTokenProvider jwtTokenProvider;
+
+  @MockBean private ApplicationUserDetailsService userDetailsService;
+
+  @MockBean private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   @Test
   void shouldGetPromotionById() throws Exception {

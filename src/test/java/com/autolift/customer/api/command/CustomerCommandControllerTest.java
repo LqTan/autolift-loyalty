@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.autolift.auth.ApplicationUserDetailsService;
+import com.autolift.auth.JwtTokenProvider;
 import com.autolift.config.SecurityConfig;
 import com.autolift.customer.application.command.CreateCustomerCommand;
 import com.autolift.customer.application.command.CreateCustomerCommandHandler;
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -24,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CustomerCommandController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import({CreateCustomerCommandHandler.class, SuspendCustomerCommandHandler.class, SecurityConfig.class})
 class CustomerCommandControllerTest {
 
@@ -31,6 +35,9 @@ class CustomerCommandControllerTest {
 
   @MockBean private CreateCustomerCommandHandler createHandler;
   @MockBean private SuspendCustomerCommandHandler suspendHandler;
+  @MockBean private JwtTokenProvider jwtTokenProvider;
+  @MockBean private ApplicationUserDetailsService userDetailsService;
+  @MockBean private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   private ObjectMapper objectMapper;
 

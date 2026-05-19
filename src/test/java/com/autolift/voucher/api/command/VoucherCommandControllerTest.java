@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.autolift.auth.ApplicationUserDetailsService;
+import com.autolift.auth.JwtTokenProvider;
 import com.autolift.config.SecurityConfig;
 import com.autolift.voucher.application.command.CreateVoucherCommand;
 import com.autolift.voucher.application.command.CreateVoucherCommandHandler;
@@ -20,6 +22,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -27,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(VoucherCommandController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import({CreateVoucherCommandHandler.class, RedeemVoucherCommandHandler.class, SecurityConfig.class})
 class VoucherCommandControllerTest {
 
@@ -34,6 +38,9 @@ class VoucherCommandControllerTest {
 
   @MockBean private CreateVoucherCommandHandler createHandler;
   @MockBean private RedeemVoucherCommandHandler redeemHandler;
+  @MockBean private JwtTokenProvider jwtTokenProvider;
+  @MockBean private ApplicationUserDetailsService userDetailsService;
+  @MockBean private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   private ObjectMapper objectMapper;
 

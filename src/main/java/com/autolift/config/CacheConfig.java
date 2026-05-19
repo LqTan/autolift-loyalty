@@ -1,5 +1,8 @@
 package com.autolift.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,13 @@ public class CacheConfig {
     return factory;
   }
 
+  private GenericJackson2JsonRedisSerializer redisSerializer() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    return new GenericJackson2JsonRedisSerializer(objectMapper);
+  }
+
   @Bean
   public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
     log.info("Creating RedisCacheManager with connectionFactory: {}", connectionFactory.getClass().getName());
@@ -39,8 +49,7 @@ public class CacheConfig {
         .serializeKeysWith(
             RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
         .serializeValuesWith(
-            RedisSerializationContext.SerializationPair
-                .fromSerializer(new GenericJackson2JsonRedisSerializer()))
+            RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
         .disableCachingNullValues();
 
     RedisCacheConfiguration upliftCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
@@ -48,8 +57,7 @@ public class CacheConfig {
         .serializeKeysWith(
             RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
         .serializeValuesWith(
-            RedisSerializationContext.SerializationPair
-                .fromSerializer(new GenericJackson2JsonRedisSerializer()))
+            RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
         .disableCachingNullValues();
 
     RedisCacheConfiguration campaignCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
@@ -57,8 +65,7 @@ public class CacheConfig {
         .serializeKeysWith(
             RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
         .serializeValuesWith(
-            RedisSerializationContext.SerializationPair
-                .fromSerializer(new GenericJackson2JsonRedisSerializer()))
+            RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
         .disableCachingNullValues();
 
     RedisCacheManager manager = RedisCacheManager.builder(connectionFactory)

@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.autolift.auth.ApplicationUserDetailsService;
+import com.autolift.auth.JwtTokenProvider;
 import com.autolift.campaign.application.query.CampaignView;
 import com.autolift.campaign.application.query.GetAllCampaignsQuery;
 import com.autolift.campaign.application.query.GetAllCampaignsQueryHandler;
@@ -18,12 +20,14 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CampaignQueryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import({GetCampaignQueryHandler.class, GetAllCampaignsQueryHandler.class, SecurityConfig.class})
 class CampaignQueryControllerTest {
 
@@ -32,6 +36,10 @@ class CampaignQueryControllerTest {
   @MockBean private GetCampaignQueryHandler getHandler;
 
   @MockBean private GetAllCampaignsQueryHandler getAllHandler;
+
+  @MockBean private JwtTokenProvider jwtTokenProvider;
+  @MockBean private ApplicationUserDetailsService userDetailsService;
+  @MockBean private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   @Test
   void shouldGetCampaignById() throws Exception {

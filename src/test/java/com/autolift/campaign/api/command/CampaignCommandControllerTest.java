@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.autolift.auth.ApplicationUserDetailsService;
+import com.autolift.auth.JwtTokenProvider;
 import com.autolift.campaign.application.command.ActivateCampaignCommand;
 import com.autolift.campaign.application.command.ActivateCampaignCommandHandler;
 import com.autolift.campaign.application.command.CampaignCreatedResult;
@@ -25,6 +27,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -32,6 +35,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CampaignCommandController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import({
   CreateCampaignCommandHandler.class,
   ActivateCampaignCommandHandler.class,
@@ -50,6 +54,10 @@ class CampaignCommandControllerTest {
   @MockBean private PauseCampaignCommandHandler pauseHandler;
 
   @MockBean private CompleteCampaignCommandHandler completeHandler;
+
+  @MockBean private JwtTokenProvider jwtTokenProvider;
+  @MockBean private ApplicationUserDetailsService userDetailsService;
+  @MockBean private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   private ObjectMapper objectMapper;
 
