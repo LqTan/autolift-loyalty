@@ -4,6 +4,7 @@ import com.autolift.ml.domain.model.MlJob;
 import com.autolift.ml.domain.valueobject.MlJobId;
 import com.autolift.ml.domain.valueobject.MlJobStatus;
 import com.autolift.ml.domain.valueobject.MlJobType;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,4 +24,6 @@ public interface MlJobRepository {
   List<MlJob> findByUpliftScoreJobId(UUID upliftScoreJobId);
 
   Optional<MlJob> findFirstPendingByJobTypeOrderByCreatedAtAsc(MlJobType jobType);
+
+  List<MlJob> findByCompletedAtBefore(Instant before);
 }

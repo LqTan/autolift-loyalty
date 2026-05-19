@@ -3,6 +3,7 @@ package com.autolift.ml.infrastructure.persistence.repository;
 import com.autolift.ml.domain.valueobject.MlJobStatus;
 import com.autolift.ml.domain.valueobject.MlJobType;
 import com.autolift.ml.infrastructure.persistence.entity.MlJobJpaEntity;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +24,8 @@ public interface MlJobJpaRepository extends JpaRepository<MlJobJpaEntity, UUID> 
   List<MlJobJpaEntity> findByJobTypeAndStatus(MlJobType jobType, MlJobStatus status);
 
   List<MlJobJpaEntity> findByUpliftScoreJobId(UUID upliftScoreJobId);
+
+  List<MlJobJpaEntity> findByCompletedAtBefore(Instant before);
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("SELECT j FROM MlJobJpaEntity j WHERE j.jobType = :jobType AND j.status = :status ORDER BY j.createdAt ASC LIMIT 1")

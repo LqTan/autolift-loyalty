@@ -6,6 +6,7 @@ import com.autolift.ml.domain.valueobject.MlJobId;
 import com.autolift.ml.domain.valueobject.MlJobStatus;
 import com.autolift.ml.domain.valueobject.MlJobType;
 import com.autolift.ml.infrastructure.persistence.mapper.MlJobMapper;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,5 +64,12 @@ public class MlJobRepositoryAdapter implements MlJobRepository {
   public Optional<MlJob> findFirstPendingByJobTypeOrderByCreatedAtAsc(MlJobType jobType) {
     return jpaRepository.findFirstPendingByJobTypeOrderByCreatedAtAsc(jobType, MlJobStatus.PENDING)
         .map(MlJobMapper::toDomain);
+  }
+
+  @Override
+  public List<MlJob> findByCompletedAtBefore(Instant before) {
+    return jpaRepository.findByCompletedAtBefore(before).stream()
+        .map(MlJobMapper::toDomain)
+        .collect(Collectors.toList());
   }
 }

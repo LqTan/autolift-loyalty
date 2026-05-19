@@ -1,7 +1,9 @@
 package com.autolift.ml.infrastructure.scheduler;
 
 import com.autolift.ml.domain.model.MlJob;
+import com.autolift.ml.domain.model.ScheduledTaskLog;
 import com.autolift.ml.domain.repository.MlJobRepository;
+import com.autolift.ml.domain.repository.ScheduledTaskLogRepository;
 import com.autolift.ml.domain.valueobject.MlJobType;
 import com.autolift.ml.events.MlJobCompletedEvent;
 import com.autolift.ml.events.MlJobFailedEvent;
@@ -14,33 +16,80 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class MlJobScheduler {
+public class MlJobProcessor {
 
-  private static final Logger log = LoggerFactory.getLogger(MlJobScheduler.class);
+  private static final Logger log = LoggerFactory.getLogger(MlJobProcessor.class);
+  private static final int MAX_RETRIES = 3;
+  private static final String TASK_NAME = "ml_job_processor";
 
   private final MlJobRepository mlJobRepository;
+  private final ScheduledTaskLogRepository taskLogRepository;
   private final ApplicationEventPublisher eventPublisher;
 
-  public MlJobScheduler(MlJobRepository mlJobRepository, ApplicationEventPublisher eventPublisher) {
+  public MlJobProcessor(
+      MlJobRepository mlJobRepository,
+      ScheduledTaskLogRepository taskLogRepository,
+      ApplicationEventPublisher eventPublisher) {
     this.mlJobRepository = mlJobRepository;
+    this.taskLogRepository = taskLogRepository;
     this.eventPublisher = eventPublisher;
   }
 
-  @Scheduled(fixedDelay = 30000)
+  @Scheduled(cron = "0/30 * * * * ?")
   @Transactional
   public void pollPendingJobs() {
-    pollJobsByType(MlJobType.UPLIFT_SCORING);
-    pollJobsByType(MlJobType.GP_RULE_EXTRACTION);
+    ScheduledTaskLog taskLog = ScheduledTaskLog.start(TASK_NAME);
+    taskLogRepository.save(taskLog);
+    try {
+      pollJobsByType(MlJobType.UPLIFT_SCORING);
+      pollJobsByType(MlJobType.GP_RULE_EXTRACTION);
+      taskLogRepository.save(taskLog.markCompleted());
+    } catch (Exception e) {
+      log.error("ML job polling failed: {}", e.getMessage());
+      taskLogRepository.save(taskLog.markFailed(e.getMessage()));
+    }
   }
 
   private void pollJobsByType(MlJobType jobType) {
     Optional<MlJob> pendingJob = mlJobRepository.findFirstPendingByJobTypeOrderByCreatedAtAsc(jobType);
     if (pendingJob.isPresent()) {
-      processJob(pendingJob.get());
+      processJobWithRetry(pendingJob.get());
     }
   }
 
-  private void processJob(MlJob job) {
+  private void processJobWithRetry(MlJob job) {
+    int attempts = 0;
+    Exception lastException = null;
+    while (attempts < MAX_RETRIES) {
+      try {
+        processJob(job);
+        return;
+      } catch (Exception e) {
+        attempts++;
+        lastException = e;
+        log.warn("ML job processing attempt {} failed: {}", attempts, e.getMessage());
+        if (attempts < MAX_RETRIES) {
+          try {
+            Thread.sleep(5000L * attempts);
+          } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            break;
+          }
+        }
+      }
+    }
+    log.error("ML job failed after {} attempts: id={}", MAX_RETRIES, job.getId().getId());
+    MlJob failedJob = job.markFailed("Failed after " + MAX_RETRIES + " attempts: " + lastException.getMessage());
+    mlJobRepository.save(failedJob);
+    eventPublisher.publishEvent(new MlJobFailedEvent(
+        failedJob.getId().getId(),
+        failedJob.getJobType(),
+        failedJob.getCampaignId(),
+        lastException.getMessage(),
+        failedJob.getCompletedAt()));
+  }
+
+  void processJob(MlJob job) {
     log.info("Processing ML job: id={}, type={}", job.getId().getId(), job.getJobType());
     MlJob runningJob = job.markRunning();
     mlJobRepository.save(runningJob);
@@ -65,6 +114,7 @@ public class MlJobScheduler {
           failedJob.getCampaignId(),
           e.getMessage(),
           failedJob.getCompletedAt()));
+      throw e;
     }
   }
 
