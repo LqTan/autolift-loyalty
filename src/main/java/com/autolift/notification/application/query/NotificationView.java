@@ -14,5 +14,4 @@ public record NotificationView(
     Map<String, Object> payload,
     String errorMessage,
     Instant sentAt,
-    Instant createdAt
-) {}
+    Instant createdAt) {}

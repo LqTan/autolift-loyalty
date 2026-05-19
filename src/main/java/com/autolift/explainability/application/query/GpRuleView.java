@@ -16,5 +16,4 @@ public record GpRuleView(
     BigDecimal coverageValue,
     String modelVersion,
     String sourceFile,
-    Instant createdAt
-) {}
+    Instant createdAt) {}

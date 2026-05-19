@@ -3,13 +3,12 @@ package com.autolift.voucher.infrastructure.persistence.entity;
 import com.autolift.voucher.domain.valueobject.VoucherStatus;
 import com.autolift.voucher.domain.valueobject.VoucherType;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "vouchers", schema = "voucher")
@@ -20,23 +19,39 @@ public class VoucherJpaEntity {
 
   @Id private UUID id;
 
-  @Column(unique = true) private String code;
-  @Column(name = "campaign_id") private String campaignId;
+  @Column(unique = true)
+  private String code;
+
+  @Column(name = "campaign_id")
+  private String campaignId;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "type") private VoucherType type;
+  @Column(name = "type")
+  private VoucherType type;
 
   @Column private BigDecimal value;
-  @Column(name = "min_order_amount") private BigDecimal minOrderAmount;
-  @Column(name = "max_usage") private Integer maxUsage;
-  @Column(name = "used_count") private Integer usedCount;
+
+  @Column(name = "min_order_amount")
+  private BigDecimal minOrderAmount;
+
+  @Column(name = "max_usage")
+  private Integer maxUsage;
+
+  @Column(name = "used_count")
+  private Integer usedCount;
 
   @Enumerated(EnumType.STRING)
-  @Column private VoucherStatus status;
+  @Column
+  private VoucherStatus status;
 
-  @Column(name = "valid_from") private Instant validFrom;
-  @Column(name = "valid_until") private Instant validUntil;
-  @Column(name = "created_at") private Instant createdAt;
+  @Column(name = "valid_from")
+  private Instant validFrom;
+
+  @Column(name = "valid_until")
+  private Instant validUntil;
+
+  @Column(name = "created_at")
+  private Instant createdAt;
 
   public VoucherJpaEntity(
       UUID id,
@@ -78,7 +93,18 @@ public class VoucherJpaEntity {
       Instant validFrom,
       Instant validUntil,
       Instant createdAt) {
-    return new VoucherJpaEntity(id, code, campaignId, type, value, minOrderAmount, maxUsage,
-        usedCount, status, validFrom, validUntil, createdAt);
+    return new VoucherJpaEntity(
+        id,
+        code,
+        campaignId,
+        type,
+        value,
+        minOrderAmount,
+        maxUsage,
+        usedCount,
+        status,
+        validFrom,
+        validUntil,
+        createdAt);
   }
 }

@@ -1,10 +1,6 @@
 package com.autolift.explainability.infrastructure.importfile;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 
 import com.autolift.explainability.domain.model.GpRule;
 import com.autolift.explainability.domain.repository.GpRuleRepository;
@@ -36,10 +32,7 @@ class GpRuleCsvImporterTest {
 
     MockMultipartFile file =
         new MockMultipartFile(
-            "file",
-            "gp_rules.csv",
-            "text/csv",
-            csv.getBytes(StandardCharsets.UTF_8));
+            "file", "gp_rules.csv", "text/csv", csv.getBytes(StandardCharsets.UTF_8));
 
     int count = importer.importFromCsv(file, "x5-campaign-v1", "v1");
 
@@ -76,7 +69,8 @@ class GpRuleCsvImporterTest {
 
   @Test
   void shouldHandleEmptyFile() {
-    String csv = "campaign_id,rule_text,rule_expression,target_label,precision_value,recall_value,f1_score,accuracy_value,coverage_value,model_version,source_file,created_at";
+    String csv =
+        "campaign_id,rule_text,rule_expression,target_label,precision_value,recall_value,f1_score,accuracy_value,coverage_value,model_version,source_file,created_at";
 
     MockMultipartFile file =
         new MockMultipartFile(
@@ -90,7 +84,8 @@ class GpRuleCsvImporterTest {
   @Test
   void shouldBatchSaveWhenBatchSizeReached() {
     StringBuilder csv = new StringBuilder();
-    csv.append("campaign_id,rule_text,rule_expression,target_label,precision_value,recall_value,f1_score,accuracy_value,coverage_value,model_version,source_file,created_at\n");
+    csv.append(
+        "campaign_id,rule_text,rule_expression,target_label,precision_value,recall_value,f1_score,accuracy_value,coverage_value,model_version,source_file,created_at\n");
     for (int i = 0; i < 501; i++) {
       csv.append("x5-campaign-v1,(rule_")
           .append(i)

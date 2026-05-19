@@ -15,7 +15,8 @@ public class ActivatePromotionCommandHandler {
   private final PromotionRepository repository;
   private final ApplicationEventPublisher eventPublisher;
 
-  public ActivatePromotionCommandHandler(PromotionRepository repository, ApplicationEventPublisher eventPublisher) {
+  public ActivatePromotionCommandHandler(
+      PromotionRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
@@ -28,9 +29,8 @@ public class ActivatePromotionCommandHandler {
             .orElseThrow(() -> new PromotionNotFoundException(command.promotionId()));
     promotion.activate();
     repository.save(promotion);
-    eventPublisher.publishEvent(new PromotionActivatedEvent(
-        promotion.getId().getId().toString(),
-        promotion.getName(),
-        Instant.now()));
+    eventPublisher.publishEvent(
+        new PromotionActivatedEvent(
+            promotion.getId().getId().toString(), promotion.getName(), Instant.now()));
   }
 }

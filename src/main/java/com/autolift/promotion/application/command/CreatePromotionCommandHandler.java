@@ -12,27 +12,28 @@ public class CreatePromotionCommandHandler {
   private final PromotionRepository repository;
   private final ApplicationEventPublisher eventPublisher;
 
-  public CreatePromotionCommandHandler(PromotionRepository repository, ApplicationEventPublisher eventPublisher) {
+  public CreatePromotionCommandHandler(
+      PromotionRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
 
   @org.springframework.transaction.annotation.Transactional
   public CreatePromotionResult handle(CreatePromotionCommand command) {
-    Promotion promotion = Promotion.create(
-        command.name(),
-        command.description(),
-        command.promotionType(),
-        command.value(),
-        command.minOrderAmount(),
-        command.applicableCustomerSegment(),
-        command.startDate(),
-        command.endDate());
+    Promotion promotion =
+        Promotion.create(
+            command.name(),
+            command.description(),
+            command.promotionType(),
+            command.value(),
+            command.minOrderAmount(),
+            command.applicableCustomerSegment(),
+            command.startDate(),
+            command.endDate());
     repository.save(promotion);
-    eventPublisher.publishEvent(new PromotionCreatedEvent(
-        promotion.getId().getId().toString(),
-        promotion.getName(),
-        promotion.getCreatedAt()));
+    eventPublisher.publishEvent(
+        new PromotionCreatedEvent(
+            promotion.getId().getId().toString(), promotion.getName(), promotion.getCreatedAt()));
     return new CreatePromotionResult(
         promotion.getId().getId().toString(),
         promotion.getName(),

@@ -18,21 +18,28 @@ public class CustomerUpliftScoreJpaEntity {
 
   @Id private UUID id;
 
-  @Column(name = "customer_id") private String customerId;
+  @Column(name = "customer_id")
+  private String customerId;
 
-  @Column(name = "campaign_id") private String campaignId;
+  @Column(name = "campaign_id")
+  private String campaignId;
 
-  @Column(name = "uplift_score", precision = 10, scale = 6) private BigDecimal upliftScore;
+  @Column(name = "uplift_score", precision = 10, scale = 6)
+  private BigDecimal upliftScore;
 
-  @Column(name = "treatment_probability", precision = 10, scale = 6) private BigDecimal treatmentProbability;
+  @Column(name = "treatment_probability", precision = 10, scale = 6)
+  private BigDecimal treatmentProbability;
 
-  @Column(name = "control_probability", precision = 10, scale = 6) private BigDecimal controlProbability;
+  @Column(name = "control_probability", precision = 10, scale = 6)
+  private BigDecimal controlProbability;
 
   @Column private String segment;
 
-  @Column(name = "model_version") private String modelVersion;
+  @Column(name = "model_version")
+  private String modelVersion;
 
-  @Column(name = "scored_at") private Instant scoredAt;
+  @Column(name = "scored_at")
+  private Instant scoredAt;
 
   public CustomerUpliftScoreJpaEntity(
       UUID id,

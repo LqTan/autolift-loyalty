@@ -1,146 +1,146 @@
 package com.autolift.monitoring;
 
-import com.autolift.ml.domain.valueobject.MlJobStatus;
 import com.autolift.ml.domain.repository.MlJobRepository;
+import com.autolift.ml.domain.valueobject.MlJobStatus;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-
 @Configuration
 public class MonitoringConfiguration {
 
-    @Component("mlJobHealthIndicator")
-    public static class MlJobHealthIndicator implements HealthIndicator {
+  @Component("mlJobHealthIndicator")
+  public static class MlJobHealthIndicator implements HealthIndicator {
 
-        private final MlJobRepository mlJobRepository;
+    private final MlJobRepository mlJobRepository;
 
-        public MlJobHealthIndicator(MlJobRepository mlJobRepository) {
-            this.mlJobRepository = mlJobRepository;
-        }
-
-        @Override
-        public Health health() {
-            long pendingCount = mlJobRepository.countByStatus(MlJobStatus.PENDING);
-            long failedCount = mlJobRepository.countByStatus(MlJobStatus.FAILED);
-
-            if (failedCount > 0) {
-                return Health.down()
-                        .withDetail("failedJobs", failedCount)
-                        .withDetail("pendingJobs", pendingCount)
-                        .withDetail("reason", "There are failed ML jobs")
-                        .build();
-            }
-
-            if (pendingCount > 10) {
-                return Health.up()
-                        .withDetail("pendingJobs", pendingCount)
-                        .withDetail("warning", "High number of pending ML jobs")
-                        .build();
-            }
-
-            return Health.up()
-                    .withDetail("pendingJobs", pendingCount)
-                    .withDetail("failedJobs", failedCount)
-                    .build();
-        }
+    public MlJobHealthIndicator(MlJobRepository mlJobRepository) {
+      this.mlJobRepository = mlJobRepository;
     }
 
-    @Component("mlJobMetrics")
-    public static class MlJobMetrics {
+    @Override
+    public Health health() {
+      long pendingCount = mlJobRepository.countByStatus(MlJobStatus.PENDING);
+      long failedCount = mlJobRepository.countByStatus(MlJobStatus.FAILED);
 
-        private final AtomicLong pendingJobs = new AtomicLong(0);
-        private final AtomicLong runningJobs = new AtomicLong(0);
-        private final AtomicLong completedJobs = new AtomicLong(0);
-        private final AtomicLong failedJobs = new AtomicLong(0);
+      if (failedCount > 0) {
+        return Health.down()
+            .withDetail("failedJobs", failedCount)
+            .withDetail("pendingJobs", pendingCount)
+            .withDetail("reason", "There are failed ML jobs")
+            .build();
+      }
 
-        private final Counter completedCounter;
-        private final Counter failedCounter;
+      if (pendingCount > 10) {
+        return Health.up()
+            .withDetail("pendingJobs", pendingCount)
+            .withDetail("warning", "High number of pending ML jobs")
+            .build();
+      }
 
-        public MlJobMetrics(MeterRegistry meterRegistry) {
-            Gauge.builder("ml.jobs.pending", pendingJobs, AtomicLong::get)
-                    .description("Number of pending ML jobs")
-                    .register(meterRegistry);
+      return Health.up()
+          .withDetail("pendingJobs", pendingCount)
+          .withDetail("failedJobs", failedCount)
+          .build();
+    }
+  }
 
-            Gauge.builder("ml.jobs.running", runningJobs, AtomicLong::get)
-                    .description("Number of running ML jobs")
-                    .register(meterRegistry);
+  @Component("mlJobMetrics")
+  public static class MlJobMetrics {
 
-            Gauge.builder("ml.jobs.completed", completedJobs, AtomicLong::get)
-                    .description("Number of completed ML jobs")
-                    .register(meterRegistry);
+    private final AtomicLong pendingJobs = new AtomicLong(0);
+    private final AtomicLong runningJobs = new AtomicLong(0);
+    private final AtomicLong completedJobs = new AtomicLong(0);
+    private final AtomicLong failedJobs = new AtomicLong(0);
 
-            Gauge.builder("ml.jobs.failed", failedJobs, AtomicLong::get)
-                    .description("Number of failed ML jobs")
-                    .register(meterRegistry);
+    private final Counter completedCounter;
+    private final Counter failedCounter;
 
-            completedCounter = Counter.builder("ml.jobs.completed.total")
-                    .description("Total number of completed ML jobs")
-                    .register(meterRegistry);
+    public MlJobMetrics(MeterRegistry meterRegistry) {
+      Gauge.builder("ml.jobs.pending", pendingJobs, AtomicLong::get)
+          .description("Number of pending ML jobs")
+          .register(meterRegistry);
 
-            failedCounter = Counter.builder("ml.jobs.failed.total")
-                    .description("Total number of failed ML jobs")
-                    .register(meterRegistry);
-        }
+      Gauge.builder("ml.jobs.running", runningJobs, AtomicLong::get)
+          .description("Number of running ML jobs")
+          .register(meterRegistry);
 
-        public void recordPending(long count) {
-            pendingJobs.set(count);
-        }
+      Gauge.builder("ml.jobs.completed", completedJobs, AtomicLong::get)
+          .description("Number of completed ML jobs")
+          .register(meterRegistry);
 
-        public void recordRunning(long count) {
-            runningJobs.set(count);
-        }
+      Gauge.builder("ml.jobs.failed", failedJobs, AtomicLong::get)
+          .description("Number of failed ML jobs")
+          .register(meterRegistry);
 
-        public void recordCompleted() {
-            completedJobs.incrementAndGet();
-            completedCounter.increment();
-        }
+      completedCounter =
+          Counter.builder("ml.jobs.completed.total")
+              .description("Total number of completed ML jobs")
+              .register(meterRegistry);
 
-        public void recordFailed() {
-            failedJobs.incrementAndGet();
-            failedCounter.increment();
-        }
+      failedCounter =
+          Counter.builder("ml.jobs.failed.total")
+              .description("Total number of failed ML jobs")
+              .register(meterRegistry);
     }
 
-    @Component("campaignHealthIndicator")
-    public static class CampaignHealthIndicator implements HealthIndicator {
-
-        @Override
-        public Health health() {
-            return Health.up().withDetail("status", "Campaign module is running").build();
-        }
+    public void recordPending(long count) {
+      pendingJobs.set(count);
     }
 
-    @Component("voucherHealthIndicator")
-    public static class VoucherHealthIndicator implements HealthIndicator {
-
-        @Override
-        public Health health() {
-            return Health.up().withDetail("status", "Voucher module is running").build();
-        }
+    public void recordRunning(long count) {
+      runningJobs.set(count);
     }
 
-    @Component("loyaltyHealthIndicator")
-    public static class LoyaltyHealthIndicator implements HealthIndicator {
-
-        @Override
-        public Health health() {
-            return Health.up().withDetail("status", "Loyalty module is running").build();
-        }
+    public void recordCompleted() {
+      completedJobs.incrementAndGet();
+      completedCounter.increment();
     }
 
-    @Component("targetingHealthIndicator")
-    public static class TargetingHealthIndicator implements HealthIndicator {
-
-        @Override
-        public Health health() {
-            return Health.up().withDetail("status", "Targeting module is running").build();
-        }
+    public void recordFailed() {
+      failedJobs.incrementAndGet();
+      failedCounter.increment();
     }
+  }
+
+  @Component("campaignHealthIndicator")
+  public static class CampaignHealthIndicator implements HealthIndicator {
+
+    @Override
+    public Health health() {
+      return Health.up().withDetail("status", "Campaign module is running").build();
+    }
+  }
+
+  @Component("voucherHealthIndicator")
+  public static class VoucherHealthIndicator implements HealthIndicator {
+
+    @Override
+    public Health health() {
+      return Health.up().withDetail("status", "Voucher module is running").build();
+    }
+  }
+
+  @Component("loyaltyHealthIndicator")
+  public static class LoyaltyHealthIndicator implements HealthIndicator {
+
+    @Override
+    public Health health() {
+      return Health.up().withDetail("status", "Loyalty module is running").build();
+    }
+  }
+
+  @Component("targetingHealthIndicator")
+  public static class TargetingHealthIndicator implements HealthIndicator {
+
+    @Override
+    public Health health() {
+      return Health.up().withDetail("status", "Targeting module is running").build();
+    }
+  }
 }

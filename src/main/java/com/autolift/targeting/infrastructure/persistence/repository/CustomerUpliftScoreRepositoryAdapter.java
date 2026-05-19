@@ -23,15 +23,15 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   @Override
   @CacheEvict(value = "upliftScores", allEntries = true)
   public CustomerUpliftScore save(CustomerUpliftScore score) {
-    return CustomerUpliftScoreMapper.toDomain(jpaRepository.save(CustomerUpliftScoreMapper.toEntity(score)));
+    return CustomerUpliftScoreMapper.toDomain(
+        jpaRepository.save(CustomerUpliftScoreMapper.toEntity(score)));
   }
 
   @Override
   @CacheEvict(value = "upliftScores", allEntries = true)
   public void saveAll(List<CustomerUpliftScore> scores) {
-    jpaRepository.saveAll(scores.stream()
-        .map(CustomerUpliftScoreMapper::toEntity)
-        .collect(Collectors.toList()));
+    jpaRepository.saveAll(
+        scores.stream().map(CustomerUpliftScoreMapper::toEntity).collect(Collectors.toList()));
   }
 
   @Override
@@ -56,14 +56,16 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
 
   @Override
   @Cacheable(value = "upliftScores", key = "'campaign:' + #campaignId + ':top:' + #limit")
-  public List<CustomerUpliftScore> findTopByCampaignIdOrderByUpliftScoreDesc(String campaignId, int limit) {
+  public List<CustomerUpliftScore> findTopByCampaignIdOrderByUpliftScoreDesc(
+      String campaignId, int limit) {
     return jpaRepository.findTopByCampaignIdOrderByUpliftScoreDesc(campaignId, limit).stream()
         .map(CustomerUpliftScoreMapper::toDomain)
         .collect(Collectors.toList());
   }
 
   @Override
-  public Optional<CustomerUpliftScore> findByCustomerIdAndCampaignId(String customerId, String campaignId) {
+  public Optional<CustomerUpliftScore> findByCustomerIdAndCampaignId(
+      String customerId, String campaignId) {
     return Optional.ofNullable(jpaRepository.findByCustomerIdAndCampaignId(customerId, campaignId))
         .map(CustomerUpliftScoreMapper::toDomain);
   }

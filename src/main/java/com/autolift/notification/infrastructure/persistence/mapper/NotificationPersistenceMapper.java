@@ -1,15 +1,11 @@
 package com.autolift.notification.infrastructure.persistence.mapper;
 
 import com.autolift.notification.domain.model.Notification;
-import com.autolift.notification.domain.valueobject.NotificationChannel;
-import com.autolift.notification.domain.valueobject.NotificationEventType;
 import com.autolift.notification.domain.valueobject.NotificationId;
-import com.autolift.notification.domain.valueobject.NotificationStatus;
 import com.autolift.notification.infrastructure.persistence.entity.NotificationJpaEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.Instant;
 import java.util.Map;
 
 public class NotificationPersistenceMapper {

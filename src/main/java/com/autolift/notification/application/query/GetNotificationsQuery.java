@@ -11,8 +11,7 @@ public record GetNotificationsQuery(
     Instant startDate,
     Instant endDate,
     int limit,
-    int offset
-) {
+    int offset) {
   public GetNotificationsQuery {
     if (limit <= 0) limit = 50;
     if (limit > 200) limit = 200;

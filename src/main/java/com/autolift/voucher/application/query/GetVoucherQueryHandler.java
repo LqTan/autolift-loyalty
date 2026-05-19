@@ -17,8 +17,10 @@ public class GetVoucherQueryHandler {
 
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public VoucherResponse handle(GetVoucherQuery query) {
-    Voucher voucher = repository.findByCode(query.code())
-        .orElseThrow(() -> VoucherNotFoundException.withCode(query.code()));
+    Voucher voucher =
+        repository
+            .findByCode(query.code())
+            .orElseThrow(() -> VoucherNotFoundException.withCode(query.code()));
     return toResponse(voucher);
   }
 

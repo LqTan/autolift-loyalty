@@ -1,6 +1,5 @@
 package com.autolift.loyalty.application.command;
 
-import com.autolift.loyalty.domain.exception.InsufficientPointsException;
 import com.autolift.loyalty.domain.exception.LoyaltyAccountNotFoundException;
 import com.autolift.loyalty.domain.model.LoyaltyAccount;
 import com.autolift.loyalty.domain.model.PointTransaction;
@@ -21,9 +20,10 @@ public class UsePointsHandler {
 
   @org.springframework.transaction.annotation.Transactional
   public void handle(UsePointsCommand command) {
-    LoyaltyAccount account = repository
-        .findById(LoyaltyAccountId.of(command.accountId()))
-        .orElseThrow(() -> new LoyaltyAccountNotFoundException(command.accountId()));
+    LoyaltyAccount account =
+        repository
+            .findById(LoyaltyAccountId.of(command.accountId()))
+            .orElseThrow(() -> new LoyaltyAccountNotFoundException(command.accountId()));
     account.deductPoints(command.amount());
     repository.save(account);
     PointTransaction transaction =

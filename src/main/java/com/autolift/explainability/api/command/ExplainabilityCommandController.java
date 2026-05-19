@@ -1,6 +1,5 @@
 package com.autolift.explainability.api.command;
 
-import com.autolift.explainability.application.command.ImportGpRulesCommand;
 import com.autolift.explainability.application.command.ImportGpRulesHandler;
 import com.autolift.explainability.infrastructure.importfile.GpRuleCsvImporter;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,7 @@ public class ExplainabilityCommandController {
   private final GpRuleCsvImporter csvImporter;
 
   public ExplainabilityCommandController(
-      ImportGpRulesHandler importHandler,
-      GpRuleCsvImporter csvImporter) {
+      ImportGpRulesHandler importHandler, GpRuleCsvImporter csvImporter) {
     this.importHandler = importHandler;
     this.csvImporter = csvImporter;
   }

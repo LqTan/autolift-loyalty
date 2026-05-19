@@ -18,11 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/loyalty/accounts")
-@Import({
-  CreateLoyaltyAccountHandler.class,
-  AddPointsHandler.class,
-  UsePointsHandler.class
-})
+@Import({CreateLoyaltyAccountHandler.class, AddPointsHandler.class, UsePointsHandler.class})
 public class LoyaltyCommandController {
 
   private final CreateLoyaltyAccountHandler createHandler;
@@ -47,14 +43,16 @@ public class LoyaltyCommandController {
   }
 
   @PostMapping("/{id}/add-points")
-  public ResponseEntity<Void> addPoints(@PathVariable String id, @RequestBody AddPointsRequest request) {
+  public ResponseEntity<Void> addPoints(
+      @PathVariable String id, @RequestBody AddPointsRequest request) {
     AddPointsCommand command = new AddPointsCommand(id, request.amount(), request.referenceId());
     addPointsHandler.handle(command);
     return ResponseEntity.noContent().build();
   }
 
   @PostMapping("/{id}/use-points")
-  public ResponseEntity<Void> usePoints(@PathVariable String id, @RequestBody UsePointsRequest request) {
+  public ResponseEntity<Void> usePoints(
+      @PathVariable String id, @RequestBody UsePointsRequest request) {
     UsePointsCommand command = new UsePointsCommand(id, request.amount(), request.referenceId());
     usePointsHandler.handle(command);
     return ResponseEntity.noContent().build();

@@ -1,9 +1,9 @@
 package com.autolift.ml.infrastructure.scheduler;
 
-import com.autolift.ml.domain.model.ScheduledTaskLog;
 import com.autolift.ml.domain.model.MlJob;
-import com.autolift.ml.domain.repository.ScheduledTaskLogRepository;
+import com.autolift.ml.domain.model.ScheduledTaskLog;
 import com.autolift.ml.domain.repository.MlJobRepository;
+import com.autolift.ml.domain.repository.ScheduledTaskLogRepository;
 import java.io.File;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -58,8 +58,7 @@ public class CleanupScheduler {
 
   private void cleanupOldTaskLogs() {
     Instant cutoff = Instant.now().minus(RETENTION_DAYS, ChronoUnit.DAYS);
-    var oldLogs =
-        taskLogRepository.findByStatusAndStartedAtBefore("COMPLETED", cutoff);
+    var oldLogs = taskLogRepository.findByStatusAndStartedAtBefore("COMPLETED", cutoff);
     for (ScheduledTaskLog logEntry : oldLogs) {
       taskLogRepository.deleteById(logEntry.getId().getId());
     }

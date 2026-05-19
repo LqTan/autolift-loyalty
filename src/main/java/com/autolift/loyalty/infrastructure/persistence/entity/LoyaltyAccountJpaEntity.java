@@ -18,17 +18,21 @@ public class LoyaltyAccountJpaEntity {
 
   @Id private UUID id;
 
-  @Column(name = "customer_id") private String customerId;
+  @Column(name = "customer_id")
+  private String customerId;
 
-  @Column(name = "points_balance") private BigDecimal pointsBalance;
+  @Column(name = "points_balance")
+  private BigDecimal pointsBalance;
 
   @Column private String tier;
 
   @Column private String status;
 
-  @Column(name = "created_at") private Instant createdAt;
+  @Column(name = "created_at")
+  private Instant createdAt;
 
-  @Column(name = "updated_at") private Instant updatedAt;
+  @Column(name = "updated_at")
+  private Instant updatedAt;
 
   public LoyaltyAccountJpaEntity(
       UUID id,

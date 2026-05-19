@@ -5,7 +5,6 @@ import com.autolift.notification.domain.repository.NotificationRepository;
 import com.autolift.notification.domain.valueobject.NotificationEventType;
 import com.autolift.notification.domain.valueobject.NotificationStatus;
 import com.autolift.notification.infrastructure.persistence.mapper.NotificationPersistenceMapper;
-import com.autolift.notification.infrastructure.persistence.repository.NotificationJpaRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +28,7 @@ public class NotificationRepositoryAdapter implements NotificationRepository {
 
   @Override
   public Optional<Notification> findById(String id) {
-    return jpaRepository.findById(UUID.fromString(id))
-        .map(NotificationPersistenceMapper::toDomain);
+    return jpaRepository.findById(UUID.fromString(id)).map(NotificationPersistenceMapper::toDomain);
   }
 
   @Override

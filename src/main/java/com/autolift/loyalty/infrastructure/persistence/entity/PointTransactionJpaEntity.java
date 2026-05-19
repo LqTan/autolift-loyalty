@@ -18,15 +18,19 @@ public class PointTransactionJpaEntity {
 
   @Id private UUID id;
 
-  @Column(name = "loyalty_account_id") private UUID loyaltyAccountId;
+  @Column(name = "loyalty_account_id")
+  private UUID loyaltyAccountId;
 
   @Column private BigDecimal amount;
 
-  @Column(name = "transaction_type") private String transactionType;
+  @Column(name = "transaction_type")
+  private String transactionType;
 
-  @Column(name = "reference_id") private String referenceId;
+  @Column(name = "reference_id")
+  private String referenceId;
 
-  @Column(name = "created_at") private Instant createdAt;
+  @Column(name = "created_at")
+  private Instant createdAt;
 
   public PointTransactionJpaEntity(
       UUID id,

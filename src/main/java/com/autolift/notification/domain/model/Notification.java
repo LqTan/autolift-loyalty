@@ -96,7 +96,17 @@ public class Notification {
       Instant sentAt,
       Instant createdAt) {
     return new Notification(
-        id, eventType, channel, recipient, subject, body, status, payload, errorMessage, sentAt, createdAt);
+        id,
+        eventType,
+        channel,
+        recipient,
+        subject,
+        body,
+        status,
+        payload,
+        errorMessage,
+        sentAt,
+        createdAt);
   }
 
   public Notification markSent() {

@@ -1,7 +1,7 @@
 package com.autolift.notification.api.command;
 
-import com.autolift.notification.application.command.CreateNotificationHandler;
 import com.autolift.notification.application.command.CreateNotificationCommand;
+import com.autolift.notification.application.command.CreateNotificationHandler;
 import com.autolift.notification.domain.valueobject.NotificationChannel;
 import com.autolift.notification.domain.valueobject.NotificationEventType;
 import java.util.Map;
@@ -23,14 +23,16 @@ public class NotificationCommandController {
   }
 
   @PostMapping
-  public ResponseEntity<NotificationCommandResponse> create(@RequestBody CreateNotificationRequest request) {
-    CreateNotificationCommand command = new CreateNotificationCommand(
-        NotificationEventType.valueOf(request.eventType()),
-        NotificationChannel.valueOf(request.channel()),
-        request.recipient(),
-        request.subject(),
-        request.body(),
-        request.payload());
+  public ResponseEntity<NotificationCommandResponse> create(
+      @RequestBody CreateNotificationRequest request) {
+    CreateNotificationCommand command =
+        new CreateNotificationCommand(
+            NotificationEventType.valueOf(request.eventType()),
+            NotificationChannel.valueOf(request.channel()),
+            request.recipient(),
+            request.subject(),
+            request.body(),
+            request.payload());
     var result = createNotificationHandler.handle(command);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new NotificationCommandResponse(result.getId().getId().toString(), "PENDING"));
@@ -43,7 +45,6 @@ record CreateNotificationRequest(
     String recipient,
     String subject,
     String body,
-    Map<String, Object> payload
-) {}
+    Map<String, Object> payload) {}
 
 record NotificationCommandResponse(String id, String status) {}

@@ -22,7 +22,8 @@ class CleanupSchedulerTest {
   @Test
   void shouldSaveTaskLogOnCleanup() {
     when(taskLogRepository.save(any(ScheduledTaskLog.class))).thenAnswer(i -> i.getArgument(0));
-    when(taskLogRepository.findByStatusAndStartedAtBefore(any(), any())).thenReturn(java.util.List.of());
+    when(taskLogRepository.findByStatusAndStartedAtBefore(any(), any()))
+        .thenReturn(java.util.List.of());
 
     CleanupScheduler cleanupScheduler = new CleanupScheduler(null, taskLogRepository);
     cleanupScheduler.cleanup();

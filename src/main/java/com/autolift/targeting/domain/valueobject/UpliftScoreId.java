@@ -1,6 +1,5 @@
 package com.autolift.targeting.domain.valueobject;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;

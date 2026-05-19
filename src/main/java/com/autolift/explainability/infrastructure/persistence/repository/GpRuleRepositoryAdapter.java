@@ -25,13 +25,9 @@ public class GpRuleRepositoryAdapter implements GpRuleRepository {
 
   @Override
   public List<GpRule> saveAll(List<GpRule> gpRules) {
-    var entities = gpRules.stream()
-        .map(GpRuleMapper::toEntity)
-        .collect(Collectors.toList());
+    var entities = gpRules.stream().map(GpRuleMapper::toEntity).collect(Collectors.toList());
     var saved = jpaRepository.saveAll(entities);
-    return saved.stream()
-        .map(GpRuleMapper::toDomain)
-        .collect(Collectors.toList());
+    return saved.stream().map(GpRuleMapper::toDomain).collect(Collectors.toList());
   }
 
   @Override

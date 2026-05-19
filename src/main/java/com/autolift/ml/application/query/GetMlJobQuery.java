@@ -12,8 +12,19 @@ public class GetMlJobQuery {
     this.jobId = jobId;
   }
 
-  public UUID getJobId() { return jobId; }
-  public void setJobId(UUID jobId) { this.jobId = jobId; }
-  public String getCampaignId() { return campaignId; }
-  public void setCampaignId(String campaignId) { this.campaignId = campaignId; }
+  public UUID getJobId() {
+    return jobId;
+  }
+
+  public void setJobId(UUID jobId) {
+    this.jobId = jobId;
+  }
+
+  public String getCampaignId() {
+    return campaignId;
+  }
+
+  public void setCampaignId(String campaignId) {
+    this.campaignId = campaignId;
+  }
 }

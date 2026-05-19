@@ -51,7 +51,8 @@ public class MlJobProcessor {
   }
 
   private void pollJobsByType(MlJobType jobType) {
-    Optional<MlJob> pendingJob = mlJobRepository.findFirstPendingByJobTypeOrderByCreatedAtAsc(jobType);
+    Optional<MlJob> pendingJob =
+        mlJobRepository.findFirstPendingByJobTypeOrderByCreatedAtAsc(jobType);
     if (pendingJob.isPresent()) {
       processJobWithRetry(pendingJob.get());
     }
@@ -79,14 +80,16 @@ public class MlJobProcessor {
       }
     }
     log.error("ML job failed after {} attempts: id={}", MAX_RETRIES, job.getId().getId());
-    MlJob failedJob = job.markFailed("Failed after " + MAX_RETRIES + " attempts: " + lastException.getMessage());
+    MlJob failedJob =
+        job.markFailed("Failed after " + MAX_RETRIES + " attempts: " + lastException.getMessage());
     mlJobRepository.save(failedJob);
-    eventPublisher.publishEvent(new MlJobFailedEvent(
-        failedJob.getId().getId(),
-        failedJob.getJobType(),
-        failedJob.getCampaignId(),
-        lastException.getMessage(),
-        failedJob.getCompletedAt()));
+    eventPublisher.publishEvent(
+        new MlJobFailedEvent(
+            failedJob.getId().getId(),
+            failedJob.getJobType(),
+            failedJob.getCampaignId(),
+            lastException.getMessage(),
+            failedJob.getCompletedAt()));
   }
 
   void processJob(MlJob job) {
@@ -95,36 +98,43 @@ public class MlJobProcessor {
     mlJobRepository.save(runningJob);
     try {
       executeJob(job);
-      MlJob completedJob = runningJob.markCompleted("/tmp/ml_jobs/" + job.getId().getId() + "/result.csv");
+      MlJob completedJob =
+          runningJob.markCompleted("/tmp/ml_jobs/" + job.getId().getId() + "/result.csv");
       mlJobRepository.save(completedJob);
-      eventPublisher.publishEvent(new MlJobCompletedEvent(
-          completedJob.getId().getId(),
-          completedJob.getJobType(),
-          completedJob.getCampaignId(),
-          "/tmp/ml_jobs/" + job.getId().getId() + "/result.csv",
-          completedJob.getCompletedAt()));
+      eventPublisher.publishEvent(
+          new MlJobCompletedEvent(
+              completedJob.getId().getId(),
+              completedJob.getJobType(),
+              completedJob.getCampaignId(),
+              "/tmp/ml_jobs/" + job.getId().getId() + "/result.csv",
+              completedJob.getCompletedAt()));
       log.info("ML job completed: id={}", job.getId().getId());
     } catch (Exception e) {
       log.error("ML job failed: id={}, error={}", job.getId().getId(), e.getMessage());
       MlJob failedJob = runningJob.markFailed(e.getMessage());
       mlJobRepository.save(failedJob);
-      eventPublisher.publishEvent(new MlJobFailedEvent(
-          failedJob.getId().getId(),
-          failedJob.getJobType(),
-          failedJob.getCampaignId(),
-          e.getMessage(),
-          failedJob.getCompletedAt()));
+      eventPublisher.publishEvent(
+          new MlJobFailedEvent(
+              failedJob.getId().getId(),
+              failedJob.getJobType(),
+              failedJob.getCampaignId(),
+              e.getMessage(),
+              failedJob.getCompletedAt()));
       throw e;
     }
   }
 
   private void executeJob(MlJob job) {
     if (job.getJobType() == MlJobType.UPLIFT_SCORING) {
-      log.info("Would execute uplift scoring job via Python worker: campaignId={}, modelVersion={}",
-          job.getCampaignId(), job.getModelVersion());
+      log.info(
+          "Would execute uplift scoring job via Python worker: campaignId={}, modelVersion={}",
+          job.getCampaignId(),
+          job.getModelVersion());
     } else if (job.getJobType() == MlJobType.GP_RULE_EXTRACTION) {
-      log.info("Would execute GP rule extraction job via Python worker: campaignId={}, modelVersion={}",
-          job.getCampaignId(), job.getModelVersion());
+      log.info(
+          "Would execute GP rule extraction job via Python worker: campaignId={}, modelVersion={}",
+          job.getCampaignId(),
+          job.getModelVersion());
     }
   }
 }

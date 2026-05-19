@@ -23,18 +23,21 @@ public class OpenApiConfig {
                 .title("AutoLift Loyalty API")
                 .version("0.0.1-SNAPSHOT")
                 .description("Uplift Modeling + Loyalty Promotion System")
-                .contact(
-                    new Contact()
-                        .name("AutoLift Team")
-                        .url("https://autolift.example.com"))
-                .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0")))
+                .contact(new Contact().name("AutoLift Team").url("https://autolift.example.com"))
+                .license(
+                    new License()
+                        .name("Apache 2.0")
+                        .url("https://www.apache.org/licenses/LICENSE-2.0")))
         .servers(List.of(new Server().url("http://localhost:8080").description("Local Dev Server")))
         .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-        .components(new Components().addSecuritySchemes("bearerAuth",
-            new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-                .description("Enter JWT token")));
+        .components(
+            new Components()
+                .addSecuritySchemes(
+                    "bearerAuth",
+                    new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
+                        .description("Enter JWT token")));
   }
 }

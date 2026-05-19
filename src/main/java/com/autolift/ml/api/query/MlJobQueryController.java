@@ -1,8 +1,8 @@
 package com.autolift.ml.api.query;
 
-import com.autolift.ml.application.query.GetMlJobQuery;
-import com.autolift.ml.application.query.GetMlJobHandler;
 import com.autolift.ml.api.command.MlJobResponse;
+import com.autolift.ml.application.query.GetMlJobHandler;
+import com.autolift.ml.application.query.GetMlJobQuery;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,8 @@ public class MlJobQueryController {
 
   @GetMapping("/{jobId}")
   public ResponseEntity<MlJobResponse> getJob(@PathVariable UUID jobId) {
-    return getMlJobHandler.handleByJobId(new GetMlJobQuery(jobId))
+    return getMlJobHandler
+        .handleByJobId(new GetMlJobQuery(jobId))
         .map(MlJobResponse::from)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
@@ -33,9 +34,8 @@ public class MlJobQueryController {
   public ResponseEntity<List<MlJobResponse>> getJobsByCampaign(@PathVariable String campaignId) {
     GetMlJobQuery query = new GetMlJobQuery();
     query.setCampaignId(campaignId);
-    List<MlJobResponse> jobs = getMlJobHandler.handleByCampaign(query).stream()
-        .map(MlJobResponse::from)
-        .toList();
+    List<MlJobResponse> jobs =
+        getMlJobHandler.handleByCampaign(query).stream().map(MlJobResponse::from).toList();
     return ResponseEntity.ok(jobs);
   }
 }

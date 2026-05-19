@@ -12,15 +12,16 @@ class VoucherTest {
 
   @Test
   void shouldCreateVoucher() {
-    Voucher voucher = Voucher.create(
-        "VCHR001",
-        null,
-        VoucherType.DISCOUNT_PERCENTAGE,
-        new BigDecimal("10"),
-        new BigDecimal("100000"),
-        100,
-        null,
-        Instant.parse("2026-12-31T23:59:59Z"));
+    Voucher voucher =
+        Voucher.create(
+            "VCHR001",
+            null,
+            VoucherType.DISCOUNT_PERCENTAGE,
+            new BigDecimal("10"),
+            new BigDecimal("100000"),
+            100,
+            null,
+            Instant.parse("2026-12-31T23:59:59Z"));
 
     assertNotNull(voucher.getId());
     assertEquals("VCHR001", voucher.getCode());
@@ -32,15 +33,16 @@ class VoucherTest {
 
   @Test
   void shouldRedeemVoucher() {
-    Voucher voucher = Voucher.create(
-        "VCHR001",
-        null,
-        VoucherType.DISCOUNT_PERCENTAGE,
-        new BigDecimal("10"),
-        new BigDecimal("100000"),
-        100,
-        null,
-        Instant.parse("2026-12-31T23:59:59Z"));
+    Voucher voucher =
+        Voucher.create(
+            "VCHR001",
+            null,
+            VoucherType.DISCOUNT_PERCENTAGE,
+            new BigDecimal("10"),
+            new BigDecimal("100000"),
+            100,
+            null,
+            Instant.parse("2026-12-31T23:59:59Z"));
 
     voucher.redeem();
 
@@ -49,15 +51,16 @@ class VoucherTest {
 
   @Test
   void shouldNotRedeemVoucherWhenMaxUsageReached() {
-    Voucher voucher = Voucher.create(
-        "VCHR001",
-        null,
-        VoucherType.DISCOUNT_PERCENTAGE,
-        new BigDecimal("10"),
-        new BigDecimal("100000"),
-        1,
-        null,
-        Instant.parse("2026-12-31T23:59:59Z"));
+    Voucher voucher =
+        Voucher.create(
+            "VCHR001",
+            null,
+            VoucherType.DISCOUNT_PERCENTAGE,
+            new BigDecimal("10"),
+            new BigDecimal("100000"),
+            1,
+            null,
+            Instant.parse("2026-12-31T23:59:59Z"));
 
     voucher.redeem();
 
@@ -66,15 +69,16 @@ class VoucherTest {
 
   @Test
   void shouldExpireVoucher() {
-    Voucher voucher = Voucher.create(
-        "VCHR001",
-        null,
-        VoucherType.DISCOUNT_PERCENTAGE,
-        new BigDecimal("10"),
-        new BigDecimal("100000"),
-        100,
-        null,
-        Instant.parse("2026-12-31T23:59:59Z"));
+    Voucher voucher =
+        Voucher.create(
+            "VCHR001",
+            null,
+            VoucherType.DISCOUNT_PERCENTAGE,
+            new BigDecimal("10"),
+            new BigDecimal("100000"),
+            100,
+            null,
+            Instant.parse("2026-12-31T23:59:59Z"));
 
     voucher.expire();
 

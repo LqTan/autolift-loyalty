@@ -14,11 +14,7 @@ public class VoucherRedeemedEvent extends ApplicationEvent {
   private final Instant redeemedAt;
 
   public VoucherRedeemedEvent(
-      String voucherId,
-      String code,
-      String campaignId,
-      String customerId,
-      BigDecimal value) {
+      String voucherId, String code, String campaignId, String customerId, BigDecimal value) {
     super(voucherId);
     this.voucherId = voucherId;
     this.code = code;
@@ -28,10 +24,27 @@ public class VoucherRedeemedEvent extends ApplicationEvent {
     this.redeemedAt = Instant.now();
   }
 
-  public String getVoucherId() { return voucherId; }
-  public String getCode() { return code; }
-  public String getCampaignId() { return campaignId; }
-  public String getCustomerId() { return customerId; }
-  public BigDecimal getValue() { return value; }
-  public Instant getRedeemedAt() { return redeemedAt; }
+  public String getVoucherId() {
+    return voucherId;
+  }
+
+  public String getCode() {
+    return code;
+  }
+
+  public String getCampaignId() {
+    return campaignId;
+  }
+
+  public String getCustomerId() {
+    return customerId;
+  }
+
+  public BigDecimal getValue() {
+    return value;
+  }
+
+  public Instant getRedeemedAt() {
+    return redeemedAt;
+  }
 }

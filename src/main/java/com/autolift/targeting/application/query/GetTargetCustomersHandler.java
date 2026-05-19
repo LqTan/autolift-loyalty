@@ -15,7 +15,8 @@ public class GetTargetCustomersHandler {
   }
 
   public List<TargetCustomerView> handle(GetTargetCustomersQuery query) {
-    return repository.findTopByCampaignIdOrderByUpliftScoreDesc(query.campaignId(), query.limit())
+    return repository
+        .findTopByCampaignIdOrderByUpliftScoreDesc(query.campaignId(), query.limit())
         .stream()
         .map(this::toView)
         .toList();

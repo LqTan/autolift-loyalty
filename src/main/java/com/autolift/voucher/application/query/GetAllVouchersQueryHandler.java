@@ -3,9 +3,8 @@ package com.autolift.voucher.application.query;
 import com.autolift.voucher.api.query.VoucherResponse;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class GetAllVouchersQueryHandler {
@@ -18,9 +17,7 @@ public class GetAllVouchersQueryHandler {
 
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public List<VoucherResponse> handle(GetAllVouchersQuery query) {
-    return repository.findAll().stream()
-        .map(this::toResponse)
-        .toList();
+    return repository.findAll().stream().map(this::toResponse).toList();
   }
 
   private VoucherResponse toResponse(Voucher voucher) {

@@ -22,12 +22,15 @@ public class MlJobCommandController {
 
   @PostMapping
   public ResponseEntity<MlJobResponse> createJob(@RequestBody CreateMlJobRequest request) {
-    CreateMlJobCommand command = new CreateMlJobCommand(
-        request.getJobType(),
-        request.getCampaignId(),
-        request.getModelVersion(),
-        request.getInputParams(),
-        request.getUpliftScoreJobId() != null ? java.util.UUID.fromString(request.getUpliftScoreJobId()) : null);
+    CreateMlJobCommand command =
+        new CreateMlJobCommand(
+            request.getJobType(),
+            request.getCampaignId(),
+            request.getModelVersion(),
+            request.getInputParams(),
+            request.getUpliftScoreJobId() != null
+                ? java.util.UUID.fromString(request.getUpliftScoreJobId())
+                : null);
     MlJob job = createMlJobHandler.handle(command);
     return ResponseEntity.status(HttpStatus.CREATED).body(MlJobResponse.from(job));
   }

@@ -25,9 +25,23 @@ public class CreateMlJobRequest {
     this.upliftScoreJobId = upliftScoreJobId;
   }
 
-  public MlJobType getJobType() { return jobType; }
-  public String getCampaignId() { return campaignId; }
-  public String getModelVersion() { return modelVersion; }
-  public Map<String, Object> getInputParams() { return inputParams; }
-  public String getUpliftScoreJobId() { return upliftScoreJobId; }
+  public MlJobType getJobType() {
+    return jobType;
+  }
+
+  public String getCampaignId() {
+    return campaignId;
+  }
+
+  public String getModelVersion() {
+    return modelVersion;
+  }
+
+  public Map<String, Object> getInputParams() {
+    return inputParams;
+  }
+
+  public String getUpliftScoreJobId() {
+    return upliftScoreJobId;
+  }
 }

@@ -29,16 +29,14 @@ public class TargetingCommandController {
 
   @PostMapping("/scores/import")
   public ResponseEntity<ImportResult> importUpliftScores(
-      @RequestParam("file") MultipartFile file,
-      @RequestParam("campaignId") String campaignId) {
+      @RequestParam("file") MultipartFile file, @RequestParam("campaignId") String campaignId) {
     int count = upliftScoresHandler.handle(new ImportUpliftScoresCommand(file, campaignId));
     return ResponseEntity.ok(new ImportResult(campaignId, count, "uplift_scores"));
   }
 
   @PostMapping("/features/import")
   public ResponseEntity<ImportResult> importFeatureSnapshots(
-      @RequestParam("file") MultipartFile file,
-      @RequestParam("campaignId") String campaignId) {
+      @RequestParam("file") MultipartFile file, @RequestParam("campaignId") String campaignId) {
     int count = featureSnapshotsHandler.handle(new ImportFeatureSnapshotsCommand(file, campaignId));
     return ResponseEntity.ok(new ImportResult(campaignId, count, "feature_snapshots"));
   }

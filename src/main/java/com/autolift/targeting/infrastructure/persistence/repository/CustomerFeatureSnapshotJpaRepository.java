@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerFeatureSnapshotJpaRepository extends JpaRepository<CustomerFeatureSnapshotJpaEntity, UUID> {
+public interface CustomerFeatureSnapshotJpaRepository
+    extends JpaRepository<CustomerFeatureSnapshotJpaEntity, UUID> {
 
   List<CustomerFeatureSnapshotJpaEntity> findByCustomerId(String customerId);
 
-  CustomerFeatureSnapshotJpaEntity findByCustomerIdAndCampaignId(String customerId, String campaignId);
+  CustomerFeatureSnapshotJpaEntity findByCustomerIdAndCampaignId(
+      String customerId, String campaignId);
 }

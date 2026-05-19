@@ -12,7 +12,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component("notificationPromotionListener")
-public class PromotionActivatedEventListener implements ApplicationListener<PromotionActivatedEvent> {
+public class PromotionActivatedEventListener
+    implements ApplicationListener<PromotionActivatedEvent> {
 
   private static final Logger log = LoggerFactory.getLogger(PromotionActivatedEventListener.class);
 
@@ -26,15 +27,16 @@ public class PromotionActivatedEventListener implements ApplicationListener<Prom
   public void onApplicationEvent(PromotionActivatedEvent event) {
     log.info("Received PromotionActivatedEvent: promotionId={}", event.getPromotionId());
 
-    CreateNotificationCommand command = new CreateNotificationCommand(
-        NotificationEventType.PROMOTION_ACTIVATED,
-        NotificationChannel.IN_APP,
-        null,
-        "Promotion Activated: " + event.getName(),
-        "Promotion " + event.getPromotionId() + " has been activated",
-        Map.of(
-            "promotionId", event.getPromotionId(),
-            "name", event.getName()));
+    CreateNotificationCommand command =
+        new CreateNotificationCommand(
+            NotificationEventType.PROMOTION_ACTIVATED,
+            NotificationChannel.IN_APP,
+            null,
+            "Promotion Activated: " + event.getName(),
+            "Promotion " + event.getPromotionId() + " has been activated",
+            Map.of(
+                "promotionId", event.getPromotionId(),
+                "name", event.getName()));
 
     createNotificationHandler.handle(command);
   }

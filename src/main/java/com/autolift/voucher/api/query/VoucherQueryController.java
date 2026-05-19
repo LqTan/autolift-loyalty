@@ -20,7 +20,8 @@ public class VoucherQueryController {
   private final GetVoucherQueryHandler getHandler;
   private final GetAllVouchersQueryHandler getAllHandler;
 
-  public VoucherQueryController(GetVoucherQueryHandler getHandler, GetAllVouchersQueryHandler getAllHandler) {
+  public VoucherQueryController(
+      GetVoucherQueryHandler getHandler, GetAllVouchersQueryHandler getAllHandler) {
     this.getHandler = getHandler;
     this.getAllHandler = getAllHandler;
   }

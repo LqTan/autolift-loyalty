@@ -16,7 +16,15 @@ public class CampaignActivatedEvent extends ApplicationEvent {
     this.activatedAt = activatedAt;
   }
 
-  public String campaignId() { return campaignId; }
-  public String name() { return name; }
-  public Instant activatedAt() { return activatedAt; }
+  public String campaignId() {
+    return campaignId;
+  }
+
+  public String name() {
+    return name;
+  }
+
+  public Instant activatedAt() {
+    return activatedAt;
+  }
 }

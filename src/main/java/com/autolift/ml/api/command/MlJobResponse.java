@@ -81,16 +81,51 @@ public class MlJobResponse {
     this.completedAt = completedAt;
   }
 
-  public UUID getId() { return id; }
-  public MlJobType getJobType() { return jobType; }
-  public String getCampaignId() { return campaignId; }
-  public MlJobStatus getStatus() { return status; }
-  public String getModelVersion() { return modelVersion; }
-  public Map<String, Object> getInputParams() { return inputParams; }
-  public String getResultPath() { return resultPath; }
-  public String getErrorMessage() { return errorMessage; }
-  public UUID getUpliftScoreJobId() { return upliftScoreJobId; }
-  public Instant getCreatedAt() { return createdAt; }
-  public Instant getStartedAt() { return startedAt; }
-  public Instant getCompletedAt() { return completedAt; }
+  public UUID getId() {
+    return id;
+  }
+
+  public MlJobType getJobType() {
+    return jobType;
+  }
+
+  public String getCampaignId() {
+    return campaignId;
+  }
+
+  public MlJobStatus getStatus() {
+    return status;
+  }
+
+  public String getModelVersion() {
+    return modelVersion;
+  }
+
+  public Map<String, Object> getInputParams() {
+    return inputParams;
+  }
+
+  public String getResultPath() {
+    return resultPath;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
+  public UUID getUpliftScoreJobId() {
+    return upliftScoreJobId;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
+
+  public Instant getStartedAt() {
+    return startedAt;
+  }
+
+  public Instant getCompletedAt() {
+    return completedAt;
+  }
 }

@@ -16,9 +16,7 @@ public class GetGpRulesHandler {
 
   public List<GpRuleView> handle(GetGpRulesQuery query) {
     var gpRules = repository.findByCampaignIdOrderByF1ScoreDesc(query.campaignId());
-    return gpRules.stream()
-        .map(this::toView)
-        .toList();
+    return gpRules.stream().map(this::toView).toList();
   }
 
   private GpRuleView toView(GpRule gpRule) {
@@ -35,7 +33,6 @@ public class GetGpRulesHandler {
         gpRule.getCoverageValue(),
         gpRule.getModelVersion(),
         gpRule.getSourceFile(),
-        gpRule.getCreatedAt()
-    );
+        gpRule.getCreatedAt());
   }
 }

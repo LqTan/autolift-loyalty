@@ -16,7 +16,15 @@ public class PromotionActivatedEvent extends ApplicationEvent {
     this.activatedAt = activatedAt;
   }
 
-  public String getPromotionId() { return promotionId; }
-  public String getName() { return name; }
-  public Instant getActivatedAt() { return activatedAt; }
+  public String getPromotionId() {
+    return promotionId;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public Instant getActivatedAt() {
+    return activatedAt;
+  }
 }

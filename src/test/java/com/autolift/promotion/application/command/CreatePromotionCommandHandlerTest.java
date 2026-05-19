@@ -50,7 +50,8 @@ class CreatePromotionCommandHandlerTest {
 
     handler.handle(command);
 
-    ArgumentCaptor<PromotionCreatedEvent> eventCaptor = ArgumentCaptor.forClass(PromotionCreatedEvent.class);
+    ArgumentCaptor<PromotionCreatedEvent> eventCaptor =
+        ArgumentCaptor.forClass(PromotionCreatedEvent.class);
     verify(eventPublisher).publishEvent(eventCaptor.capture());
 
     PromotionCreatedEvent event = eventCaptor.getValue();
