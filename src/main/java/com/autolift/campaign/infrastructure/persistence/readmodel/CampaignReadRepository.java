@@ -6,6 +6,7 @@ import com.autolift.campaign.infrastructure.persistence.repository.CampaignJpaRe
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -17,12 +18,13 @@ public class CampaignReadRepository {
     this.jpaRepository = jpaRepository;
   }
 
-  public Optional<CampaignView> findById(String id) {
-    return jpaRepository.findById(UUID.fromString(id)).map(this::toView);
-  }
-
+  @Cacheable(value = "campaigns", key = "'all'")
   public List<CampaignView> findAll() {
     return jpaRepository.findAll().stream().map(this::toView).toList();
+  }
+
+  public Optional<CampaignView> findById(String id) {
+    return jpaRepository.findById(UUID.fromString(id)).map(this::toView);
   }
 
   public List<CampaignView> findByStatus(String status) {

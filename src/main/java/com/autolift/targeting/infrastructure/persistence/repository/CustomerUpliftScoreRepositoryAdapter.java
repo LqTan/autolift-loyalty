@@ -7,6 +7,8 @@ import com.autolift.targeting.infrastructure.persistence.mapper.CustomerUpliftSc
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -19,11 +21,13 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   }
 
   @Override
+  @CacheEvict(value = "upliftScores", allEntries = true)
   public CustomerUpliftScore save(CustomerUpliftScore score) {
     return CustomerUpliftScoreMapper.toDomain(jpaRepository.save(CustomerUpliftScoreMapper.toEntity(score)));
   }
 
   @Override
+  @CacheEvict(value = "upliftScores", allEntries = true)
   public void saveAll(List<CustomerUpliftScore> scores) {
     jpaRepository.saveAll(scores.stream()
         .map(CustomerUpliftScoreMapper::toEntity)
@@ -36,6 +40,7 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   }
 
   @Override
+  @Cacheable(value = "upliftScores", key = "'campaign:' + #campaignId")
   public List<CustomerUpliftScore> findByCampaignId(String campaignId) {
     return jpaRepository.findByCampaignId(campaignId).stream()
         .map(CustomerUpliftScoreMapper::toDomain)
@@ -50,6 +55,7 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   }
 
   @Override
+  @Cacheable(value = "upliftScores", key = "'campaign:' + #campaignId + ':top:' + #limit")
   public List<CustomerUpliftScore> findTopByCampaignIdOrderByUpliftScoreDesc(String campaignId, int limit) {
     return jpaRepository.findTopByCampaignIdOrderByUpliftScoreDesc(campaignId, limit).stream()
         .map(CustomerUpliftScoreMapper::toDomain)
