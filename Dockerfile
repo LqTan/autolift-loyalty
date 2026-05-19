@@ -1,12 +1,26 @@
+# Stage 1: Build
+FROM eclipse-temurin:21-jdk-alpine AS builder
+
+WORKDIR /app
+
+RUN apk add --no-cache curl
+
+COPY pom.xml .
+COPY mvnw .
+COPY .mvn .mvn
+COPY src ./src
+
+RUN ./mvnw package -DskipTests
+
+# Stage 2: Runtime
 FROM eclipse-temurin:21-jre-alpine AS runtime
 
 WORKDIR /app
 
-RUN apk add --no-cache \
-    curl \
+RUN apk add --no-cache curl \
     && rm -rf /var/cache/apk/*
 
-COPY target/*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 
