@@ -3,54 +3,24 @@ name: Deploy to AWS EC2
 on:
   push:
     branches: [main]
-    tags:
-      - 'v*'
+  tags:
+    - 'v*'
   workflow_dispatch:
-
-permissions:
-  contents: read
-  packages: write
 
 env:
   JAVA_VERSION: '21'
-  REGISTRY: ghcr.io
-  IMAGE_NAME: lqtan/autolift-loyalty
+  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/autolift-loyalty
 
 jobs:
   build-docker:
     name: Build Docker Image
     runs-on: ubuntu-latest
     outputs:
-      image_ref: ${{ steps.image.outputs.image_ref }}
+      image_tag: ${{ steps.meta.outputs.tags }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set image ref
-        id: image
-        run: |
-          IMAGE_NAME_LOWER=$(echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE_REF="${IMAGE_NAME_LOWER}:${GITHUB_SHA::7}"
-          echo "image_ref=${IMAGE_REF}" >> "$GITHUB_OUTPUT"
-          echo "IMAGE_REF=${IMAGE_REF}" >> "$GITHUB_ENV"
-          echo "LATEST_REF=${IMAGE_NAME_LOWER}:latest" >> "$GITHUB_ENV"
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: temurin
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: Build JAR
-        run: ./mvnw clean package -DskipTests
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -58,20 +28,27 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=sha,prefix=,suffix=,format=short
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.IMAGE_REF }}
-            ${{ env.LATEST_REF }}
-          labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -84,17 +61,60 @@ jobs:
     steps:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1
-        env:
-          IMAGE_REF: ${{ needs.build-docker.outputs.image_ref }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.EC2_PRODUCTION_HOST }}
           username: ${{ secrets.EC2_PRODUCTION_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: IMAGE_REF,GHCR_USERNAME,GHCR_TOKEN
           script: |
             set -e
+
+            echo "==> Go to deploy directory"
             cd /opt/autolift
-            chmod +x scripts/deploy.sh
-            ./scripts/deploy.sh production "$IMAGE_REF"
+
+            echo "==> Clone or update repository"
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/LqTan/autolift-loyalty.git .
+            else
+              git fetch origin
+              git reset --hard origin/main
+              git clean -fd
+            fi
+
+            echo "==> Create production .env"
+            cat > .env <<EOF
+            SPRING_PROFILES_ACTIVE=prod
+            SERVER_PORT=8080
+            POSTGRES_HOST=127.0.0.1
+            POSTGRES_PORT=5432
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            REDIS_HOST=127.0.0.1
+            REDIS_PORT=6379
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            EOF
+
+            echo "==> Pull Docker image"
+            docker pull ${{ needs.build-docker.outputs.image_tag }}
+
+            echo "==> Stop and remove existing container"
+            docker stop autolift-loyalty 2>/dev/null || true
+            docker rm autolift-loyalty 2>/dev/null || true
+
+            echo "==> Start new container"
+            docker run -d \
+              --name autolift-loyalty \
+              --restart unless-stopped \
+              --network host \
+              --env-file .env \
+              -v /var/log/autolift:/var/log/autolift \
+              ${{ needs.build-docker.outputs.image_tag }}
+
+            echo "==> Show containers"
+            docker ps
+
+            echo "==> Wait for app startup"
+            sleep 20
+
+            echo "==> Health check"
+            curl -f http://localhost:8080/actuator/health
