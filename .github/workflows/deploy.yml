@@ -96,5 +96,5 @@ jobs:
           script: |
             set -e
             cd /opt/autolift
-            chmod +x deploy.sh
-            ./deploy.sh production "$IMAGE_REF"
+            chmod +x scripts/deploy.sh
+            ./scripts/deploy.sh production "$IMAGE_REF"
