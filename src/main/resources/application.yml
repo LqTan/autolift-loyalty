@@ -47,3 +47,10 @@ spring:
       jpa:
         persistence:
           enabled: false
+  config:
+    jwt:
+      secret: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnlyNotForProductionUse123456789012345678}
+      expiration: 86400000
+
+server:
+  port: 8080
