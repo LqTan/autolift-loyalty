@@ -6,7 +6,6 @@ import com.autolift.campaign.infrastructure.persistence.repository.CampaignJpaRe
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -58,8 +58,7 @@ public class ImportCustomersCommandHandler {
           java.time.Instant updatedAt = parseInstant(parts[8].trim());
 
           CustomerJpaEntity entity =
-              new CustomerJpaEntity(
-                  id, name, email, phone, segment, status, createdAt, updatedAt);
+              new CustomerJpaEntity(id, name, email, phone, segment, status, createdAt, updatedAt);
 
           batch.add(entity);
 
