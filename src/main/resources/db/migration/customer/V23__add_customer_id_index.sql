@@ -1,0 +1,1 @@
+CREATE INDEX idx_customers_customer_id ON customer.customers(id);
