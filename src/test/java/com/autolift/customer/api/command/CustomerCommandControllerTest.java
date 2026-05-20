@@ -12,8 +12,11 @@ import com.autolift.config.SecurityConfig;
 import com.autolift.customer.application.command.CreateCustomerCommand;
 import com.autolift.customer.application.command.CreateCustomerCommandHandler;
 import com.autolift.customer.application.command.CreateCustomerResult;
+import com.autolift.customer.application.command.ImportCustomersCommandHandler;
+import com.autolift.customer.application.command.SeedCustomersCommandHandler;
 import com.autolift.customer.application.command.SuspendCustomerCommandHandler;
 import com.autolift.customer.domain.valueobject.CustomerSegment;
+import com.autolift.ml.domain.repository.MlJobRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +42,9 @@ class CustomerCommandControllerTest {
 
   @MockBean private CreateCustomerCommandHandler createHandler;
   @MockBean private SuspendCustomerCommandHandler suspendHandler;
+  @MockBean private ImportCustomersCommandHandler importHandler;
+  @MockBean private SeedCustomersCommandHandler seedHandler;
+  @MockBean private MlJobRepository mlJobRepository;
   @MockBean private JwtTokenProvider jwtTokenProvider;
   @MockBean private ApplicationUserDetailsService userDetailsService;
   @MockBean private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;

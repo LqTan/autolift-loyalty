@@ -1,5 +1,6 @@
 package com.autolift.promotion.api.query;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,6 +23,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PromotionQueryController.class)
@@ -101,13 +105,15 @@ class PromotionQueryControllerTest {
             Instant.now(),
             Instant.now());
 
-    when(getAllHandler.handle()).thenReturn(List.of(view1, view2));
+    Pageable pageable = PageRequest.of(0, 20);
+    when(getAllHandler.handle(any(Pageable.class)))
+        .thenReturn(new PageImpl<>(List.of(view1, view2), pageable, 2));
 
     mvc.perform(get("/api/promotions"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].id").value("550e8400-e29b-41d4-a716-446655440000"))
-        .andExpect(jsonPath("$[0].name").value("Promo 1"))
-        .andExpect(jsonPath("$[1].id").value("660e8400-e29b-41d4-a716-446655440001"))
-        .andExpect(jsonPath("$[1].name").value("Promo 2"));
+        .andExpect(jsonPath("$.content[0].id").value("550e8400-e29b-41d4-a716-446655440000"))
+        .andExpect(jsonPath("$.content[0].name").value("Promo 1"))
+        .andExpect(jsonPath("$.content[1].id").value("660e8400-e29b-41d4-a716-446655440001"))
+        .andExpect(jsonPath("$.content[1].name").value("Promo 2"));
   }
 }

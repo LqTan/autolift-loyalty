@@ -146,7 +146,7 @@ public class CustomerCommandController {
   @PostMapping("/seed")
   public ResponseEntity<SeedCustomersResult> seedCustomers() {
     MlJob job = mlJobRepository.save(MlJob.createCustomerSeedJob());
-    seedHandler.handle(new SeedCustomersCommand(job.getId().getId()));
+    seedHandler.handleAsync(new SeedCustomersCommand(job.getId().getId()));
     return ResponseEntity.accepted().body(new SeedCustomersResult(job.getId().getId(), "PENDING"));
   }
 }

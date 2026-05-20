@@ -41,15 +41,19 @@ public class SeedCustomersCommandHandler {
     this.mlDataPath = mlDataPath;
   }
 
-  @Async
   @Transactional
-  public CompletableFuture<ImportCustomersResult> handle(SeedCustomersCommand command) {
+  public ImportCustomersResult handle(SeedCustomersCommand command) {
     MlJob job = mlJobRepository.findById(MlJobId.of(command.jobId())).orElse(null);
+    int totalRecords = countTotalRecords();
+
     if (job != null) {
-      job = mlJobRepository.save(job.markRunning());
-      log.info("Starting X5 customers seed process (jobId={})...", command.jobId());
+      job = mlJobRepository.save(job.startWithProgress(totalRecords));
+      log.info(
+          "Starting X5 customers seed process (jobId={}, total={})...",
+          command.jobId(),
+          totalRecords);
     } else {
-      log.info("Starting X5 customers seed process (no job tracking)...");
+      log.info("Starting X5 customers seed process (no job tracking, total={})...", totalRecords);
     }
 
     int imported = 0;
@@ -59,9 +63,10 @@ public class SeedCustomersCommandHandler {
       String header = reader.readLine();
       if (header == null) {
         if (job != null) {
-          mlJobRepository.save(job.markCompleted("{\"imported\":0,\"failed\":0}"));
+          mlJobRepository.save(
+              job.markCompleted(String.format("{\"imported\":0,\"failed\":0,\"total\":%d}", 0)));
         }
-        return CompletableFuture.completedFuture(new ImportCustomersResult(0, 0));
+        return new ImportCustomersResult(0, 0);
       }
 
       String line;
@@ -116,17 +121,25 @@ public class SeedCustomersCommandHandler {
 
       if (job != null) {
         mlJobRepository.save(
-            job.markCompleted(String.format("{\"imported\":%d,\"failed\":%d}", imported, failed)));
+            job.markCompleted(
+                String.format(
+                    "{\"imported\":%d,\"failed\":%d,\"total\":%d}",
+                    imported, failed, totalRecords)));
       }
     } catch (Exception e) {
       log.error("Failed to seed customers: {}", e.getMessage(), e);
       if (job != null) {
         mlJobRepository.save(job.markFailed(e.getMessage()));
       }
-      return CompletableFuture.failedFuture(e);
+      throw new RuntimeException(e);
     }
 
-    return CompletableFuture.completedFuture(new ImportCustomersResult(imported, failed));
+    return new ImportCustomersResult(imported, failed);
+  }
+
+  @Async
+  public CompletableFuture<ImportCustomersResult> handleAsync(SeedCustomersCommand command) {
+    return CompletableFuture.completedFuture(handle(command));
   }
 
   private BufferedReader openClientsCsv() throws Exception {
@@ -147,5 +160,29 @@ public class SeedCustomersCommandHandler {
   private UUID customerIdToUuid(String customerId) {
     UUID namespaceUuid = UUID.fromString("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
     return UUID.nameUUIDFromBytes(("6ba7b810-9dad-11d1-80b4-00c04fd430c8" + customerId).getBytes());
+  }
+
+  private int countTotalRecords() {
+    try {
+      java.nio.file.Path clientsGzPath =
+          java.nio.file.Paths.get(
+              (mlDataPath.endsWith("/") ? mlDataPath : mlDataPath + "/") + "clients.csv.gz");
+      if (!java.nio.file.Files.exists(clientsGzPath)) {
+        return 0;
+      }
+      int count = 0;
+      try (var gzipStream = new GZIPInputStream(java.nio.file.Files.newInputStream(clientsGzPath));
+          var reader =
+              new BufferedReader(new InputStreamReader(gzipStream, StandardCharsets.UTF_8))) {
+        reader.readLine();
+        while (reader.readLine() != null) {
+          count++;
+        }
+      }
+      return count;
+    } catch (Exception e) {
+      log.warn("Failed to count total records: {}", e.getMessage());
+      return 0;
+    }
   }
 }

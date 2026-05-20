@@ -24,6 +24,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CampaignQueryController.class)
@@ -96,21 +99,25 @@ class CampaignQueryControllerTest {
                 new BigDecimal("2000000"),
                 "VND"));
 
-    when(getAllHandler.handle(any(GetAllCampaignsQuery.class))).thenReturn(campaigns);
+    Pageable pageable = PageRequest.of(0, 20);
+    when(getAllHandler.handle(any(GetAllCampaignsQuery.class), any(Pageable.class)))
+        .thenReturn(new PageImpl<>(campaigns, pageable, 2));
 
     mvc.perform(get("/api/campaigns"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].name").value("Campaign 1"))
-        .andExpect(jsonPath("$[1].name").value("Campaign 2"));
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(jsonPath("$.content[0].name").value("Campaign 1"))
+        .andExpect(jsonPath("$.content[1].name").value("Campaign 2"));
   }
 
   @Test
   void shouldReturnEmptyListWhenNoCampaigns() throws Exception {
-    when(getAllHandler.handle(any(GetAllCampaignsQuery.class))).thenReturn(List.of());
+    Pageable pageable = PageRequest.of(0, 20);
+    when(getAllHandler.handle(any(GetAllCampaignsQuery.class), any(Pageable.class)))
+        .thenReturn(new PageImpl<>(List.of(), pageable, 0));
 
     mvc.perform(get("/api/campaigns"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(0));
+        .andExpect(jsonPath("$.content.length()").value(0));
   }
 }

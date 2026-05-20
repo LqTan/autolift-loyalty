@@ -22,4 +22,8 @@ public class MlJobId {
   public static MlJobId random() {
     return new MlJobId(UUID.randomUUID());
   }
+
+  public UUID getUuid() {
+    return id;
+  }
 }

@@ -1,5 +1,6 @@
 package com.autolift.customer.api.query;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -63,7 +64,8 @@ class CustomerQueryControllerTest {
 
     Page<CustomerResponse> customerPage = new PageImpl(customerList, PageRequest.of(0, 20), 2);
     Pageable pageable = PageRequest.of(0, 20);
-    when(getAllHandler.handle(new GetAllCustomersQuery(), pageable)).thenReturn(customerPage);
+    when(getAllHandler.handle(any(GetAllCustomersQuery.class), any(Pageable.class)))
+        .thenReturn(customerPage);
 
     mvc.perform(get("/api/customers").param("page", "0").param("size", "20"))
         .andExpect(status().isOk())

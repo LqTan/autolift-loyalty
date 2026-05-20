@@ -147,6 +147,22 @@ public class MlJob {
         completedAt);
   }
 
+  public MlJob startWithProgress(int total) {
+    return new MlJob(
+        this.id,
+        this.jobType,
+        this.campaignId,
+        MlJobStatus.RUNNING,
+        this.modelVersion,
+        this.inputParams,
+        String.format("{\"imported\":0,\"failed\":0,\"total\":%d}", total),
+        this.errorMessage,
+        this.upliftScoreJobId,
+        this.createdAt,
+        Instant.now(),
+        this.completedAt);
+  }
+
   public MlJob markRunning() {
     return new MlJob(
         this.id,
@@ -196,6 +212,14 @@ public class MlJob {
   }
 
   public MlJob updateProgress(int imported, int failed) {
+    int total = 0;
+    if (this.resultPath != null && this.resultPath.contains("\"total\":")) {
+      try {
+        String totalStr = this.resultPath.split("\"total\":")[1].split("[,}]")[0];
+        total = Integer.parseInt(totalStr.trim());
+      } catch (Exception e) {
+      }
+    }
     return new MlJob(
         this.id,
         this.jobType,
@@ -203,7 +227,7 @@ public class MlJob {
         this.status,
         this.modelVersion,
         this.inputParams,
-        String.format("{\"imported\":%d,\"failed\":%d}", imported, failed),
+        String.format("{\"imported\":%d,\"failed\":%d,\"total\":%d}", imported, failed, total),
         this.errorMessage,
         this.upliftScoreJobId,
         this.createdAt,
