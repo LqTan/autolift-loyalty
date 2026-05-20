@@ -3,7 +3,8 @@ package com.autolift.customer.application.query;
 import com.autolift.customer.api.query.CustomerResponse;
 import com.autolift.customer.domain.model.Customer;
 import com.autolift.customer.domain.repository.CustomerRepository;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,8 +17,8 @@ public class GetAllCustomersQueryHandler {
   }
 
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
-  public List<CustomerResponse> handle(GetAllCustomersQuery query) {
-    return repository.findAll().stream().map(this::toResponse).toList();
+  public Page<CustomerResponse> handle(GetAllCustomersQuery query, Pageable pageable) {
+    return repository.findAll(pageable).map(this::toResponse);
   }
 
   private CustomerResponse toResponse(Customer customer) {

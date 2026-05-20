@@ -4,6 +4,8 @@ import com.autolift.customer.domain.model.Customer;
 import com.autolift.customer.domain.valueobject.CustomerId;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CustomerRepository {
 
@@ -12,6 +14,8 @@ public interface CustomerRepository {
   Optional<Customer> findById(CustomerId id);
 
   List<Customer> findAll();
+
+  Page<Customer> findAll(Pageable pageable);
 
   List<Customer> findBySegment(String segment);
 

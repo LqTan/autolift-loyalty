@@ -6,6 +6,8 @@ import com.autolift.customer.domain.valueobject.CustomerId;
 import com.autolift.customer.infrastructure.persistence.mapper.CustomerPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -35,6 +37,11 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
   @Override
   public List<Customer> findAll() {
     return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+  }
+
+  @Override
+  public Page<Customer> findAll(Pageable pageable) {
+    return jpaRepository.findAll(pageable).map(mapper::toDomain);
   }
 
   @Override
