@@ -37,38 +37,65 @@ public class CustomerQueryController {
 
   @Operation(
       summary = "Get all customers (paginated)",
-      description = "Returns a paginated list of customers. Default page size is 20.")
+      description = "Returns a paginated list of customers. Default page size is 20, max is 100.")
   @ApiResponse(
       responseCode = "200",
       description = "Paginated customers",
       content =
           @Content(
               mediaType = "application/json",
-              schema = @Schema(example = """
+              schema =
+                  @Schema(
+                      example =
+                          """
                   {
                     "content": [
-                      {"id": "...", "name": "...", "email": "...", "phone": "", "segment": "NORMAL", "status": "ACTIVE"}
+                      {
+                        "id": "557b5575-7920-5bfe-b338-986baf22a9ba",
+                        "name": "X5 Customer 00001276",
+                        "email": "000012768d@x5.client",
+                        "phone": "",
+                        "segment": "NORMAL",
+                        "status": "ACTIVE"
+                      }
                     ],
-                    "pageable": {"pageNumber": 0, "pageSize": 20},
+                    "pageable": {
+                      "pageNumber": 0,
+                      "pageSize": 20,
+                      "sort": {"direction": "DESC", "property": "createdAt"}
+                    },
                     "totalElements": 400162,
                     "totalPages": 20009,
+                    "last": false,
+                    "first": true,
                     "size": 20,
-                    "number": 0
+                    "number": 0,
+                    "empty": false
                   }
                   """)))
   @GetMapping
   public Page<CustomerResponse> findAll(
-      @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
-      @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size,
-      @Parameter(description = "Sort field") @RequestParam(defaultValue = "createdAt") String sortBy,
-      @Parameter(description = "Sort direction (ASC/DESC)") @RequestParam(defaultValue = "DESC") String sortDir) {
+      @Parameter(description = "Page number (0-indexed)", example = "0")
+          @RequestParam(defaultValue = "0")
+          int page,
+      @Parameter(description = "Number of items per page (max 100)", example = "20")
+          @RequestParam(defaultValue = "20")
+          int size,
+      @Parameter(description = "Field to sort by", example = "createdAt")
+          @RequestParam(defaultValue = "createdAt")
+          String sortBy,
+      @Parameter(description = "Sort direction", example = "DESC")
+          @RequestParam(defaultValue = "DESC")
+          String sortDir) {
     Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
     Pageable pageable = PageRequest.of(page, Math.min(size, 100), sort);
     return getAllHandler.handle(new GetAllCustomersQuery(), pageable);
   }
 
   @GetMapping("/{customerId}")
-  @Operation(summary = "Get customer by ID", description = "Returns a single customer by their UUID")
+  @Operation(
+      summary = "Get customer by ID",
+      description = "Returns a single customer by their UUID")
   @ApiResponse(responseCode = "200", description = "Customer found")
   @ApiResponse(responseCode = "404", description = "Customer not found")
   public ResponseEntity<CustomerResponse> findById(@PathVariable String customerId) {
