@@ -6,6 +6,8 @@ import com.autolift.sandbox.domain.valueobject.SandboxId;
 import com.autolift.sandbox.infrastructure.persistence.mapper.SandboxPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -35,6 +37,11 @@ public class SandboxRepositoryAdapter implements SandboxRepository {
   @Override
   public List<Sandbox> findAll() {
     return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+  }
+
+  @Override
+  public Page<Sandbox> findAll(Pageable pageable) {
+    return jpaRepository.findAll(pageable).map(mapper::toDomain);
   }
 
   @Override

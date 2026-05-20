@@ -4,6 +4,8 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.infrastructure.persistence.mapper.CampaignPersistenceMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -33,6 +35,11 @@ public class CampaignRepositoryAdapter implements CampaignRepository {
   @Override
   public java.util.List<Campaign> findAll() {
     return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+  }
+
+  @Override
+  public Page<Campaign> findAll(Pageable pageable) {
+    return jpaRepository.findAll(pageable).map(mapper::toDomain);
   }
 
   @Override

@@ -3,6 +3,8 @@ package com.autolift.promotion.application.query;
 import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +18,10 @@ public class GetAllPromotionsQueryHandler {
 
   public List<PromotionView> handle() {
     return repository.findAll().stream().map(this::mapToView).toList();
+  }
+
+  public Page<PromotionView> handle(Pageable pageable) {
+    return repository.findAll(pageable).map(this::mapToView);
   }
 
   private PromotionView mapToView(Promotion promotion) {

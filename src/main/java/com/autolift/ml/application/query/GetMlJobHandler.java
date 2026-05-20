@@ -5,6 +5,8 @@ import com.autolift.ml.domain.valueobject.MlJobId;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,5 +32,12 @@ public class GetMlJobHandler {
           .collect(Collectors.toList());
     }
     return List.of();
+  }
+
+  public Page<MlJobView> handleByCampaign(GetMlJobQuery query, Pageable pageable) {
+    if (query.getCampaignId() != null) {
+      return mlJobRepository.findByCampaignId(query.getCampaignId(), pageable).map(MlJobView::from);
+    }
+    return Page.empty();
   }
 }

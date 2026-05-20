@@ -8,6 +8,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface MlJobRepository {
 
@@ -16,6 +18,8 @@ public interface MlJobRepository {
   Optional<MlJob> findById(MlJobId id);
 
   List<MlJob> findByCampaignId(String campaignId);
+
+  Page<MlJob> findByCampaignId(String campaignId, Pageable pageable);
 
   List<MlJob> findByStatus(MlJobStatus status);
 

@@ -4,6 +4,8 @@ import com.autolift.voucher.api.query.VoucherResponse;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +20,11 @@ public class GetAllVouchersQueryHandler {
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public List<VoucherResponse> handle(GetAllVouchersQuery query) {
     return repository.findAll().stream().map(this::toResponse).toList();
+  }
+
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+  public Page<VoucherResponse> handle(GetAllVouchersQuery query, Pageable pageable) {
+    return repository.findAll(pageable).map(this::toResponse);
   }
 
   private VoucherResponse toResponse(Voucher voucher) {

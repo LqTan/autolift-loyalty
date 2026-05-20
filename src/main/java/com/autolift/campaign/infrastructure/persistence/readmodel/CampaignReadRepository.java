@@ -6,6 +6,8 @@ import com.autolift.campaign.infrastructure.persistence.repository.CampaignJpaRe
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -19,6 +21,10 @@ public class CampaignReadRepository {
 
   public List<CampaignView> findAll() {
     return jpaRepository.findAll().stream().map(this::toView).toList();
+  }
+
+  public Page<CampaignView> findAll(Pageable pageable) {
+    return jpaRepository.findAll(pageable).map(this::toView);
   }
 
   public Optional<CampaignView> findById(String id) {

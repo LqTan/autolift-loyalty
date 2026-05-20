@@ -6,6 +6,8 @@ import com.autolift.voucher.domain.valueobject.VoucherId;
 import com.autolift.voucher.infrastructure.persistence.mapper.VoucherPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -43,6 +45,11 @@ public class VoucherRepositoryAdapter implements VoucherRepository {
   @Override
   public List<Voucher> findAll() {
     return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+  }
+
+  @Override
+  public Page<Voucher> findAll(Pageable pageable) {
+    return jpaRepository.findAll(pageable).map(mapper::toDomain);
   }
 
   @Override

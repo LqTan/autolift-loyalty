@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -37,6 +39,11 @@ public class MlJobRepositoryAdapter implements MlJobRepository {
     return jpaRepository.findByCampaignId(campaignId).stream()
         .map(MlJobMapper::toDomain)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public Page<MlJob> findByCampaignId(String campaignId, Pageable pageable) {
+    return jpaRepository.findByCampaignId(campaignId, pageable).map(MlJobMapper::toDomain);
   }
 
   @Override
