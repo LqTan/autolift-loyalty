@@ -20,6 +20,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CustomerQueryController.class)
@@ -40,7 +44,7 @@ class CustomerQueryControllerTest {
 
   @Test
   void shouldGetAllCustomers() throws Exception {
-    List<CustomerResponse> customers =
+    List<CustomerResponse> customerList =
         List.of(
             new CustomerResponse(
                 "550e8400-e29b-41d4-a716-446655440000",
@@ -57,12 +61,15 @@ class CustomerQueryControllerTest {
                 "VIP",
                 "ACTIVE"));
 
-    when(getAllHandler.handle(new GetAllCustomersQuery())).thenReturn(customers);
+    Page<CustomerResponse> customerPage = new PageImpl(customerList, PageRequest.of(0, 20), 2);
+    Pageable pageable = PageRequest.of(0, 20);
+    when(getAllHandler.handle(new GetAllCustomersQuery(), pageable)).thenReturn(customerPage);
 
-    mvc.perform(get("/api/customers"))
+    mvc.perform(get("/api/customers").param("page", "0").param("size", "20"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].name").value("John Doe"))
-        .andExpect(jsonPath("$[1].name").value("Jane Doe"));
+        .andExpect(jsonPath("$.content[0].name").value("John Doe"))
+        .andExpect(jsonPath("$.content[1].name").value("Jane Doe"))
+        .andExpect(jsonPath("$.totalElements").value(2));
   }
 
   @Test
