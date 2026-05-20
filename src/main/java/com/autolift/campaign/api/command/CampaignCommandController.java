@@ -1,12 +1,20 @@
 package com.autolift.campaign.api.command;
 
+import com.autolift.campaign.api.command.CreateBatchCampaignsRequest;
+import com.autolift.campaign.api.command.CreateBatchCampaignsResponse;
+import com.autolift.campaign.api.command.GenerateTestCampaignsRequest;
+import com.autolift.campaign.api.command.GenerateTestCampaignsResponse;
 import com.autolift.campaign.application.command.ActivateCampaignCommand;
 import com.autolift.campaign.application.command.ActivateCampaignCommandHandler;
 import com.autolift.campaign.application.command.CampaignCreatedResult;
 import com.autolift.campaign.application.command.CompleteCampaignCommand;
 import com.autolift.campaign.application.command.CompleteCampaignCommandHandler;
+import com.autolift.campaign.application.command.CreateBatchCampaignsCommand;
+import com.autolift.campaign.application.command.CreateBatchCampaignsCommandHandler;
 import com.autolift.campaign.application.command.CreateCampaignCommand;
 import com.autolift.campaign.application.command.CreateCampaignCommandHandler;
+import com.autolift.campaign.application.command.GenerateTestCampaignsCommand;
+import com.autolift.campaign.application.command.GenerateTestCampaignsCommandHandler;
 import com.autolift.campaign.application.command.PauseCampaignCommand;
 import com.autolift.campaign.application.command.PauseCampaignCommandHandler;
 import com.autolift.campaign.events.CampaignActivatedEvent;
@@ -23,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/campaigns")
 @Import({
   CreateCampaignCommandHandler.class,
+  CreateBatchCampaignsCommandHandler.class,
+  GenerateTestCampaignsCommandHandler.class,
   ActivateCampaignCommandHandler.class,
   PauseCampaignCommandHandler.class,
   CompleteCampaignCommandHandler.class
@@ -30,16 +40,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class CampaignCommandController {
 
   private final CreateCampaignCommandHandler createHandler;
+  private final CreateBatchCampaignsCommandHandler batchHandler;
+  private final GenerateTestCampaignsCommandHandler generateTestHandler;
   private final ActivateCampaignCommandHandler activateHandler;
   private final PauseCampaignCommandHandler pauseHandler;
   private final CompleteCampaignCommandHandler completeHandler;
 
   public CampaignCommandController(
       CreateCampaignCommandHandler createHandler,
+      CreateBatchCampaignsCommandHandler batchHandler,
+      GenerateTestCampaignsCommandHandler generateTestHandler,
       ActivateCampaignCommandHandler activateHandler,
       PauseCampaignCommandHandler pauseHandler,
       CompleteCampaignCommandHandler completeHandler) {
     this.createHandler = createHandler;
+    this.batchHandler = batchHandler;
+    this.generateTestHandler = generateTestHandler;
     this.activateHandler = activateHandler;
     this.pauseHandler = pauseHandler;
     this.completeHandler = completeHandler;
@@ -57,6 +73,22 @@ public class CampaignCommandController {
             request.budgetCurrency());
     CampaignCreatedResult result = createHandler.handle(command);
     return ResponseEntity.created(URI.create("/api/campaigns/" + result.id())).body(result);
+  }
+
+  @PostMapping("/batch")
+  public ResponseEntity<CreateBatchCampaignsResponse> createBatch(
+      @RequestBody CreateBatchCampaignsRequest request) {
+    CreateBatchCampaignsCommand command = new CreateBatchCampaignsCommand(request.campaigns());
+    CreateBatchCampaignsResponse result = batchHandler.handle(command);
+    return ResponseEntity.ok(result);
+  }
+
+  @PostMapping("/generate-test")
+  public ResponseEntity<GenerateTestCampaignsResponse> generateTest(
+      @RequestBody GenerateTestCampaignsRequest request) {
+    GenerateTestCampaignsCommand command = new GenerateTestCampaignsCommand(request.count());
+    GenerateTestCampaignsResponse result = generateTestHandler.handle(command);
+    return ResponseEntity.ok(result);
   }
 
   @PostMapping("/{id}/activate")
