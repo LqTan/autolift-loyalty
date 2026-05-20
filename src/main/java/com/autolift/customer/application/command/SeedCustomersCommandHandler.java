@@ -116,8 +116,7 @@ public class SeedCustomersCommandHandler {
 
       if (job != null) {
         mlJobRepository.save(
-            job.markCompleted(
-                String.format("{\"imported\":%d,\"failed\":%d}", imported, failed)));
+            job.markCompleted(String.format("{\"imported\":%d,\"failed\":%d}", imported, failed)));
       }
     } catch (Exception e) {
       log.error("Failed to seed customers: {}", e.getMessage(), e);

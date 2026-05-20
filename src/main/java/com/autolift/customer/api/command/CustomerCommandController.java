@@ -141,7 +141,8 @@ public class CustomerCommandController {
               schema =
                   @Schema(
                       implementation = SeedCustomersResult.class,
-                      example = "{\"jobId\": \"550e8400-e29b-41d4-a716-446655440000\", \"status\": \"PENDING\"}")))
+                      example =
+                          "{\"jobId\": \"550e8400-e29b-41d4-a716-446655440000\", \"status\": \"PENDING\"}")))
   @PostMapping("/seed")
   public ResponseEntity<SeedCustomersResult> seedCustomers() {
     MlJob job = mlJobRepository.save(MlJob.createCustomerSeedJob());
