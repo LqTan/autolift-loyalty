@@ -4,10 +4,13 @@ import com.autolift.ml.domain.model.MlJob;
 import com.autolift.ml.domain.model.ScheduledTaskLog;
 import com.autolift.ml.domain.repository.MlJobRepository;
 import com.autolift.ml.domain.repository.ScheduledTaskLogRepository;
+import com.autolift.ml.domain.valueobject.MlJobId;
+import com.autolift.ml.domain.valueobject.MlJobStatus;
 import com.autolift.ml.domain.valueobject.MlJobType;
 import com.autolift.ml.events.MlJobCompletedEvent;
 import com.autolift.ml.events.MlJobFailedEvent;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,8 +57,26 @@ public class MlJobProcessor {
     Optional<MlJob> pendingJob =
         mlJobRepository.findFirstPendingByJobTypeOrderByCreatedAtAsc(jobType);
     if (pendingJob.isPresent()) {
-      processJobWithRetry(pendingJob.get());
+      MlJob job = pendingJob.get();
+      if (job.getJobType() == MlJobType.GP_RULE_EXTRACTION) {
+        if (!isUpliftJobCompleted(job.getUpliftScoreJobId())) {
+          log.info(
+              "GP job {} skipped - uplift job {} not completed",
+              job.getId().getId(),
+              job.getUpliftScoreJobId());
+          return;
+        }
+      }
+      processJobWithRetry(job);
     }
+  }
+
+  private boolean isUpliftJobCompleted(UUID upliftScoreJobId) {
+    if (upliftScoreJobId == null) {
+      return true;
+    }
+    Optional<MlJob> upliftJob = mlJobRepository.findById(MlJobId.of(upliftScoreJobId));
+    return upliftJob.map(j -> j.getStatus() == MlJobStatus.COMPLETED).orElse(false);
   }
 
   private void processJobWithRetry(MlJob job) {
