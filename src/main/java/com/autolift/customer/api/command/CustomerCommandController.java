@@ -10,6 +10,8 @@ import com.autolift.customer.application.command.SeedCustomersCommand;
 import com.autolift.customer.application.command.SeedCustomersCommandHandler;
 import com.autolift.customer.application.command.SuspendCustomerCommand;
 import com.autolift.customer.application.command.SuspendCustomerCommandHandler;
+import com.autolift.ml.domain.model.MlJob;
+import com.autolift.ml.domain.repository.MlJobRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,16 +43,19 @@ public class CustomerCommandController {
   private final SuspendCustomerCommandHandler suspendHandler;
   private final ImportCustomersCommandHandler importHandler;
   private final SeedCustomersCommandHandler seedHandler;
+  private final MlJobRepository mlJobRepository;
 
   public CustomerCommandController(
       CreateCustomerCommandHandler createHandler,
       SuspendCustomerCommandHandler suspendHandler,
       ImportCustomersCommandHandler importHandler,
-      SeedCustomersCommandHandler seedHandler) {
+      SeedCustomersCommandHandler seedHandler,
+      MlJobRepository mlJobRepository) {
     this.createHandler = createHandler;
     this.suspendHandler = suspendHandler;
     this.importHandler = importHandler;
     this.seedHandler = seedHandler;
+    this.mlJobRepository = mlJobRepository;
   }
 
   @Operation(
@@ -124,16 +129,23 @@ public class CustomerCommandController {
   @Operation(
       summary = "Seed X5 customers",
       description =
-          "Asynchronously imports customers from ml/data/clients.csv.gz (X5 RetailHero dataset). "
+          "Creates a CUSTOMER_SEED ML job and asynchronously imports customers from ml/data/clients.csv.gz (X5 RetailHero dataset). "
               + "Processes in batches of 500 to avoid memory issues. "
-              + "Returns 202 Accepted immediately, job runs in background.")
+              + "Returns job ID to track progress via GET /api/ml/jobs/{jobId}")
   @ApiResponse(
       responseCode = "202",
-      description = "Accepted - seeding started in background",
-      content = @Content(mediaType = "application/json", schema = @Schema(example = "{ }")))
+      description = "Accepted - seed job created, track via GET /api/ml/jobs/{jobId}",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema =
+                  @Schema(
+                      implementation = SeedCustomersResult.class,
+                      example = "{\"jobId\": \"550e8400-e29b-41d4-a716-446655440000\", \"status\": \"PENDING\"}")))
   @PostMapping("/seed")
-  public ResponseEntity<Void> seedCustomers() {
-    seedHandler.handle(new SeedCustomersCommand());
-    return ResponseEntity.accepted().build();
+  public ResponseEntity<SeedCustomersResult> seedCustomers() {
+    MlJob job = mlJobRepository.save(MlJob.createCustomerSeedJob());
+    seedHandler.handle(new SeedCustomersCommand(job.getId().getId()));
+    return ResponseEntity.accepted().body(new SeedCustomersResult(job.getId().getId(), "PENDING"));
   }
 }

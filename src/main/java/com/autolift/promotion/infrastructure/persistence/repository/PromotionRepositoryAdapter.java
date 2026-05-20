@@ -7,6 +7,8 @@ import com.autolift.promotion.infrastructure.persistence.entity.PromotionJpaEnti
 import com.autolift.promotion.infrastructure.persistence.mapper.PromotionPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,6 +31,11 @@ public class PromotionRepositoryAdapter implements PromotionRepository {
   @Override
   public List<Promotion> findAll() {
     return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+  }
+
+  @Override
+  public Page<Promotion> findAll(Pageable pageable) {
+    return jpaRepository.findAll(pageable).map(mapper::toDomain);
   }
 
   @Override

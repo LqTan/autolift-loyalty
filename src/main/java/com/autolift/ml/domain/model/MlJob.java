@@ -103,6 +103,22 @@ public class MlJob {
         null);
   }
 
+  public static MlJob createCustomerSeedJob() {
+    return new MlJob(
+        MlJobId.random(),
+        MlJobType.CUSTOMER_SEED,
+        null,
+        MlJobStatus.PENDING,
+        null,
+        null,
+        null,
+        null,
+        null,
+        Instant.now(),
+        null,
+        null);
+  }
+
   public static MlJob of(
       MlJobId id,
       MlJobType jobType,

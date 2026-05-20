@@ -4,6 +4,9 @@ import com.autolift.customer.domain.valueobject.CustomerSegment;
 import com.autolift.customer.domain.valueobject.CustomerStatus;
 import com.autolift.customer.infrastructure.persistence.entity.CustomerJpaEntity;
 import com.autolift.customer.infrastructure.persistence.repository.CustomerJpaRepository;
+import com.autolift.ml.domain.model.MlJob;
+import com.autolift.ml.domain.repository.MlJobRepository;
+import com.autolift.ml.domain.valueobject.MlJobId;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -25,24 +28,38 @@ public class SeedCustomersCommandHandler {
   private static final int BATCH_SIZE = 500;
 
   private final CustomerJpaRepository repository;
+  private final MlJobRepository mlJobRepository;
   private final String mlDataPath;
 
   public SeedCustomersCommandHandler(
-      CustomerJpaRepository repository, @Value("${ml.data.path:ml/data}") String mlDataPath) {
+      CustomerJpaRepository repository,
+      MlJobRepository mlJobRepository,
+      @Value("${ml.data.path:ml/data}") String mlDataPath) {
     this.repository = repository;
+    this.mlJobRepository = mlJobRepository;
     this.mlDataPath = mlDataPath;
   }
 
   @Async
   @Transactional
   public CompletableFuture<ImportCustomersResult> handle(SeedCustomersCommand command) {
-    log.info("Starting X5 customers seed process (async)...");
+    MlJob job = mlJobRepository.findById(MlJobId.of(command.jobId())).orElse(null);
+    if (job != null) {
+      job = mlJobRepository.save(job.markRunning());
+      log.info("Starting X5 customers seed process (jobId={})...", command.jobId());
+    } else {
+      log.info("Starting X5 customers seed process (no job tracking)...");
+    }
+
     int imported = 0;
     int failed = 0;
 
     try (BufferedReader reader = openClientsCsv()) {
       String header = reader.readLine();
       if (header == null) {
+        if (job != null) {
+          mlJobRepository.save(job.markCompleted("{\"imported\":0,\"failed\":0}"));
+        }
         return CompletableFuture.completedFuture(new ImportCustomersResult(0, 0));
       }
 
@@ -92,8 +109,17 @@ public class SeedCustomersCommandHandler {
       }
 
       log.info("Seed complete: {} imported, {} failed", imported, failed);
+
+      if (job != null) {
+        mlJobRepository.save(
+            job.markCompleted(
+                String.format("{\"imported\":%d,\"failed\":%d}", imported, failed)));
+      }
     } catch (Exception e) {
       log.error("Failed to seed customers: {}", e.getMessage(), e);
+      if (job != null) {
+        mlJobRepository.save(job.markFailed(e.getMessage()));
+      }
       return CompletableFuture.failedFuture(e);
     }
 

@@ -1,3 +1,5 @@
 package com.autolift.customer.application.command;
 
-public record SeedCustomersCommand() {}
+import java.util.UUID;
+
+public record SeedCustomersCommand(UUID jobId) {}
