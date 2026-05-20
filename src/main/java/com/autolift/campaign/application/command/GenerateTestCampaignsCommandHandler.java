@@ -62,9 +62,7 @@ public class GenerateTestCampaignsCommandHandler {
 
   public GenerateTestCampaignsResponse handle(GenerateTestCampaignsCommand command) {
     List<TestCampaignResult> results =
-        IntStream.range(0, command.count())
-            .mapToObj(i -> createRandomCampaign())
-            .toList();
+        IntStream.range(0, command.count()).mapToObj(i -> createRandomCampaign()).toList();
 
     return new GenerateTestCampaignsResponse(command.count(), results);
   }
@@ -84,8 +82,6 @@ public class GenerateTestCampaignsCommandHandler {
     repository.save(campaign);
 
     return new TestCampaignResult(
-        campaign.getId().getId().toString(),
-        campaign.getName(),
-        campaign.getStatus().name());
+        campaign.getId().getId().toString(), campaign.getName(), campaign.getStatus().name());
   }
 }

@@ -1,9 +1,5 @@
 package com.autolift.campaign.api.command;
 
-import com.autolift.campaign.api.command.CreateBatchCampaignsRequest;
-import com.autolift.campaign.api.command.CreateBatchCampaignsResponse;
-import com.autolift.campaign.api.command.GenerateTestCampaignsRequest;
-import com.autolift.campaign.api.command.GenerateTestCampaignsResponse;
 import com.autolift.campaign.application.command.ActivateCampaignCommand;
 import com.autolift.campaign.application.command.ActivateCampaignCommandHandler;
 import com.autolift.campaign.application.command.CampaignCreatedResult;
