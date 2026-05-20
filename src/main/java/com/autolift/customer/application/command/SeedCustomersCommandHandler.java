@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,6 +97,9 @@ public class SeedCustomersCommandHandler {
             repository.saveAll(new ArrayList<>(batch));
             imported += batch.size();
             log.info("Imported {} customers so far...", imported);
+            if (job != null) {
+              job = mlJobRepository.save(job.updateProgress(imported, failed));
+            }
             batch.clear();
           }
         } catch (Exception e) {
@@ -137,8 +141,7 @@ public class SeedCustomersCommandHandler {
               + ". Please ensure ml/data/clients.csv.gz exists.");
     }
 
-    var gzipStream =
-        new java.util.zip.GZIPInputStream(java.nio.file.Files.newInputStream(clientsGzPath));
+    var gzipStream = new GZIPInputStream(java.nio.file.Files.newInputStream(clientsGzPath));
     return new BufferedReader(new InputStreamReader(gzipStream, StandardCharsets.UTF_8));
   }
 

@@ -194,4 +194,20 @@ public class MlJob {
         this.startedAt,
         Instant.now());
   }
+
+  public MlJob updateProgress(int imported, int failed) {
+    return new MlJob(
+        this.id,
+        this.jobType,
+        this.campaignId,
+        this.status,
+        this.modelVersion,
+        this.inputParams,
+        String.format("{\"imported\":%d,\"failed\":%d}", imported, failed),
+        this.errorMessage,
+        this.upliftScoreJobId,
+        this.createdAt,
+        this.startedAt,
+        this.completedAt);
+  }
 }
