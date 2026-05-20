@@ -10,12 +10,14 @@ import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.infrastructure.persistence.entity.CampaignJpaEntity;
 import com.autolift.campaign.infrastructure.persistence.mapper.CampaignPersistenceMapper;
 import com.autolift.campaign.infrastructure.persistence.repository.CampaignJpaRepository;
+import com.autolift.config.TestCacheConfig;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @SpringBootTest
 @Transactional
+@Import(TestCacheConfig.class)
 class CampaignRepositoryAdapterIntegrationTest {
 
   @SuppressWarnings("resource")

@@ -18,7 +18,6 @@ public class CampaignReadRepository {
     this.jpaRepository = jpaRepository;
   }
 
-  @Cacheable(value = "campaigns", key = "'all'")
   public List<CampaignView> findAll() {
     return jpaRepository.findAll().stream().map(this::toView).toList();
   }

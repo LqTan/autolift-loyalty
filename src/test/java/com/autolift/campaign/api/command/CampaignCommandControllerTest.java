@@ -18,8 +18,9 @@ import com.autolift.campaign.application.command.CreateCampaignCommand;
 import com.autolift.campaign.application.command.CreateCampaignCommandHandler;
 import com.autolift.campaign.application.command.PauseCampaignCommand;
 import com.autolift.campaign.application.command.PauseCampaignCommandHandler;
+import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.events.CampaignActivatedEvent;
-import com.autolift.config.SecurityConfig;
+import com.autolift.config.TestCacheConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.math.BigDecimal;
@@ -32,17 +33,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CampaignCommandController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Import({
-  CreateCampaignCommandHandler.class,
-  ActivateCampaignCommandHandler.class,
-  PauseCampaignCommandHandler.class,
-  CompleteCampaignCommandHandler.class,
-  SecurityConfig.class
-})
+@Import({TestCacheConfig.class})
 class CampaignCommandControllerTest {
 
   @Autowired private MockMvc mvc;
@@ -55,9 +51,11 @@ class CampaignCommandControllerTest {
 
   @MockBean private CompleteCampaignCommandHandler completeHandler;
 
+  @MockBean private CampaignRepository campaignRepository;
+
   @MockBean private JwtTokenProvider jwtTokenProvider;
   @MockBean private ApplicationUserDetailsService userDetailsService;
-  @MockBean private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+  @MockBean private PasswordEncoder passwordEncoder;
 
   private ObjectMapper objectMapper;
 
