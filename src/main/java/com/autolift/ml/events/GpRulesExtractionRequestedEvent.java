@@ -29,4 +29,11 @@ public class GpRulesExtractionRequestedEvent extends ApplicationEvent {
     this.inputParams = inputParams;
     this.requestedAt = requestedAt;
   }
+
+  public UUID getJobId() { return jobId; }
+  public String getCampaignId() { return campaignId; }
+  public UUID getUpliftScoreJobId() { return upliftScoreJobId; }
+  public String getModelVersion() { return modelVersion; }
+  public Map<String, Object> getInputParams() { return inputParams; }
+  public Instant getRequestedAt() { return requestedAt; }
 }
