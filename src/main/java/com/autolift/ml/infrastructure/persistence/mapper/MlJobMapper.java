@@ -30,7 +30,7 @@ public class MlJobMapper {
         entity.getMessage());
   }
 
-public static MlJobJpaEntity toEntity(MlJob domain) {
+  public static MlJobJpaEntity toEntity(MlJob domain) {
     return new MlJobJpaEntity(
         domain.getId().getId(),
         domain.getJobType(),

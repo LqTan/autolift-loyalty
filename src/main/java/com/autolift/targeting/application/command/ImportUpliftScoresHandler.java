@@ -15,4 +15,8 @@ public class ImportUpliftScoresHandler {
   public int handle(ImportUpliftScoresCommand command) {
     return importer.importFromCsv(command.file(), command.campaignId());
   }
+
+  public int handle(ImportUpliftScoresFromFileCommand command) {
+    return importer.importFromFilePath(command.filePath(), command.campaignId());
+  }
 }

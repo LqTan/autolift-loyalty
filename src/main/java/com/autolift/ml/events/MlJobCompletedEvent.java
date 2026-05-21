@@ -22,4 +22,24 @@ public class MlJobCompletedEvent extends ApplicationEvent {
     this.resultPath = resultPath;
     this.completedAt = completedAt;
   }
+
+  public UUID getJobId() {
+    return jobId;
+  }
+
+  public MlJobType getJobType() {
+    return jobType;
+  }
+
+  public String getCampaignId() {
+    return campaignId;
+  }
+
+  public String getResultPath() {
+    return resultPath;
+  }
+
+  public Instant getCompletedAt() {
+    return completedAt;
+  }
 }

@@ -67,8 +67,7 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   @Override
   public Optional<CustomerUpliftScore> findByCustomerIdAndCampaignId(
       String customerId, String campaignId) {
-    return Optional.ofNullable(
-            jpaRepository.findByCustomerIdAndCampaignId(customerId, campaignId))
+    return Optional.ofNullable(jpaRepository.findByCustomerIdAndCampaignId(customerId, campaignId))
         .map(CustomerUpliftScoreMapper::toDomain);
   }
 

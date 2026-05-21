@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class CreateMlJobHandler {
@@ -29,7 +28,6 @@ public class CreateMlJobHandler {
     this.mlJobRepository = mlJobRepository;
   }
 
-  @Transactional
   public MlJob handle(CreateMlJobCommand command) {
     log.info(
         "Creating ML job: type={}, campaignId={}", command.getJobType(), command.getCampaignId());
@@ -51,47 +49,66 @@ public class CreateMlJobHandler {
     MlJob savedJob = mlJobRepository.save(job);
     log.info("Created ML job: id={}, status=PENDING", savedJob.getId().getId());
 
-    if (savedJob.getJobType() == MlJobType.UPLIFT_SCORING
-        || savedJob.getJobType() == MlJobType.GP_RULE_EXTRACTION) {
-      triggerPythonWorkerAsync(savedJob.getId().getId());
-    }
+    triggerPythonWorkerAsync(savedJob.getId().getId());
 
     return savedJob;
   }
 
   public void triggerPythonWorkerAsync(java.util.UUID jobId) {
-    new Thread(() -> {
-      try {
-        log.info("Triggering Python ML worker for job: {}", jobId);
+    new Thread(
+            () -> {
+              try {
+                log.info("Triggering Python ML worker for job: {}", jobId);
 
-        String baseDir = System.getProperty("user.dir");
-        String scriptPath = baseDir + "/" + workerScript;
-        String condaActivate = condaPath + "/bin/activate";
+                String baseDir = System.getProperty("user.dir");
+                String scriptPath = baseDir + "/" + workerScript;
+                String condaActivate = condaPath + "/bin/activate";
 
-        String dbHost = System.getenv("POSTGRES_HOST") != null ? System.getenv("POSTGRES_HOST") : "localhost";
-        String dbName = System.getenv("POSTGRES_DB") != null ? System.getenv("POSTGRES_DB") : "autolift_db";
-        String dbUser = System.getenv("POSTGRES_USER") != null ? System.getenv("POSTGRES_USER") : "postgres";
-        String dbPass = System.getenv("POSTGRES_PASSWORD") != null ? System.getenv("POSTGRES_PASSWORD") : "postgres";
+                String dbHost =
+                    System.getenv("POSTGRES_HOST") != null
+                        ? System.getenv("POSTGRES_HOST")
+                        : "localhost";
+                String dbName =
+                    System.getenv("POSTGRES_DB") != null
+                        ? System.getenv("POSTGRES_DB")
+                        : "mydatabase";
+                String dbUser =
+                    System.getenv("POSTGRES_USER") != null
+                        ? System.getenv("POSTGRES_USER")
+                        : "myuser";
+                String dbPass =
+                    System.getenv("POSTGRES_PASSWORD") != null
+                        ? System.getenv("POSTGRES_PASSWORD")
+                        : "secret";
 
-        String dbUrl = "postgresql://" + dbUser + ":" + dbPass + "@" + dbHost + ":5432/" + dbName;
+                String dbUrl =
+                    "postgresql://" + dbUser + ":" + dbPass + "@" + dbHost + ":5432/" + dbName;
 
-        String command = "source " + condaActivate + " " + condaEnv + " && python " + scriptPath + " --db-url '" + dbUrl + "'";
-        log.info("[Python Worker] Full command: {}", command);
+                String cmd =
+                    "source "
+                        + condaActivate
+                        + " "
+                        + condaEnv
+                        + " && python "
+                        + scriptPath
+                        + " --db-url '"
+                        + dbUrl
+                        + "'";
+                log.info("[Python Worker] Full command: {}", cmd);
 
-        ProcessBuilder pb = new ProcessBuilder(
-            "/bin/bash", "-c", command
-        );
-        pb.directory(new java.io.File(baseDir));
-        pb.redirectErrorStream(true);
-        pb.redirectOutput(java.io.File.createTempFile("ml_worker", ".log"));
+                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+                pb.directory(new java.io.File(baseDir));
+                pb.redirectErrorStream(true);
+                pb.redirectOutput(java.io.File.createTempFile("ml_worker", ".log"));
 
-        Process process = pb.start();
-        int exitCode = process.waitFor();
-        log.info("Python worker exited with code: {}", exitCode);
+                Process process = pb.start();
+                int exitCode = process.waitFor();
+                log.info("Python worker exited with code: {}", exitCode);
 
-      } catch (Exception e) {
-        log.error("Failed to trigger Python worker: {}", e.getMessage(), e);
-      }
-    }).start();
+              } catch (Exception e) {
+                log.error("Failed to trigger Python worker: {}", e.getMessage(), e);
+              }
+            })
+        .start();
   }
 }
