@@ -2,15 +2,18 @@ package com.autolift.explainability.application.command;
 
 import com.autolift.explainability.domain.model.GpRule;
 import com.autolift.explainability.domain.repository.GpRuleRepository;
+import com.autolift.explainability.infrastructure.importfile.GpRuleCsvImporter;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ImportGpRulesHandler {
 
   private final GpRuleRepository repository;
+  private final GpRuleCsvImporter csvImporter;
 
-  public ImportGpRulesHandler(GpRuleRepository repository) {
+  public ImportGpRulesHandler(GpRuleRepository repository, GpRuleCsvImporter csvImporter) {
     this.repository = repository;
+    this.csvImporter = csvImporter;
   }
 
   public int handle(ImportGpRulesCommand command) {
@@ -34,5 +37,10 @@ public class ImportGpRulesHandler {
             .toList();
     repository.saveAll(gpRules);
     return gpRules.size();
+  }
+
+  public int handle(ImportGpRulesFromFileCommand command) {
+    return csvImporter.importFromFilePath(
+        command.filePath(), command.campaignId(), command.modelVersion());
   }
 }

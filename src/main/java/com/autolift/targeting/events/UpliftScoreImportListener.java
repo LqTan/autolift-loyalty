@@ -1,5 +1,6 @@
 package com.autolift.targeting.events;
 
+import com.autolift.ml.domain.valueobject.MlJobType;
 import com.autolift.ml.events.MlJobCompletedEvent;
 import com.autolift.targeting.application.command.ImportUpliftScoresFromFileCommand;
 import com.autolift.targeting.application.command.ImportUpliftScoresHandler;
@@ -21,6 +22,11 @@ public class UpliftScoreImportListener {
 
   @EventListener
   public void onMlJobCompleted(MlJobCompletedEvent event) {
+    if (event.getJobType() != MlJobType.UPLIFT_SCORING) {
+      log.debug("Skipping non-UPLIFT_SCORING job: {}", event.getJobType());
+      return;
+    }
+
     log.info(
         ">>> UpliftScoreImportListener received MlJobCompletedEvent: jobId={}, campaignId={}, resultPath={}",
         event.getJobId(),

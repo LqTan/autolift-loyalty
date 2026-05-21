@@ -56,7 +56,6 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   }
 
   @Override
-  @Cacheable(value = "upliftScores", key = "'campaign:' + #campaignId + ':top:' + #limit")
   public List<CustomerUpliftScore> findTopByCampaignIdOrderByUpliftScoreDesc(
       String campaignId, int limit) {
     return jpaRepository.findTopByCampaignIdOrderByUpliftScoreDesc(campaignId, limit).stream()
