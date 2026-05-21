@@ -23,6 +23,8 @@ public class MlJob {
   private final Instant createdAt;
   private final Instant startedAt;
   private final Instant completedAt;
+  private final Integer progress;
+  private final String message;
 
   protected MlJob() {
     this.id = null;
@@ -37,6 +39,8 @@ public class MlJob {
     this.createdAt = null;
     this.startedAt = null;
     this.completedAt = null;
+    this.progress = null;
+    this.message = null;
   }
 
   private MlJob(
@@ -51,7 +55,9 @@ public class MlJob {
       UUID upliftScoreJobId,
       Instant createdAt,
       Instant startedAt,
-      Instant completedAt) {
+      Instant completedAt,
+      Integer progress,
+      String message) {
     this.id = id;
     this.jobType = jobType;
     this.campaignId = campaignId;
@@ -64,6 +70,8 @@ public class MlJob {
     this.createdAt = createdAt;
     this.startedAt = startedAt;
     this.completedAt = completedAt;
+    this.progress = progress;
+    this.message = message;
   }
 
   public static MlJob createUpliftScoringJob(
@@ -80,7 +88,9 @@ public class MlJob {
         null,
         Instant.now(),
         null,
-        null);
+        null,
+        0,
+        "Queued");
   }
 
   public static MlJob createGpRuleExtractionJob(
@@ -100,7 +110,9 @@ public class MlJob {
         upliftScoreJobId,
         Instant.now(),
         null,
-        null);
+        null,
+        0,
+        "Queued");
   }
 
   public static MlJob createCustomerSeedJob() {
@@ -116,7 +128,9 @@ public class MlJob {
         null,
         Instant.now(),
         null,
-        null);
+        null,
+        0,
+        "Queued");
   }
 
   public static MlJob of(
@@ -131,7 +145,9 @@ public class MlJob {
       UUID upliftScoreJobId,
       Instant createdAt,
       Instant startedAt,
-      Instant completedAt) {
+      Instant completedAt,
+      Integer progress,
+      String message) {
     return new MlJob(
         id,
         jobType,
@@ -144,7 +160,9 @@ public class MlJob {
         upliftScoreJobId,
         createdAt,
         startedAt,
-        completedAt);
+        completedAt,
+        progress,
+        message);
   }
 
   public MlJob startWithProgress(int total) {
@@ -160,7 +178,9 @@ public class MlJob {
         this.upliftScoreJobId,
         this.createdAt,
         Instant.now(),
-        this.completedAt);
+        this.completedAt,
+        0,
+        "Starting...");
   }
 
   public MlJob markRunning() {
@@ -176,7 +196,9 @@ public class MlJob {
         this.upliftScoreJobId,
         this.createdAt,
         Instant.now(),
-        this.completedAt);
+        this.completedAt,
+        0,
+        "Running");
   }
 
   public MlJob markCompleted(String resultPath) {
@@ -192,7 +214,9 @@ public class MlJob {
         this.upliftScoreJobId,
         this.createdAt,
         this.startedAt,
-        Instant.now());
+        Instant.now(),
+        100,
+        "Completed");
   }
 
   public MlJob markFailed(String errorMessage) {
@@ -208,7 +232,9 @@ public class MlJob {
         this.upliftScoreJobId,
         this.createdAt,
         this.startedAt,
-        Instant.now());
+        Instant.now(),
+        this.progress,
+        "Failed");
   }
 
   public MlJob updateProgress(int imported, int failed) {
@@ -220,6 +246,7 @@ public class MlJob {
       } catch (Exception e) {
       }
     }
+    int pct = total > 0 ? (imported + failed) * 100 / total : 0;
     return new MlJob(
         this.id,
         this.jobType,
@@ -232,6 +259,26 @@ public class MlJob {
         this.upliftScoreJobId,
         this.createdAt,
         this.startedAt,
-        this.completedAt);
+        this.completedAt,
+        pct,
+        String.format("Imported %d/%d", imported, total));
+  }
+
+  public MlJob withProgress(int progress, String message) {
+    return new MlJob(
+        this.id,
+        this.jobType,
+        this.campaignId,
+        this.status,
+        this.modelVersion,
+        this.inputParams,
+        this.resultPath,
+        this.errorMessage,
+        this.upliftScoreJobId,
+        this.createdAt,
+        this.startedAt,
+        this.completedAt,
+        progress,
+        message);
   }
 }

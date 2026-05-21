@@ -21,6 +21,8 @@ public class MlJobResponse {
   private Instant createdAt;
   private Instant startedAt;
   private Instant completedAt;
+  private Integer progress;
+  private String message;
 
   public static MlJobResponse from(MlJob job) {
     return new MlJobResponse(
@@ -35,7 +37,9 @@ public class MlJobResponse {
         job.getUpliftScoreJobId(),
         job.getCreatedAt(),
         job.getStartedAt(),
-        job.getCompletedAt());
+        job.getCompletedAt(),
+        job.getProgress(),
+        job.getMessage());
   }
 
   public static MlJobResponse from(MlJobView view) {
@@ -51,7 +55,9 @@ public class MlJobResponse {
         view.getUpliftScoreJobId(),
         view.getCreatedAt(),
         view.getStartedAt(),
-        view.getCompletedAt());
+        view.getCompletedAt(),
+        view.getProgress(),
+        view.getMessage());
   }
 
   public MlJobResponse(
@@ -66,7 +72,9 @@ public class MlJobResponse {
       UUID upliftScoreJobId,
       Instant createdAt,
       Instant startedAt,
-      Instant completedAt) {
+      Instant completedAt,
+      Integer progress,
+      String message) {
     this.id = id;
     this.jobType = jobType;
     this.campaignId = campaignId;
@@ -79,6 +87,8 @@ public class MlJobResponse {
     this.createdAt = createdAt;
     this.startedAt = startedAt;
     this.completedAt = completedAt;
+    this.progress = progress;
+    this.message = message;
   }
 
   public UUID getId() {
@@ -127,5 +137,13 @@ public class MlJobResponse {
 
   public Instant getCompletedAt() {
     return completedAt;
+  }
+
+  public Integer getProgress() {
+    return progress;
+  }
+
+  public String getMessage() {
+    return message;
   }
 }

@@ -3,9 +3,9 @@ package com.autolift.ml.application.command;
 import com.autolift.ml.domain.model.MlJob;
 import com.autolift.ml.domain.repository.MlJobRepository;
 import com.autolift.ml.domain.valueobject.MlJobType;
-import com.autolift.targeting.infrastructure.importfile.UpliftScoreCsvImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,16 +14,19 @@ public class CreateMlJobHandler {
 
   private static final Logger log = LoggerFactory.getLogger(CreateMlJobHandler.class);
 
-  private static final String DEFAULT_UPLIFT_SCORES_PATH = "ml/artifacts/outputs/customer_uplift_scores.csv";
-  private static final String DEFAULT_GP_RULES_PATH = "ml/artifacts/outputs/gp_rules.csv";
-
   private final MlJobRepository mlJobRepository;
-  private final UpliftScoreCsvImporter upliftScoreCsvImporter;
 
-  public CreateMlJobHandler(
-      MlJobRepository mlJobRepository, UpliftScoreCsvImporter upliftScoreCsvImporter) {
+  @Value("${ml.conda.env:autolift-ml}")
+  private String condaEnv;
+
+  @Value("${ml.worker.script:ml/scripts/run_ml_worker.py}")
+  private String workerScript;
+
+  @Value("${ml.conda.path:/home/archer/miniforge3}")
+  private String condaPath;
+
+  public CreateMlJobHandler(MlJobRepository mlJobRepository) {
     this.mlJobRepository = mlJobRepository;
-    this.upliftScoreCsvImporter = upliftScoreCsvImporter;
   }
 
   @Transactional
@@ -46,34 +49,49 @@ public class CreateMlJobHandler {
     }
 
     MlJob savedJob = mlJobRepository.save(job);
-    log.info("Created ML job: id={}", savedJob.getId().getId());
+    log.info("Created ML job: id={}, status=PENDING", savedJob.getId().getId());
 
-    MlJob completedJob;
-    if (savedJob.getJobType() == MlJobType.UPLIFT_SCORING) {
-      completedJob = savedJob.markCompleted(DEFAULT_UPLIFT_SCORES_PATH);
-      log.info("Uplift scoring job marked as COMPLETED with result path: {}", DEFAULT_UPLIFT_SCORES_PATH);
-    } else if (savedJob.getJobType() == MlJobType.GP_RULE_EXTRACTION) {
-      completedJob = savedJob.markCompleted(DEFAULT_GP_RULES_PATH);
-      log.info("GP rule extraction job marked as COMPLETED with result path: {}", DEFAULT_GP_RULES_PATH);
-    } else {
-      completedJob = savedJob.markCompleted(null);
+    if (savedJob.getJobType() == MlJobType.UPLIFT_SCORING
+        || savedJob.getJobType() == MlJobType.GP_RULE_EXTRACTION) {
+      triggerPythonWorkerAsync(savedJob.getId().getId());
     }
 
-    MlJob finalJob = mlJobRepository.save(completedJob);
-
-    if (finalJob.getJobType() == MlJobType.UPLIFT_SCORING) {
-      importUpliftScores(finalJob.getCampaignId(), DEFAULT_UPLIFT_SCORES_PATH);
-    }
-
-    return finalJob;
+    return savedJob;
   }
 
-  private void importUpliftScores(String campaignId, String resultPath) {
-    try {
-      int count = upliftScoreCsvImporter.importFromFilePath(resultPath, campaignId);
-      log.info("Auto-imported {} uplift scores for campaign: {}", count, campaignId);
-    } catch (Exception e) {
-      log.error("Failed to import uplift scores for campaign {}: {}", campaignId, e.getMessage());
-    }
+  public void triggerPythonWorkerAsync(java.util.UUID jobId) {
+    new Thread(() -> {
+      try {
+        log.info("Triggering Python ML worker for job: {}", jobId);
+
+        String baseDir = System.getProperty("user.dir");
+        String scriptPath = baseDir + "/" + workerScript;
+        String condaActivate = condaPath + "/bin/activate";
+
+        String dbHost = System.getenv("POSTGRES_HOST") != null ? System.getenv("POSTGRES_HOST") : "localhost";
+        String dbName = System.getenv("POSTGRES_DB") != null ? System.getenv("POSTGRES_DB") : "autolift_db";
+        String dbUser = System.getenv("POSTGRES_USER") != null ? System.getenv("POSTGRES_USER") : "postgres";
+        String dbPass = System.getenv("POSTGRES_PASSWORD") != null ? System.getenv("POSTGRES_PASSWORD") : "postgres";
+
+        String dbUrl = "postgresql://" + dbUser + ":" + dbPass + "@" + dbHost + ":5432/" + dbName;
+
+        String command = "source " + condaActivate + " " + condaEnv + " && python " + scriptPath + " --db-url '" + dbUrl + "'";
+        log.info("[Python Worker] Full command: {}", command);
+
+        ProcessBuilder pb = new ProcessBuilder(
+            "/bin/bash", "-c", command
+        );
+        pb.directory(new java.io.File(baseDir));
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(java.io.File.createTempFile("ml_worker", ".log"));
+
+        Process process = pb.start();
+        int exitCode = process.waitFor();
+        log.info("Python worker exited with code: {}", exitCode);
+
+      } catch (Exception e) {
+        log.error("Failed to trigger Python worker: {}", e.getMessage(), e);
+      }
+    }).start();
   }
 }

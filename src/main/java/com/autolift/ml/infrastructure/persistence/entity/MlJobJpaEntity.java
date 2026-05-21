@@ -59,6 +59,12 @@ public class MlJobJpaEntity {
   @Column(name = "completed_at")
   private Instant completedAt;
 
+  @Column(name = "progress")
+  private Integer progress;
+
+  @Column(name = "message")
+  private String message;
+
   public MlJobJpaEntity(
       UUID id,
       MlJobType jobType,
@@ -71,7 +77,9 @@ public class MlJobJpaEntity {
       UUID upliftScoreJobId,
       Instant createdAt,
       Instant startedAt,
-      Instant completedAt) {
+      Instant completedAt,
+      Integer progress,
+      String message) {
     this.id = id;
     this.jobType = jobType;
     this.campaignId = campaignId;
@@ -84,5 +92,7 @@ public class MlJobJpaEntity {
     this.createdAt = createdAt;
     this.startedAt = startedAt;
     this.completedAt = completedAt;
+    this.progress = progress;
+    this.message = message;
   }
 }

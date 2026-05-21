@@ -25,10 +25,12 @@ public class MlJobMapper {
         entity.getUpliftScoreJobId(),
         entity.getCreatedAt(),
         entity.getStartedAt(),
-        entity.getCompletedAt());
+        entity.getCompletedAt(),
+        entity.getProgress(),
+        entity.getMessage());
   }
 
-  public static MlJobJpaEntity toEntity(MlJob domain) {
+public static MlJobJpaEntity toEntity(MlJob domain) {
     return new MlJobJpaEntity(
         domain.getId().getId(),
         domain.getJobType(),
@@ -41,7 +43,9 @@ public class MlJobMapper {
         domain.getUpliftScoreJobId(),
         domain.getCreatedAt(),
         domain.getStartedAt(),
-        domain.getCompletedAt());
+        domain.getCompletedAt(),
+        domain.getProgress(),
+        domain.getMessage());
   }
 
   private static Map<String, Object> parseJsonParams(String json) {

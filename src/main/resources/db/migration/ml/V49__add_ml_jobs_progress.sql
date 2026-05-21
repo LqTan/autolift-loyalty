@@ -1,0 +1,2 @@
+ALTER TABLE ml.ml_jobs ADD COLUMN progress INTEGER DEFAULT 0;
+ALTER TABLE ml.ml_jobs ADD COLUMN message VARCHAR(1000);

@@ -214,6 +214,7 @@
 					<!--suppress UnresolvedMavenProperty -->
 					<password>${env.POSTGRES_PASSWORD}</password>
 					<cleanDisabled>false</cleanDisabled>
+					<baselineOnMigrate>true</baselineOnMigrate>
 					<schemas>
 						<sandbox>sandbox</sandbox>
 						<campaign>campaign</campaign>

@@ -37,6 +37,14 @@ class MlJobWorker:
             self._conn.close()
             self._conn = None
 
+    def _update_progress(self, conn, job_id: str, progress: int, message: str):
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE ml.ml_jobs SET progress = %s, message = %s WHERE id = %s",
+                (progress, message, job_id)
+            )
+            conn.commit()
+
     def run(self):
         print("=" * 60)
         print("ML Job Worker Started")
@@ -65,7 +73,9 @@ class MlJobWorker:
             """)
             job = cur.fetchone()
 
+        ts = datetime.now().strftime('%H:%M:%S')
         if not job:
+            print(f"[{ts}] No PENDING job found, polling again in {self.poll_interval}s...", flush=True)
             return
 
         job_id = job['id']
@@ -74,7 +84,7 @@ class MlJobWorker:
         input_params = job['input_params'] or {}
         uplift_score_job_id = job['uplift_score_job_id']
 
-        print(f"\nProcessing job: {job_id} (type={job_type}, campaign={campaign_id})")
+        print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Processing job: {job_id} (type={job_type}, campaign={campaign_id})")
 
         with conn.cursor() as cur:
             cur.execute(
@@ -82,18 +92,19 @@ class MlJobWorker:
                 (datetime.now(), job_id)
             )
             conn.commit()
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] Marked job RUNNING")
 
         try:
             if job_type == 'UPLIFT_SCORING':
-                result_path = self._run_uplift_pipeline(campaign_id, input_params)
+                result_path = self._run_uplift_pipeline(conn, job_id, campaign_id, input_params)
             elif job_type == 'GP_RULE_EXTRACTION':
-                result_path = self._run_gp_pipeline(campaign_id, input_params, uplift_score_job_id, conn)
+                result_path = self._run_gp_pipeline(conn, job_id, campaign_id, input_params, uplift_score_job_id)
             else:
                 raise ValueError(f"Unknown job type: {job_type}")
 
             with conn.cursor() as cur:
                 cur.execute(
-                    "UPDATE ml.ml_jobs SET status = 'COMPLETED', result_path = %s, completed_at = %s WHERE id = %s",
+                    "UPDATE ml.ml_jobs SET status = 'COMPLETED', result_path = %s, completed_at = %s, progress = 100, message = 'Completed' WHERE id = %s",
                     (result_path, datetime.now(), job_id)
                 )
                 conn.commit()
@@ -106,13 +117,13 @@ class MlJobWorker:
             print(traceback.format_exc())
             with conn.cursor() as cur:
                 cur.execute(
-                    "UPDATE ml.ml_jobs SET status = 'FAILED', error_message = %s, completed_at = %s WHERE id = %s",
+                    "UPDATE ml.ml_jobs SET status = 'FAILED', error_message = %s, completed_at = %s, progress = 0, message = 'Failed' WHERE id = %s",
                     (error_msg, datetime.now(), job_id)
                 )
                 conn.commit()
 
-    def _run_uplift_pipeline(self, campaign_id: str, input_params: dict) -> str:
-        print(f"Running UPLIFT_SCORING pipeline for campaign: {campaign_id}")
+    def _run_uplift_pipeline(self, conn, job_id, campaign_id: str, input_params: dict) -> str:
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] START UPLIFT_SCORING pipeline for campaign: {campaign_id}", flush=True)
 
         ml_dir = Path(__file__).parent.parent
         data_dir = ml_dir / "data"
@@ -126,6 +137,7 @@ class MlJobWorker:
         model_version = input_params.get('model_version', 'v1')
         chunksize = input_params.get('chunksize', 300_000)
 
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 1/4: Building features...", flush=True)
         train_features, test_features, _ = build_features(
             base_dir=data_dir,
             train_file="uplift_train.csv.gz",
@@ -134,7 +146,10 @@ class MlJobWorker:
             output_dir=output_dir,
             chunksize=chunksize,
         )
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 1/4: Done. Train: {len(train_features)}, Test: {len(test_features)}", flush=True)
+        self._update_progress(conn, job_id, 25, "Training model...")
 
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 2/4: Training model...", flush=True)
         feature_cols = [c for c in train_features.columns if c not in ["customer_id", "treatment_flg", "target"]]
         model_info = train_t_learner(
             train_features=train_features,
@@ -143,7 +158,10 @@ class MlJobWorker:
             n_estimators=input_params.get('n_estimators', 100),
             random_state=input_params.get('random_state', 42),
         )
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 2/4: Done. Models saved to {model_dir}", flush=True)
+        self._update_progress(conn, job_id, 65, "Exporting scores...")
 
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 3/4: Exporting uplift scores...", flush=True)
         test_df = test_features.copy()
         uplift_csv = export_uplift_scores(
             test_features=test_df,
@@ -152,17 +170,21 @@ class MlJobWorker:
             output_dir=output_dir,
             campaign_id=campaign_id,
         )
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 3/4: Done. Output: {uplift_csv}", flush=True)
+        self._update_progress(conn, job_id, 85, "Exporting snapshots...")
 
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 4/4: Exporting feature snapshots...", flush=True)
         feature_csv = export_feature_snapshots(
             test_features=test_df,
             model_version=model_version,
             output_dir=output_dir,
             campaign_id=campaign_id,
         )
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 4/4: Done. Output: {feature_csv}", flush=True)
 
         return str(uplift_csv)
 
-    def _run_gp_pipeline(self, campaign_id: str, input_params: dict, uplift_score_job_id: Optional[str], conn) -> str:
+    def _run_gp_pipeline(self, conn, job_id, campaign_id: str, input_params: dict, uplift_score_job_id: Optional[str]) -> str:
         print(f"Running GP_RULE_EXTRACTION pipeline for campaign: {campaign_id}")
 
         if uplift_score_job_id:
