@@ -20,4 +20,6 @@ public interface CustomerUpliftScoreRepository {
   List<CustomerUpliftScore> findTopByCampaignIdOrderByUpliftScoreDesc(String campaignId, int limit);
 
   Optional<CustomerUpliftScore> findByCustomerIdAndCampaignId(String customerId, String campaignId);
+
+  void deleteByCampaignId(String campaignId);
 }

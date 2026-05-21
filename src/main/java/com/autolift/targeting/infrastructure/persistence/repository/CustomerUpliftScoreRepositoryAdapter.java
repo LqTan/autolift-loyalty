@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScoreRepository {
@@ -66,7 +67,14 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   @Override
   public Optional<CustomerUpliftScore> findByCustomerIdAndCampaignId(
       String customerId, String campaignId) {
-    return Optional.ofNullable(jpaRepository.findByCustomerIdAndCampaignId(customerId, campaignId))
+    return Optional.ofNullable(
+            jpaRepository.findByCustomerIdAndCampaignId(customerId, campaignId))
         .map(CustomerUpliftScoreMapper::toDomain);
+  }
+
+  @Override
+  @Transactional
+  public void deleteByCampaignId(String campaignId) {
+    jpaRepository.deleteByCampaignId(campaignId);
   }
 }

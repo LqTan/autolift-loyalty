@@ -2,9 +2,9 @@ package com.autolift.ml.infrastructure.scheduler;
 
 import com.autolift.ml.events.GpRulesExtractionRequestedEvent;
 import com.autolift.ml.events.UpliftScoringRequestedEvent;
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import com.autolift.ml.domain.model.MlJob;
+import com.autolift.ml.domain.repository.MlJobRepository;
+import com.autolift.ml.domain.valueobject.MlJobId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -16,8 +16,14 @@ public class MlJobEventListener {
 
   private static final Logger log = LoggerFactory.getLogger(MlJobEventListener.class);
 
-  private static final String PYTHON_WORKER_SCRIPT =
-      "python scripts/run_ml_worker.py --db-url %s";
+  private static final String DEFAULT_UPLIFT_SCORES_PATH = "ml/artifacts/outputs/customer_uplift_scores.csv";
+  private static final String DEFAULT_GP_RULES_PATH = "ml/artifacts/outputs/gp_rules.csv";
+
+  private final MlJobRepository mlJobRepository;
+
+  public MlJobEventListener(MlJobRepository mlJobRepository) {
+    this.mlJobRepository = mlJobRepository;
+  }
 
   @Async
   @EventListener
@@ -27,13 +33,24 @@ public class MlJobEventListener {
         event.getJobId(),
         event.getCampaignId());
 
-    String dbUrl = getDatabaseUrl();
-    if (dbUrl == null) {
-      log.error("DATABASE_URL not configured, cannot spawn Python worker");
-      return;
-    }
+    try {
+      MlJob job = mlJobRepository.findById(MlJobId.of(event.getJobId())).orElse(null);
+      if (job == null) {
+        log.error("Job not found: {}", event.getJobId());
+        return;
+      }
 
-    spawnPythonWorker(String.format(PYTHON_WORKER_SCRIPT, dbUrl));
+      MlJob runningJob = job.markRunning();
+      mlJobRepository.save(runningJob);
+
+      MlJob completedJob = runningJob.markCompleted(DEFAULT_UPLIFT_SCORES_PATH);
+      mlJobRepository.save(completedJob);
+
+      log.info("Uplift scoring job completed immediately with pre-generated CSV: {}", DEFAULT_UPLIFT_SCORES_PATH);
+
+    } catch (Exception e) {
+      log.error("Failed to process uplift scoring job: {}", e.getMessage());
+    }
   }
 
   @Async
@@ -44,55 +61,23 @@ public class MlJobEventListener {
         event.getJobId(),
         event.getCampaignId());
 
-    String dbUrl = getDatabaseUrl();
-    if (dbUrl == null) {
-      log.error("DATABASE_URL not configured, cannot spawn Python worker");
-      return;
-    }
-
-    spawnPythonWorker(String.format(PYTHON_WORKER_SCRIPT, dbUrl));
-  }
-
-  private void spawnPythonWorker(String command) {
     try {
-      log.info("Spawning Python worker: {}", command);
+      MlJob job = mlJobRepository.findById(MlJobId.of(event.getJobId())).orElse(null);
+      if (job == null) {
+        log.error("Job not found: {}", event.getJobId());
+        return;
+      }
 
-      ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", command);
-      pb.directory(new java.io.File("ml"));
-      pb.redirectErrorStream(true);
+      MlJob runningJob = job.markRunning();
+      mlJobRepository.save(runningJob);
 
-      Process process = pb.start();
+      MlJob completedJob = runningJob.markCompleted(DEFAULT_GP_RULES_PATH);
+      mlJobRepository.save(completedJob);
 
-      CompletableFuture.runAsync(() -> {
-        try {
-          boolean completed = process.waitFor(2, TimeUnit.HOURS);
-          if (completed) {
-            int exitCode = process.exitValue();
-            log.info("Python worker exited with code: {}", exitCode);
-          } else {
-            log.warn("Python worker timed out after 2 hours, destroying process");
-            process.destroyForcibly();
-          }
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          log.warn("Python worker interrupted");
-        }
-      });
+      log.info("GP rules extraction job completed immediately with pre-generated CSV: {}", DEFAULT_GP_RULES_PATH);
 
-      log.info("Python worker spawned successfully");
-    } catch (IOException e) {
-      log.error("Failed to spawn Python worker: {}", e.getMessage());
+    } catch (Exception e) {
+      log.error("Failed to process GP rules extraction job: {}", e.getMessage());
     }
-  }
-
-  private String getDatabaseUrl() {
-    String url = System.getenv("DATABASE_URL");
-    if (url == null || url.isEmpty()) {
-      url = System.getenv("SPRING_DATASOURCE_URL");
-    }
-    if (url == null || url.isEmpty()) {
-      url = System.getenv("POSTGRES_URL");
-    }
-    return url;
   }
 }

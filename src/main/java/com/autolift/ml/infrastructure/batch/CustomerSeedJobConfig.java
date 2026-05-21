@@ -75,8 +75,7 @@ public class CustomerSeedJobConfig {
   @Bean
   @StepScope
   public ItemWriter<Customer> customerWriter(
-      @Value("#{jobParameters['jobId']}") String jobId,
-      CustomerJpaRepository customerRepository) {
+      @Value("#{jobParameters['jobId']}") String jobId, CustomerJpaRepository customerRepository) {
     return new CustomerBatchWriter(customerRepository, jobId);
   }
 
@@ -105,7 +104,8 @@ public class CustomerSeedJobConfig {
       String phone = parts.length > 4 ? parts[4].trim().replace("\"", "") : "";
       Instant now = Instant.now();
 
-      return Customer.of(id, name, email, phone, CustomerSegment.NORMAL, CustomerStatus.ACTIVE, now, now);
+      return Customer.of(
+          id, name, email, phone, CustomerSegment.NORMAL, CustomerStatus.ACTIVE, now, now);
     }
 
     private UUID customerIdToUuid(String customerId) {

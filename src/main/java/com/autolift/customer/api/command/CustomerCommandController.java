@@ -6,10 +6,10 @@ import com.autolift.customer.application.command.CreateCustomerResult;
 import com.autolift.customer.application.command.ImportCustomersCommand;
 import com.autolift.customer.application.command.ImportCustomersCommandHandler;
 import com.autolift.customer.application.command.ImportCustomersResult;
-import com.autolift.customer.application.command.SuspendCustomerCommand;
-import com.autolift.customer.application.command.SuspendCustomerCommandHandler;
 import com.autolift.customer.application.command.SeedCustomersCommand;
 import com.autolift.customer.application.command.SeedCustomersCommandHandler;
+import com.autolift.customer.application.command.SuspendCustomerCommand;
+import com.autolift.customer.application.command.SuspendCustomerCommandHandler;
 import com.autolift.ml.domain.model.MlJob;
 import com.autolift.ml.domain.repository.MlJobRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -147,6 +147,7 @@ public class CustomerCommandController {
   public ResponseEntity<SeedCustomersResult> seedCustomers() {
     MlJob job = mlJobRepository.save(MlJob.createCustomerSeedJob());
     seedHandler.handleAsync(new SeedCustomersCommand(job.getId().getUuid()));
-    return ResponseEntity.accepted().body(new SeedCustomersResult(job.getId().getUuid(), "PENDING"));
+    return ResponseEntity.accepted()
+        .body(new SeedCustomersResult(job.getId().getUuid(), "PENDING"));
   }
 }

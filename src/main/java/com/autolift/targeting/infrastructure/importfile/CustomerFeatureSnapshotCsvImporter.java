@@ -40,7 +40,7 @@ public class CustomerFeatureSnapshotCsvImporter {
                 parseBigDecimalOrNull(parts[5]),
                 parseIntOrNull(parts[6]),
                 parseIntOrNull(parts[7]),
-                parts.length > 8 ? parts[8].trim() : null,
+                parts.length > 11 ? parts[11].trim() : null,
                 parts.length > 9 ? parts[9].trim() : "v1");
         batch.add(snapshot);
         if (batch.size() >= 500) {

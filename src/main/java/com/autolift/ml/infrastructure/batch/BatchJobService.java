@@ -39,16 +39,21 @@ public class BatchJobService {
   @Async
   public void launchCustomerSeedJob(String jobId) {
     try {
-      String gzPath = mlDataPath.endsWith("/") ? mlDataPath + "clients.csv.gz" : mlDataPath + "/clients.csv.gz";
+      String gzPath =
+          mlDataPath.endsWith("/") ? mlDataPath + "clients.csv.gz" : mlDataPath + "/clients.csv.gz";
       File csvFile = decompressGzip(gzPath, jobId);
 
-      log.info("Launching customer seed batch job: jobId={}, filePath={}", jobId, csvFile.getAbsolutePath());
+      log.info(
+          "Launching customer seed batch job: jobId={}, filePath={}",
+          jobId,
+          csvFile.getAbsolutePath());
 
-      JobParameters jobParameters = new JobParametersBuilder()
-          .addString("jobId", jobId)
-          .addString("filePath", csvFile.getAbsolutePath())
-          .addLong("timestamp", System.currentTimeMillis())
-          .toJobParameters();
+      JobParameters jobParameters =
+          new JobParametersBuilder()
+              .addString("jobId", jobId)
+              .addString("filePath", csvFile.getAbsolutePath())
+              .addLong("timestamp", System.currentTimeMillis())
+              .toJobParameters();
 
       jobLauncher.run(customerSeedJob, jobParameters);
 
@@ -66,8 +71,9 @@ public class BatchJobService {
     File tempFile = File.createTempFile("customers_" + jobId + "_", ".csv");
 
     try (GZIPInputStream gzipStream = new GZIPInputStream(new FileInputStream(gzPath));
-         BufferedReader reader = new BufferedReader(new InputStreamReader(gzipStream, StandardCharsets.UTF_8));
-         FileOutputStream fos = new FileOutputStream(tempFile)) {
+        BufferedReader reader =
+            new BufferedReader(new InputStreamReader(gzipStream, StandardCharsets.UTF_8));
+        FileOutputStream fos = new FileOutputStream(tempFile)) {
 
       String line;
       while ((line = reader.readLine()) != null) {
@@ -75,7 +81,8 @@ public class BatchJobService {
       }
     }
 
-    log.info("Decompressed {} -> {} ({} bytes)", gzPath, tempFile.getAbsolutePath(), tempFile.length());
+    log.info(
+        "Decompressed {} -> {} ({} bytes)", gzPath, tempFile.getAbsolutePath(), tempFile.length());
     return tempFile;
   }
 }

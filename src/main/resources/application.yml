@@ -69,6 +69,12 @@ spring:
 
 server:
   port: 8080
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  tomcat:
+    max-swallow-size: 100MB
 
 management:
   endpoints:
