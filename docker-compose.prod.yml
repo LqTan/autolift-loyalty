@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -102,7 +100,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./ml/data:/opt/autolift/ml/data:ro
-      - ./ml/artifacts:/opt/autolift/ml/artifacts:ro
+      - ./ml/artifacts:/opt/autolift/ml/artifacts
       - ./ml/scripts:/opt/autolift/ml/scripts:ro
       - ml_worker_logs:/var/log/autolift
     environment:
