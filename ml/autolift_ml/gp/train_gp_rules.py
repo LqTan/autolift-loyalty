@@ -17,6 +17,16 @@ TERMINALS = [
     ("unique_category_count", lambda c: c > 3),
 ]
 
+FEATURE_DISPLAY_NAMES = {
+    "recency_days": "Recency Days",
+    "frequency_total": "Frequency Total",
+    "monetary_total": "Monetary Total",
+    "avg_basket_value": "Avg Basket Value",
+    "total_quantity": "Total Quantity",
+    "unique_product_count": "Unique Product Count",
+    "unique_category_count": "Unique Category Count",
+}
+
 COMPARATORS = [
     (operator.lt, "<"),
     (operator.gt, ">"),
@@ -156,7 +166,8 @@ def ind_to_rule_str(individual) -> str:
     for node in individual:
         if isinstance(node, tuple) and len(node) == 4:
             feat_name, _, threshold, comp_sym = node
-            parts.append(f"{feat_name} {comp_sym} {threshold:.2f}")
+            display_name = FEATURE_DISPLAY_NAMES.get(feat_name, feat_name)
+            parts.append(f"{display_name} {comp_sym} {threshold:.2f}")
     return " AND ".join(parts)
 
 
