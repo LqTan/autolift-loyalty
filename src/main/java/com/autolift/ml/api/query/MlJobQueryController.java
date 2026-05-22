@@ -2,6 +2,9 @@ package com.autolift.ml.api.query;
 
 import com.autolift.ml.api.command.MlJobResponse;
 import com.autolift.ml.application.query.GetMlJobHandler;
+import com.autolift.ml.application.query.GetMlJobMetricsHandler;
+import com.autolift.ml.application.query.GetMlJobMetricsQuery;
+import com.autolift.ml.application.query.MlJobMetricsView;
 import com.autolift.ml.application.query.GetMlJobQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,9 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MlJobQueryController {
 
   private final GetMlJobHandler getMlJobHandler;
+  private final GetMlJobMetricsHandler getMlJobMetricsHandler;
 
-  public MlJobQueryController(GetMlJobHandler getMlJobHandler) {
+  public MlJobQueryController(
+      GetMlJobHandler getMlJobHandler, GetMlJobMetricsHandler getMlJobMetricsHandler) {
     this.getMlJobHandler = getMlJobHandler;
+    this.getMlJobMetricsHandler = getMlJobMetricsHandler;
   }
 
   @GetMapping("/{jobId}")
@@ -40,6 +46,19 @@ public class MlJobQueryController {
         .map(MlJobResponse::from)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  @GetMapping("/{jobId}/metrics")
+  @Operation(summary = "Get ML job metrics for charts")
+  @ApiResponse(responseCode = "200", description = "Metrics found")
+  @ApiResponse(responseCode = "404", description = "Job not found")
+  @ApiResponse(responseCode = "204", description = "No metrics available for this job")
+  public ResponseEntity<MlJobMetricsView> getJobMetrics(@PathVariable UUID jobId) {
+    MlJobMetricsView metrics = getMlJobMetricsHandler.handle(new GetMlJobMetricsQuery(jobId));
+    if (metrics.getMetrics() == null || metrics.getMetrics().isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(metrics);
   }
 
   @GetMapping("/campaign/{campaignId}")

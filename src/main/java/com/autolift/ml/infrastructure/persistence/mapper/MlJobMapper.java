@@ -27,7 +27,8 @@ public class MlJobMapper {
         entity.getStartedAt(),
         entity.getCompletedAt(),
         entity.getProgress(),
-        entity.getMessage());
+        entity.getMessage(),
+        parseJsonParams(entity.getMetrics()));
   }
 
   public static MlJobJpaEntity toEntity(MlJob domain) {
@@ -45,7 +46,8 @@ public class MlJobMapper {
         domain.getStartedAt(),
         domain.getCompletedAt(),
         domain.getProgress(),
-        domain.getMessage());
+        domain.getMessage(),
+        toJsonParams(domain.getMetrics()));
   }
 
   private static Map<String, Object> parseJsonParams(String json) {

@@ -25,6 +25,7 @@ public class MlJob {
   private final Instant completedAt;
   private final Integer progress;
   private final String message;
+  private final Map<String, Object> metrics;
 
   protected MlJob() {
     this.id = null;
@@ -41,6 +42,7 @@ public class MlJob {
     this.completedAt = null;
     this.progress = null;
     this.message = null;
+    this.metrics = null;
   }
 
   private MlJob(
@@ -57,7 +59,8 @@ public class MlJob {
       Instant startedAt,
       Instant completedAt,
       Integer progress,
-      String message) {
+      String message,
+      Map<String, Object> metrics) {
     this.id = id;
     this.jobType = jobType;
     this.campaignId = campaignId;
@@ -72,6 +75,7 @@ public class MlJob {
     this.completedAt = completedAt;
     this.progress = progress;
     this.message = message;
+    this.metrics = metrics;
   }
 
   public static MlJob createUpliftScoringJob(
@@ -90,7 +94,8 @@ public class MlJob {
         null,
         null,
         0,
-        "Queued");
+        "Queued",
+        null);
   }
 
   public static MlJob createGpRuleExtractionJob(
@@ -112,7 +117,8 @@ public class MlJob {
         null,
         null,
         0,
-        "Queued");
+        "Queued",
+        null);
   }
 
   public static MlJob createCustomerSeedJob() {
@@ -130,7 +136,8 @@ public class MlJob {
         null,
         null,
         0,
-        "Queued");
+        "Queued",
+        null);
   }
 
   public static MlJob of(
@@ -147,7 +154,8 @@ public class MlJob {
       Instant startedAt,
       Instant completedAt,
       Integer progress,
-      String message) {
+      String message,
+      Map<String, Object> metrics) {
     return new MlJob(
         id,
         jobType,
@@ -162,7 +170,8 @@ public class MlJob {
         startedAt,
         completedAt,
         progress,
-        message);
+        message,
+        metrics);
   }
 
   public MlJob startWithProgress(int total) {
@@ -180,7 +189,8 @@ public class MlJob {
         Instant.now(),
         this.completedAt,
         0,
-        "Starting...");
+        "Starting...",
+        this.metrics);
   }
 
   public MlJob markRunning() {
@@ -198,7 +208,8 @@ public class MlJob {
         Instant.now(),
         this.completedAt,
         0,
-        "Running");
+        "Running",
+        this.metrics);
   }
 
   public MlJob markCompleted(String resultPath) {
@@ -216,7 +227,8 @@ public class MlJob {
         this.startedAt,
         Instant.now(),
         100,
-        "Completed");
+        "Completed",
+        this.metrics);
   }
 
   public MlJob markFailed(String errorMessage) {
@@ -234,7 +246,8 @@ public class MlJob {
         this.startedAt,
         Instant.now(),
         this.progress,
-        "Failed");
+        "Failed",
+        this.metrics);
   }
 
   public MlJob updateProgress(int imported, int failed) {
@@ -261,7 +274,8 @@ public class MlJob {
         this.startedAt,
         this.completedAt,
         pct,
-        String.format("Imported %d/%d", imported, total));
+        String.format("Imported %d/%d", imported, total),
+        this.metrics);
   }
 
   public MlJob withProgress(int progress, String message) {
@@ -279,6 +293,26 @@ public class MlJob {
         this.startedAt,
         this.completedAt,
         progress,
-        message);
+        message,
+        this.metrics);
+  }
+
+  public MlJob withMetrics(Map<String, Object> metrics) {
+    return new MlJob(
+        this.id,
+        this.jobType,
+        this.campaignId,
+        this.status,
+        this.modelVersion,
+        this.inputParams,
+        this.resultPath,
+        this.errorMessage,
+        this.upliftScoreJobId,
+        this.createdAt,
+        this.startedAt,
+        this.completedAt,
+        this.progress,
+        this.message,
+        metrics);
   }
 }

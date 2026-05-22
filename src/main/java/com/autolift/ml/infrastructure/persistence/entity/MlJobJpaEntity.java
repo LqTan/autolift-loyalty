@@ -65,6 +65,10 @@ public class MlJobJpaEntity {
   @Column(name = "message")
   private String message;
 
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "metrics", columnDefinition = "jsonb")
+  private String metrics;
+
   public MlJobJpaEntity(
       UUID id,
       MlJobType jobType,
@@ -79,7 +83,8 @@ public class MlJobJpaEntity {
       Instant startedAt,
       Instant completedAt,
       Integer progress,
-      String message) {
+      String message,
+      String metrics) {
     this.id = id;
     this.jobType = jobType;
     this.campaignId = campaignId;
@@ -94,5 +99,6 @@ public class MlJobJpaEntity {
     this.completedAt = completedAt;
     this.progress = progress;
     this.message = message;
+    this.metrics = metrics;
   }
 }

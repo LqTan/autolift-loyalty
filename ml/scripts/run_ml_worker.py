@@ -1,5 +1,6 @@
 """ML Job Worker - polls ml_jobs table and executes pipelines."""
 import argparse
+import json
 import os
 import sys
 import time
@@ -7,6 +8,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+import numpy as np
+import pandas as pd
 import psycopg2
 import psycopg2.extras
 
@@ -14,7 +17,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from autolift_ml.pipeline.build_features import build_features
 from autolift_ml.pipeline.train import train_t_learner, predict_uplift
-from autolift_ml.pipeline.evaluate import evaluate_model
 from autolift_ml.pipeline.export import export_uplift_scores, export_feature_snapshots
 from autolift_ml.gp.build_gp_input import build_gp_input
 from autolift_ml.gp.train_gp_rules import train_gp_rules
@@ -42,6 +44,15 @@ class MlJobWorker:
             cur.execute(
                 "UPDATE ml.ml_jobs SET progress = %s, message = %s WHERE id = %s",
                 (progress, message, job_id)
+            )
+            conn.commit()
+
+    def _update_metrics(self, conn, job_id: str, metrics: dict):
+        metrics_json = json.dumps(metrics)
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE ml.ml_jobs SET metrics = %s WHERE id = %s",
+                (metrics_json, job_id)
             )
             conn.commit()
 
@@ -171,18 +182,192 @@ class MlJobWorker:
             campaign_id=campaign_id,
         )
         print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 3/4: Done. Output: {uplift_csv}", flush=True)
-        self._update_progress(conn, job_id, 85, "Exporting snapshots...")
+        self._update_progress(conn, job_id, 85, "Computing metrics...")
 
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 4/4: Exporting feature snapshots...", flush=True)
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 4/4: Computing and saving metrics...", flush=True)
+        metrics = self._compute_metrics(train_features, feature_cols, model_info, top_k_rate)
+        self._update_metrics(conn, job_id, metrics)
+
         feature_csv = export_feature_snapshots(
             test_features=test_df,
             model_version=model_version,
             output_dir=output_dir,
             campaign_id=campaign_id,
         )
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 4/4: Done. Output: {feature_csv}", flush=True)
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] STEP 4/4: Done. Metrics saved.", flush=True)
 
         return str(uplift_csv)
+
+    def _compute_metrics(self, train_features, feature_cols, model_info, top_k_rate):
+        from autolift_ml.pipeline.train import predict_uplift
+        import joblib
+
+        model_treatment = joblib.load(model_info["model_treatment_path"])
+        model_control = joblib.load(model_info["model_control_path"])
+
+        X = train_features[feature_cols].values
+        p_treatment, p_control, uplift_score = predict_uplift(model_treatment, model_control, X)
+
+        result = train_features.copy()
+        result["uplift_score"] = uplift_score
+
+        uplift_metrics = self._calculate_uplift_metrics(result, top_k_rate)
+        qini_curve = self._calculate_qini_curve(result)
+        economic_summary = self._calculate_economic_summary(result, top_k_rate)
+
+        return {
+            "upliftAt10": uplift_metrics.get("uplift_at_10", 0),
+            "upliftAt20": uplift_metrics.get("uplift_at_20", 0),
+            "upliftAt30": uplift_metrics.get("uplift_at_30", 0),
+            "auuc": uplift_metrics.get("auuc", 0),
+            "qiniAuc": uplift_metrics.get("qini_auc", 0),
+            "upliftCurve": uplift_metrics.get("uplift_curve", []),
+            "qiniCurve": qini_curve,
+            "economicSummary": economic_summary,
+        }
+
+    def _calculate_uplift_metrics(self, df, top_k_rate):
+        df_sorted = df.sort_values("uplift_score", ascending=False).reset_index(drop=True)
+        n = len(df_sorted)
+
+        steps = 20
+        uplift_curve = []
+        for frac in np.linspace(0.05, 1.0, steps):
+            k = max(1, int(n * frac))
+            subset = df_sorted.head(k)
+
+            rates = subset.groupby("treatment_flg")["target"].mean()
+            treated_rate = rates.get(1, np.nan)
+            control_rate = rates.get(0, np.nan)
+
+            observed_uplift = float(treated_rate - control_rate) if pd.notna(treated_rate) and pd.notna(control_rate) else np.nan
+
+            uplift_curve.append({
+                "targetFraction": round(float(frac), 4),
+                "numCustomers": k,
+                "observedUplift": round(observed_uplift, 6) if pd.notna(observed_uplift) else 0,
+                "treatedResponseRate": round(float(treated_rate), 6) if pd.notna(treated_rate) else None,
+                "controlResponseRate": round(float(control_rate), 6) if pd.notna(control_rate) else None,
+            })
+
+        uplift_k = {}
+        for k_rate in [0.10, 0.20, 0.30]:
+            k = max(1, int(n * k_rate))
+            top = df_sorted.head(k)
+            rates = top.groupby("treatment_flg")["target"].mean()
+            if 1 in rates.index and 0 in rates.index:
+                uplift_k[f"uplift_at_{int(k_rate * 100)}"] = round(float(rates.loc[1] - rates.loc[0]), 6)
+            else:
+                uplift_k[f"uplift_at_{int(k_rate * 100)}"] = 0
+
+        auuc = round(float(np.trapezoid(
+            [p.get("observedUplift", 0) or 0 for p in uplift_curve],
+            [p.get("targetFraction", 0) for p in uplift_curve]
+        )), 6)
+
+        qini_auc = self._calculate_qini_auc(df_sorted)
+
+        return {
+            **uplift_k,
+            "auuc": auuc,
+            "qini_auc": qini_auc,
+            "uplift_curve": uplift_curve,
+        }
+
+    def _calculate_qini_curve(self, df):
+        df_q = df.sort_values("uplift_score", ascending=False).reset_index(drop=True)
+
+        y = df_q["target"].astype(float)
+        treatment = df_q["treatment_flg"].astype(int)
+
+        treated = (treatment == 1).astype(int)
+        control = (treatment == 0).astype(int)
+
+        cum_treated = treated.cumsum()
+        cum_control = control.cumsum()
+        cum_treated_responders = (y * treated).cumsum()
+        cum_control_responders = (y * control).cumsum()
+
+        qini = cum_treated_responders - (cum_control_responders * cum_treated / cum_control.replace(0, np.nan))
+        qini = qini.fillna(0)
+
+        n = len(df_q)
+        curve = []
+        for i in range(n):
+            frac = (i + 1) / n
+            curve.append({
+                "targetFraction": round(float(frac), 4),
+                "numCustomers": i + 1,
+                "qini": round(float(qini.iloc[i]), 2),
+                "cumTreated": int(cum_treated.iloc[i]),
+                "cumControl": int(cum_control.iloc[i]),
+                "cumTreatedResponders": int(cum_treated_responders.iloc[i]),
+                "cumControlResponders": int(cum_control_responders.iloc[i]),
+            })
+
+        return curve
+
+    def _calculate_qini_auc(self, df):
+        df_q = df.sort_values("uplift_score", ascending=False).reset_index(drop=True)
+
+        y = df_q["target"].astype(float)
+        treatment = df_q["treatment_flg"].astype(int)
+
+        treated = (treatment == 1).astype(int)
+        control = (treatment == 0).astype(int)
+
+        cum_treated = treated.cumsum()
+        cum_control = control.cumsum()
+        cum_treated_responders = (y * treated).cumsum()
+        cum_control_responders = (y * control).cumsum()
+
+        qini = cum_treated_responders - (cum_control_responders * cum_treated / cum_control.replace(0, np.nan))
+        qini = qini.fillna(0).values
+
+        n = len(df_q)
+        percentages = np.arange(1, n + 1) / n
+        random_qini = np.array([0.0] + qini[:-1].tolist())
+
+        return round(float(np.trapezoid(qini - random_qini, percentages)), 2)
+
+    def _calculate_economic_summary(self, df, top_k_rate):
+        VALUE_PER_CONVERSION = 100_000
+        PROMO_COST_PER_TARGET = 10_000
+
+        total_customers = len(df)
+
+        mass_campaign_targets = int(total_customers * 0.5)
+        targeted_targets = int(total_customers * top_k_rate)
+
+        strategies = [
+            ("Mass Campaign", df.index),
+            ("Response Targeting", df.sort_values("uplift_score", ascending=False).head(targeted_targets).index),
+            ("Uplift Targeting", df[df["uplift_score"] >= df["uplift_score"].quantile(1 - top_k_rate)].index),
+        ]
+
+        summary = []
+        for strategy_name, selected_idx in strategies:
+            subset = df.loc[selected_idx]
+
+            treated_rate = subset[subset["treatment_flg"] == 1]["target"].mean() if (subset["treatment_flg"] == 1).any() else subset["target"].mean()
+            control_rate = subset[subset["treatment_flg"] == 0]["target"].mean() if (subset["treatment_flg"] == 0).any() else 0
+
+            incremental_rate = max(0, float(treated_rate - control_rate))
+            expected_incremental_conversions = len(subset) * incremental_rate
+            promotion_cost = len(subset) * PROMO_COST_PER_TARGET
+            expected_revenue = expected_incremental_conversions * VALUE_PER_CONVERSION
+            net_profit = expected_revenue - promotion_cost
+
+            summary.append({
+                "strategy": strategy_name,
+                "numTargeted": len(subset),
+                "expectedIncrementalConversions": round(expected_incremental_conversions, 2),
+                "promotionCost": promotion_cost,
+                "expectedRevenue": round(expected_revenue, 2),
+                "netProfit": round(net_profit, 2),
+            })
+
+        return summary
 
     def _run_gp_pipeline(self, conn, job_id, campaign_id: str, input_params: dict, uplift_score_job_id: Optional[str]) -> str:
         print(f"Running GP_RULE_EXTRACTION pipeline for campaign: {campaign_id}")
