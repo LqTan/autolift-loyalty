@@ -121,5 +121,8 @@ services:
 
 volumes:
   postgres_data:
+    name: autolift-postgres-data
   redis_data:
+    name: autolift-redis-data
   ml_worker_logs:
+    name: autolift-ml-logs
