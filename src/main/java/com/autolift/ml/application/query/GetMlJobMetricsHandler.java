@@ -1,12 +1,12 @@
 package com.autolift.ml.application.query;
 
-import com.autolift.ml.domain.model.MlJob;
-import com.autolift.ml.domain.repository.MlJobRepository;
-import com.autolift.ml.domain.valueobject.MlJobId;
 import com.autolift.ml.application.query.MlJobMetricsView.EconomicComparison;
 import com.autolift.ml.application.query.MlJobMetricsView.EconomicComparison.StrategySummary;
 import com.autolift.ml.application.query.MlJobMetricsView.QiniCurvePoint;
 import com.autolift.ml.application.query.MlJobMetricsView.UpliftCurvePoint;
+import com.autolift.ml.domain.model.MlJob;
+import com.autolift.ml.domain.repository.MlJobRepository;
+import com.autolift.ml.domain.valueobject.MlJobId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

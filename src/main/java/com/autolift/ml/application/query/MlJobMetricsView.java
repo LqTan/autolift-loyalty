@@ -1,6 +1,5 @@
 package com.autolift.ml.application.query;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +37,8 @@ public class MlJobMetricsView {
       List<UpliftCurvePoint> upliftCurve,
       List<QiniCurvePoint> qiniCurve,
       EconomicComparison economicComparison) {
-    return new MlJobMetricsView(jobId, modelVersion, metrics, upliftCurve, qiniCurve, economicComparison);
+    return new MlJobMetricsView(
+        jobId, modelVersion, metrics, upliftCurve, qiniCurve, economicComparison);
   }
 
   public UUID getJobId() {
