@@ -140,10 +140,6 @@ jobs:
             echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
             echo "==> Update docker-compose.prod.yml with image refs"
-            sed -i "s|image: postgres:16-alpine|image: postgres:16-alpine|g" docker-compose.prod.yml
-            sed -i "s|image: redis:7-alpine|image: redis:7-alpine|g" docker-compose.prod.yml
-            sed -i "s|build:|image: ${APP_IMAGE_REF}|" docker-compose.prod.yml || true
-            # For app service, replace build section with image
             python3 -c "
             import yaml
             with open('docker-compose.prod.yml', 'r') as f:
