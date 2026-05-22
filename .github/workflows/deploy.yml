@@ -191,6 +191,8 @@ jobs:
               if curl -sf http://localhost:8080/actuator/health > /dev/null 2>&1; then
                 echo "Application is healthy!"
                 echo "==> Deployment complete!"
+                echo "==> Cleaning up old Docker images (keep last 24h)..."
+                docker image prune -af --filter "until=24h" || true
                 exit 0
               fi
               echo "Waiting... (${i}/30)"
