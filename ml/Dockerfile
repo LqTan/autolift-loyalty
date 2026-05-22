@@ -10,6 +10,7 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY autolift_ml/ ./autolift_ml/
 COPY scripts/ ./scripts/
 COPY config.yaml .
 
