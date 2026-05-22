@@ -180,6 +180,10 @@ jobs:
             mkdir -p /opt/autolift/ml/artifacts
             mkdir -p /opt/autolift/ml/scripts
 
+            echo "==> Cleanup old Docker resources before deployment"
+            docker system prune -af || true
+            docker image prune -af --filter "until=24h" || true
+
             echo "==> Stop existing containers"
             docker compose -f docker-compose.prod.yml down || true
 
