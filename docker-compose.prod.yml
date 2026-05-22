@@ -73,7 +73,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - REDIS_HOST=redis
-      - JWT_SECRET=${JWT_SECRET}
+      - JWT_SECRET=${JWT_SECRET:-AutoliftLoyalty2024SecretKeyAtLeast256BitsLong!}
       - JAVA_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200
     depends_on:
       postgres:
@@ -113,9 +113,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1536M
         reservations:
-          memory: 256M
+          memory: 512M
     restart: unless-stopped
 
 volumes:
