@@ -68,6 +68,7 @@ services:
       - "8080:8080"
     volumes:
       - ./ml/data:/opt/autolift/ml/data:ro
+      - ./ml/artifacts:/opt/autolift/ml/artifacts:ro
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - POSTGRES_HOST=postgres
