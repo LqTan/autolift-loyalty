@@ -66,6 +66,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    volumes:
+      - ./ml/data:/opt/autolift/ml/data:ro
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - POSTGRES_HOST=postgres
