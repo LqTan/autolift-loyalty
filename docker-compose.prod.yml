@@ -111,6 +111,7 @@ services:
       - ML_DB_NAME=${POSTGRES_DB}
       - ML_DB_USER=${POSTGRES_USER}
       - ML_DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     deploy:
       resources:
         limits:
