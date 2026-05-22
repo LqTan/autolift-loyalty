@@ -55,6 +55,12 @@ public class CreateMlJobHandler {
   }
 
   public void triggerPythonWorkerAsync(java.util.UUID jobId) {
+    // Skip Python worker trigger in Docker/production - ML Worker container handles polling
+    if (System.getenv("DOCKER_CONTAINER") != null || new java.io.File("/.dockerenv").exists()) {
+      log.info("Running in Docker - ML Worker container will poll and process job: {}", jobId);
+      return;
+    }
+
     new Thread(
             () -> {
               try {
