@@ -61,7 +61,7 @@ class GPModel:
         recall = true_positives / actual_positives if actual_positives > 0 else 0
         f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
 
-        return f1, precision
+        return f1, precision, recall
 
     def apply_rule(self, rule_str: str) -> pd.Series:
         condition = self._parse_rule(rule_str)
@@ -146,17 +146,14 @@ def build_gp_model(
     rules = []
     for idx, ind in enumerate(top_individuals):
         rule_str = ind_to_rule_str(ind)
-        fitness, precision = gp_model.evaluate_rule(ind)
-        recall = gp_model.evaluate_rule(ind)[1]
-
-        rule = {
+        f1, precision, recall = gp_model.evaluate_rule(ind)
+        rules.append({
             "rule_text": rule_str,
             "rule_expression": rule_str,
             "precision": precision,
             "recall": recall,
-            "f1": fitness,
-        }
-        rules.append(rule)
+            "f1": f1,
+        })
 
     return rules
 
