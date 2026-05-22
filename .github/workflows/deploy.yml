@@ -192,7 +192,7 @@ jobs:
 
             echo "==> Waiting for application to be healthy..."
             for i in {1..30}; do
-              if curl -sf http://localhost:8080/actuator/health > /dev/null 2>&1; then
+              if curl -sf http://localhost:8080/actuator/health/liveness > /dev/null 2>&1; then
                 echo "Application is healthy!"
                 echo "==> Deployment complete!"
                 echo "==> Cleaning up old Docker images (keep last 24h)..."
