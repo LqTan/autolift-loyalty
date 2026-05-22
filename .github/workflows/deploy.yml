@@ -177,7 +177,6 @@ jobs:
             mkdir -p /opt/autolift/ml/data
             mkdir -p /opt/autolift/ml/artifacts
             mkdir -p /opt/autolift/ml/scripts
-            mkdir -p /opt/autolift/ml/config.yaml
 
             echo "==> Stop existing containers"
             docker compose -f docker-compose.prod.yml down || true
