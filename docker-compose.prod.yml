@@ -71,6 +71,7 @@ services:
       - ./ml/artifacts:/opt/autolift/ml/artifacts:ro
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - ML_DATA_PATH=/opt/autolift/ml/data
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
