@@ -96,7 +96,7 @@ public class CreateMlJobHandler {
                         + "'";
                 log.info("[Python Worker] Full command: {}", cmd);
 
-                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+                ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", cmd);
                 pb.directory(new java.io.File(baseDir));
                 pb.redirectErrorStream(true);
                 pb.redirectOutput(java.io.File.createTempFile("ml_worker", ".log"));
