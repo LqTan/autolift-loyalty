@@ -1,6 +1,6 @@
 dataset:
   name: x5_retailhero
-  base_dir: /home/archer/Projects/java_projects/autolift-loyalty/ml/data
+  base_dir: data
   train_file: uplift_train.csv.gz
   clients_file: clients.csv.gz
   purchases_file: purchases.csv.gz

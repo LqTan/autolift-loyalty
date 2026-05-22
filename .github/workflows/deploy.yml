@@ -15,26 +15,37 @@ env:
   JAVA_VERSION: '21'
   REGISTRY: ghcr.io
   IMAGE_NAME: lqtan/autolift-loyalty
+  ML_IMAGE_NAME: lqtan/autolift-ml-worker
 
 jobs:
   build-docker:
-    name: Build Docker Image
+    name: Build Docker Images
     runs-on: ubuntu-latest
     outputs:
-      image_ref: ${{ steps.image.outputs.image_ref }}
+      app_image_ref: ${{ steps.app_image.outputs.image_ref }}
+      ml_image_ref: ${{ steps.ml_image.outputs.image_ref }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set image ref
-        id: image
+      - name: Set app image ref
+        id: app_image
         run: |
           IMAGE_NAME_LOWER=$(echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
           IMAGE_REF="${IMAGE_NAME_LOWER}:${GITHUB_SHA::7}"
           echo "image_ref=${IMAGE_REF}" >> "$GITHUB_OUTPUT"
           echo "IMAGE_REF=${IMAGE_REF}" >> "$GITHUB_ENV"
           echo "LATEST_REF=${IMAGE_NAME_LOWER}:latest" >> "$GITHUB_ENV"
+
+      - name: Set ML worker image ref
+        id: ml_image
+        run: |
+          ML_IMAGE_LOWER=$(echo "${{ env.REGISTRY }}/${{ env.ML_IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          ML_IMAGE_REF="${ML_IMAGE_LOWER}:${GITHUB_SHA::7}"
+          echo "image_ref=${ML_IMAGE_REF}" >> "$GITHUB_OUTPUT"
+          echo "ML_IMAGE_REF=${ML_IMAGE_REF}" >> "$GITHUB_ENV"
+          echo "ML_LATEST_REF=${ML_IMAGE_LOWER}:latest" >> "$GITHUB_ENV"
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -62,7 +73,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push App Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -70,6 +81,19 @@ jobs:
           tags: |
             ${{ env.IMAGE_REF }}
             ${{ env.LATEST_REF }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push ML Worker Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ml
+          push: true
+          tags: |
+            ${{ env.ML_IMAGE_REF }}
+            ${{ env.ML_LATEST_REF }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
           cache-from: type=gha
@@ -85,14 +109,15 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1
         env:
-          IMAGE_REF: ${{ needs.build-docker.outputs.image_ref }}
+          APP_IMAGE_REF: ${{ needs.build-docker.outputs.app_image_ref }}
+          ML_IMAGE_REF: ${{ needs.build-docker.outputs.ml_image_ref }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.EC2_PRODUCTION_HOST }}
           username: ${{ secrets.EC2_PRODUCTION_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: IMAGE_REF,GHCR_USERNAME,GHCR_TOKEN
+          envs: APP_IMAGE_REF,ML_IMAGE_REF,GHCR_USERNAME,GHCR_TOKEN
           script: |
             set -e
 
@@ -111,20 +136,70 @@ jobs:
               git clean -fd
             fi
 
+            echo "==> Login to GHCR"
+            echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+
+            echo "==> Update docker-compose.prod.yml with image refs"
+            sed -i "s|image: postgres:16-alpine|image: postgres:16-alpine|g" docker-compose.prod.yml
+            sed -i "s|image: redis:7-alpine|image: redis:7-alpine|g" docker-compose.prod.yml
+            sed -i "s|build:|image: ${APP_IMAGE_REF}|" docker-compose.prod.yml || true
+            # For app service, replace build section with image
+            python3 -c "
+            import yaml
+            with open('docker-compose.prod.yml', 'r') as f:
+                compose = yaml.safe_load(f)
+            compose['services']['app']['image'] = '${APP_IMAGE_REF}'
+            if 'build' in compose['services']['app']:
+                del compose['services']['app']['build']
+            compose['services']['ml-worker']['image'] = '${ML_IMAGE_REF}'
+            if 'build' in compose['services']['ml-worker']:
+                del compose['services']['ml-worker']['build']
+            with open('docker-compose.prod.yml', 'w') as f:
+                yaml.dump(compose, f)
+            "
+
             echo "==> Create production .env"
             cat > .env <<EOF
             SPRING_PROFILES_ACTIVE=prod
             SERVER_PORT=8080
-            POSTGRES_HOST=127.0.0.1
+            POSTGRES_HOST=postgres
             POSTGRES_PORT=5432
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            REDIS_HOST=127.0.0.1
+            REDIS_HOST=redis
             REDIS_PORT=6379
             JWT_SECRET=${{ secrets.JWT_SECRET }}
+            ML_DB_HOST=postgres
+            ML_DB_PORT=5432
+            ML_DB_NAME=${{ secrets.POSTGRES_DB }}
+            ML_DB_USER=${{ secrets.POSTGRES_USER }}
+            ML_DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             EOF
 
-            echo "==> Run deploy script"
-            chmod +x scripts/deploy.sh
-            ./scripts/deploy.sh production "$IMAGE_REF"
+            echo "==> Ensure ML data directory exists with data"
+            mkdir -p /opt/autolift/ml/data
+            mkdir -p /opt/autolift/ml/artifacts
+            mkdir -p /opt/autolift/ml/scripts
+            mkdir -p /opt/autolift/ml/config.yaml
+
+            echo "==> Stop existing containers"
+            docker compose -f docker-compose.prod.yml down || true
+
+            echo "==> Start full stack with docker-compose"
+            docker compose -f docker-compose.prod.yml up -d
+
+            echo "==> Waiting for application to be healthy..."
+            for i in {1..30}; do
+              if curl -sf http://localhost:8080/actuator/health > /dev/null 2>&1; then
+                echo "Application is healthy!"
+                echo "==> Deployment complete!"
+                exit 0
+              fi
+              echo "Waiting... (${i}/30)"
+              sleep 2
+            done
+
+            echo "ERROR: Application health check failed!"
+            docker compose -f docker-compose.prod.yml logs
+            exit 1
