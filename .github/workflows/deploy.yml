@@ -141,10 +141,10 @@ jobs:
             echo "==> Login to GHCR"
             echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
-            echo "==> Update docker-compose.prod.yml with image refs"
+            echo "==> Update docker/prod/docker-compose.yml with image refs"
             python3 -c "
             import yaml
-            with open('docker-compose.prod.yml', 'r') as f:
+            with open('docker/prod/docker-compose.yml', 'r') as f:
                 compose = yaml.safe_load(f)
             compose['services']['app']['image'] = '${APP_IMAGE_REF}'
             if 'build' in compose['services']['app']:
@@ -152,7 +152,7 @@ jobs:
             compose['services']['ml-worker']['image'] = '${ML_IMAGE_REF}'
             if 'build' in compose['services']['ml-worker']:
                 del compose['services']['ml-worker']['build']
-            with open('docker-compose.prod.yml', 'w') as f:
+            with open('docker/prod/docker-compose.yml', 'w') as f:
                 yaml.dump(compose, f)
             "
 
@@ -185,10 +185,10 @@ jobs:
             docker image prune -af --filter "until=24h" || true
 
             echo "==> Stop existing containers"
-            docker compose -f docker-compose.prod.yml down || true
+            docker compose -f docker/prod/docker-compose.yml down || true
 
             echo "==> Start full stack with docker-compose"
-            docker compose -f docker-compose.prod.yml up -d
+            docker compose -f docker/prod/docker-compose.yml up -d
 
             echo "==> Waiting for application to be healthy..."
             for i in {1..30}; do
@@ -204,5 +204,5 @@ jobs:
             done
 
             echo "ERROR: Application health check failed!"
-            docker compose -f docker-compose.prod.yml logs
+            docker compose -f docker/prod/docker-compose.yml logs
             exit 1

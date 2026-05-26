@@ -62,13 +62,13 @@ services:
 
   app:
     build:
-      context: .
+      context: ../../
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     volumes:
-      - ./ml/data:/opt/autolift/ml/data:ro
-      - ./ml/artifacts:/opt/autolift/ml/artifacts:ro
+      - ../../ml/data:/opt/autolift/ml/data:ro
+      - ../../ml/artifacts:/opt/autolift/ml/artifacts:ro
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - ML_DATA_PATH=/opt/autolift/ml/data
@@ -100,12 +100,12 @@ services:
 
   ml-worker:
     build:
-      context: ./ml
+      context: ../../ml
       dockerfile: Dockerfile
     volumes:
-      - ./ml/data:/opt/autolift/ml/data:ro
-      - ./ml/artifacts:/opt/autolift/ml/artifacts
-      - ./ml/scripts:/opt/autolift/ml/scripts:ro
+      - ../../ml/data:/opt/autolift/ml/data:ro
+      - ../../ml/artifacts:/opt/autolift/ml/artifacts
+      - ../../ml/scripts:/opt/autolift/ml/scripts:ro
       - ml_worker_logs:/var/log/autolift
     environment:
       - ML_DB_HOST=postgres
@@ -124,8 +124,8 @@ services:
 
 volumes:
   postgres_data:
-    name: autolift-postgres-data
+    name: autolift-prod-postgres-data
   redis_data:
-    name: autolift-redis-data
+    name: autolift-prod-redis-data
   ml_worker_logs:
-    name: autolift-ml-logs
+    name: autolift-prod-ml-logs

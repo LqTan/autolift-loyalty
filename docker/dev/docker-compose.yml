@@ -1,0 +1,68 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-autolift}
+      - POSTGRES_USER=${POSTGRES_USER:-autolift}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-autolift2024}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-autolift} -d ${POSTGRES_DB:-autolift}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  app:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../ml/data:/opt/autolift/ml/data:ro
+      - ../../ml/artifacts:/opt/autolift/ml/artifacts:ro
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - ML_DATA_PATH=/opt/autolift/ml/data
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=${POSTGRES_DB:-autolift}
+      - POSTGRES_USER=${POSTGRES_USER:-autolift}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-autolift2024}
+      - REDIS_HOST=redis
+      - JWT_SECRET=${JWT_SECRET:-AutoliftLoyalty2024SecretKeyAtLeast256BitsLong!}
+      - JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseG1GC
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health/liveness || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: autolift-dev-postgres-data
+  redis_data:
+    name: autolift-dev-redis-data
