@@ -16,8 +16,10 @@ public class GetTargetCustomersHandler {
 
   public List<TargetCustomerView> handle(GetTargetCustomersQuery query) {
     return repository
-        .findTopByCampaignIdOrderByUpliftScoreDesc(query.campaignId(), query.limit())
+        .findByCampaignId(query.campaignId())
         .stream()
+        .sorted((a, b) -> b.getUpliftScore().compareTo(a.getUpliftScore()))
+        .limit(query.limit())
         .map(this::toView)
         .toList();
   }

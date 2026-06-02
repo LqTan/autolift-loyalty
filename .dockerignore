@@ -7,7 +7,7 @@ src/test/
 *.md
 docs/
 ml/
-.env
+docker/dev/.env
 *.log
 *.class
 *.jar.original

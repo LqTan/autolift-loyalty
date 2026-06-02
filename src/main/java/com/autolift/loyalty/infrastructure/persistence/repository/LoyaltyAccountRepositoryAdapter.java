@@ -8,10 +8,14 @@ import com.autolift.loyalty.infrastructure.persistence.mapper.LoyaltyAccountPers
 import com.autolift.loyalty.infrastructure.persistence.mapper.PointTransactionPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class LoyaltyAccountRepositoryAdapter implements LoyaltyAccountRepository {
+
+  private static final String CACHE_NAME = "loyaltyAccounts";
 
   private final LoyaltyAccountJpaRepository jpaRepository;
   private final LoyaltyAccountPersistenceMapper mapper;
@@ -30,6 +34,7 @@ public class LoyaltyAccountRepositoryAdapter implements LoyaltyAccountRepository
   }
 
   @Override
+  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public LoyaltyAccount save(LoyaltyAccount account) {
     var entity = mapper.toEntity(account);
     entity = jpaRepository.save(entity);
@@ -37,11 +42,13 @@ public class LoyaltyAccountRepositoryAdapter implements LoyaltyAccountRepository
   }
 
   @Override
+  @Cacheable(value = CACHE_NAME, key = "#id.getId().toString()")
   public Optional<LoyaltyAccount> findById(LoyaltyAccountId id) {
     return jpaRepository.findById(id.getId()).map(mapper::toDomain);
   }
 
   @Override
+  @Cacheable(value = CACHE_NAME, key = "#customerId")
   public Optional<LoyaltyAccount> findByCustomerId(String customerId) {
     return jpaRepository.findAll().stream()
         .filter(e -> e.getCustomerId().equals(customerId))

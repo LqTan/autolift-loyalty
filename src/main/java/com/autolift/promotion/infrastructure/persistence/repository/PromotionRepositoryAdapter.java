@@ -7,12 +7,16 @@ import com.autolift.promotion.infrastructure.persistence.entity.PromotionJpaEnti
 import com.autolift.promotion.infrastructure.persistence.mapper.PromotionPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class PromotionRepositoryAdapter implements PromotionRepository {
+
+  private static final String CACHE_NAME = "promotions";
 
   private final PromotionJpaRepository jpaRepository;
   private final PromotionPersistenceMapper mapper;
@@ -24,6 +28,7 @@ public class PromotionRepositoryAdapter implements PromotionRepository {
   }
 
   @Override
+  @Cacheable(value = CACHE_NAME, key = "#id.getId().toString()")
   public Optional<Promotion> findById(PromotionId id) {
     return jpaRepository.findById(id.getId()).map(mapper::toDomain);
   }
@@ -39,6 +44,7 @@ public class PromotionRepositoryAdapter implements PromotionRepository {
   }
 
   @Override
+  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public Promotion save(Promotion promotion) {
     PromotionJpaEntity entity = mapper.toEntity(promotion);
     PromotionJpaEntity savedEntity = jpaRepository.save(entity);
@@ -46,6 +52,7 @@ public class PromotionRepositoryAdapter implements PromotionRepository {
   }
 
   @Override
+  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public void delete(Promotion promotion) {
     jpaRepository.delete(mapper.toEntity(promotion));
   }

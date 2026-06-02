@@ -32,7 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-.env
+docker/dev/.env
 AGENTS.md
 opencode.json
 

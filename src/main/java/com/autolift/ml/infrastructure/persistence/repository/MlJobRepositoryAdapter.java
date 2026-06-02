@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class MlJobRepositoryAdapter implements MlJobRepository {
+
+  private static final String CACHE_NAME = "mlJobs";
 
   private final MlJobJpaRepository jpaRepository;
 
@@ -25,11 +29,13 @@ public class MlJobRepositoryAdapter implements MlJobRepository {
   }
 
   @Override
+  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public MlJob save(MlJob job) {
     return MlJobMapper.toDomain(jpaRepository.save(MlJobMapper.toEntity(job)));
   }
 
   @Override
+  @Cacheable(value = CACHE_NAME, key = "#id.getId().toString()")
   public Optional<MlJob> findById(MlJobId id) {
     return jpaRepository.findById(id.getId()).map(MlJobMapper::toDomain);
   }
