@@ -2,6 +2,7 @@ package com.autolift.sandbox.events;
 
 import org.springframework.context.ApplicationEvent;
 
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class SandboxCreatedEvent extends ApplicationEvent {
 
   private final String id;

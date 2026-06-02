@@ -3,6 +3,7 @@ package com.autolift.customer.events;
 import java.time.Instant;
 import org.springframework.context.ApplicationEvent;
 
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class CustomerCreatedEvent extends ApplicationEvent {
 
   private final String customerId;

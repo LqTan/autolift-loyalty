@@ -256,7 +256,8 @@ public class MlJob {
       try {
         String totalStr = this.resultPath.split("\"total\":")[1].split("[,}]")[0];
         total = Integer.parseInt(totalStr.trim());
-      } catch (Exception e) {
+      } catch (Exception ignored) {
+        // ignore parse error, progress will be 0
       }
     }
     int pct = total > 0 ? (imported + failed) * 100 / total : 0;

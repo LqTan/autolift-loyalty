@@ -158,7 +158,6 @@ public class SeedCustomersCommandHandler {
   }
 
   private UUID customerIdToUuid(String customerId) {
-    UUID namespaceUuid = UUID.fromString("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
     return UUID.nameUUIDFromBytes(("6ba7b810-9dad-11d1-80b4-00c04fd430c8" + customerId).getBytes());
   }
 

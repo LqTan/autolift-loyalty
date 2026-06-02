@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import org.springframework.context.ApplicationEvent;
 
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class TargetCustomersSelectedEvent extends ApplicationEvent {
 
   private final String campaignId;

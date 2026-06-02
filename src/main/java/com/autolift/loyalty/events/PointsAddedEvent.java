@@ -4,6 +4,7 @@ import com.autolift.loyalty.domain.valueobject.LoyaltyAccountId;
 import java.math.BigDecimal;
 import org.springframework.context.ApplicationEvent;
 
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class PointsAddedEvent extends ApplicationEvent {
 
   private final LoyaltyAccountId loyaltyAccountId;

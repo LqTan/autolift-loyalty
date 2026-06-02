@@ -70,7 +70,6 @@ public class CleanupScheduler {
     if (tempDir.exists() && tempDir.isDirectory()) {
       File[] subdirs = tempDir.listFiles();
       if (subdirs != null) {
-        Instant cutoff = Instant.now().minus(RETENTION_DAYS, ChronoUnit.DAYS);
         for (File subdir : subdirs) {
           long ageInDays =
               ChronoUnit.DAYS.between(Instant.ofEpochMilli(subdir.lastModified()), Instant.now());

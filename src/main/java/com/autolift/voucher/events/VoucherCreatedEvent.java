@@ -3,6 +3,7 @@ package com.autolift.voucher.events;
 import java.time.Instant;
 import org.springframework.context.ApplicationEvent;
 
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class VoucherCreatedEvent extends ApplicationEvent {
 
   private final String voucherId;

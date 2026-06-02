@@ -119,6 +119,7 @@ public class CustomerSeedJobConfig {
     }
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateField")
   static class CustomerBatchWriter implements ItemWriter<Customer> {
 
     private final CustomerJpaRepository repository;

@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -118,7 +119,7 @@ public class CustomerCommandController {
     if (file.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
-    java.nio.file.Path tempFile = java.nio.file.Files.createTempFile("customers_import_", ".csv");
+    Path tempFile = Files.createTempFile("customers_import_", ".csv");
     Files.copy(file.getInputStream(), tempFile);
     ImportCustomersResult result =
         importHandler.handle(new ImportCustomersCommand(tempFile.toString()));

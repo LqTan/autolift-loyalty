@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.UUID;
 import org.springframework.context.ApplicationEvent;
 
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class MlJobFailedEvent extends ApplicationEvent {
 
   private final UUID jobId;

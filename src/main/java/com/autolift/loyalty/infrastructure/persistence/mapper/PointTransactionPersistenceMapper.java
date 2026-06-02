@@ -15,7 +15,7 @@ public class PointTransactionPersistenceMapper {
     }
     return PointTransaction.of(
         PointTransactionId.of(entity.getId()),
-        com.autolift.loyalty.domain.valueobject.PointTransactionId.of(entity.getLoyaltyAccountId()),
+        PointTransactionId.of(entity.getLoyaltyAccountId()),
         entity.getAmount(),
         TransactionType.valueOf(entity.getTransactionType()),
         entity.getReferenceId(),
