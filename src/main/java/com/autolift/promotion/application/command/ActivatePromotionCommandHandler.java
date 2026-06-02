@@ -6,6 +6,7 @@ import com.autolift.promotion.domain.repository.PromotionRepository;
 import com.autolift.promotion.domain.valueobject.PromotionId;
 import com.autolift.promotion.events.PromotionActivatedEvent;
 import java.time.Instant;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ public class ActivatePromotionCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
+  @CacheEvict(value = "promotions", key = "#command.promotionId()")
   @org.springframework.transaction.annotation.Transactional
   public void handle(ActivatePromotionCommand command) {
     Promotion promotion =

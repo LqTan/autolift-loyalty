@@ -6,6 +6,7 @@ import com.autolift.ml.domain.valueobject.MlJobType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,6 +29,7 @@ public class CreateMlJobHandler {
     this.mlJobRepository = mlJobRepository;
   }
 
+  @CacheEvict(value = "mlJobs", key = "#result.getId().getId().toString()")
   public MlJob handle(CreateMlJobCommand command) {
     log.info(
         "Creating ML job: type={}, campaignId={}", command.getJobType(), command.getCampaignId());

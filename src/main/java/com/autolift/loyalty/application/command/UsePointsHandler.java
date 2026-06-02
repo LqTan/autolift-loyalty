@@ -7,6 +7,7 @@ import com.autolift.loyalty.domain.model.PointTransaction.TransactionType;
 import com.autolift.loyalty.domain.repository.LoyaltyAccountRepository;
 import com.autolift.loyalty.domain.valueobject.LoyaltyAccountId;
 import com.autolift.loyalty.domain.valueobject.PointTransactionId;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +19,7 @@ public class UsePointsHandler {
     this.repository = repository;
   }
 
+  @CacheEvict(value = "loyaltyAccounts", key = "#command.accountId()")
   @org.springframework.transaction.annotation.Transactional
   public void handle(UsePointsCommand command) {
     LoyaltyAccount account =

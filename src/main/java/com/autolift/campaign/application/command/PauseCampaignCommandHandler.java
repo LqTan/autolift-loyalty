@@ -16,7 +16,7 @@ public class PauseCampaignCommandHandler {
     this.repository = repository;
   }
 
-  @CacheEvict(value = "campaigns", allEntries = true)
+  @CacheEvict(value = "campaigns", key = "#command.campaignId()")
   @org.springframework.transaction.annotation.Transactional
   public void handle(PauseCampaignCommand command) {
     Campaign campaign =

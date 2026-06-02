@@ -2,6 +2,7 @@ package com.autolift.loyalty.application.command;
 
 import com.autolift.loyalty.domain.model.LoyaltyAccount;
 import com.autolift.loyalty.domain.repository.LoyaltyAccountRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,6 +14,7 @@ public class CreateLoyaltyAccountHandler {
     this.repository = repository;
   }
 
+  @CacheEvict(value = "loyaltyAccounts", key = "#result.id()")
   @org.springframework.transaction.annotation.Transactional
   public LoyaltyAccountCreatedResult handle(CreateLoyaltyAccountCommand command) {
     LoyaltyAccount account = LoyaltyAccount.create(command.customerId());

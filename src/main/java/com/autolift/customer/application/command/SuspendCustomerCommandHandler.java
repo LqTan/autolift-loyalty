@@ -4,6 +4,7 @@ import com.autolift.customer.domain.exception.CustomerNotFoundException;
 import com.autolift.customer.domain.model.Customer;
 import com.autolift.customer.domain.repository.CustomerRepository;
 import com.autolift.customer.domain.valueobject.CustomerId;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class SuspendCustomerCommandHandler {
     this.repository = repository;
   }
 
+  @CacheEvict(value = "customers", key = "#command.customerId()")
   @org.springframework.transaction.annotation.Transactional
   public void handle(SuspendCustomerCommand command) {
     Customer customer =

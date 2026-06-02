@@ -3,6 +3,7 @@ package com.autolift.promotion.application.command;
 import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
 import com.autolift.promotion.events.PromotionCreatedEvent;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class CreatePromotionCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
+  @CacheEvict(value = "promotions", key = "#result.id()")
   @org.springframework.transaction.annotation.Transactional
   public CreatePromotionResult handle(CreatePromotionCommand command) {
     Promotion promotion =

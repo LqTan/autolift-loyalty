@@ -3,6 +3,7 @@ package com.autolift.customer.application.command;
 import com.autolift.customer.domain.model.Customer;
 import com.autolift.customer.domain.repository.CustomerRepository;
 import com.autolift.customer.events.CustomerCreatedEvent;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class CreateCustomerCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
+  @CacheEvict(value = "customers", key = "#result.id.getId().toString()")
   @org.springframework.transaction.annotation.Transactional
   public CreateCustomerResult handle(CreateCustomerCommand command) {
     Customer customer =

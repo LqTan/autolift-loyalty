@@ -4,6 +4,7 @@ import com.autolift.promotion.domain.exception.PromotionNotFoundException;
 import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
 import com.autolift.promotion.domain.valueobject.PromotionId;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class DeactivatePromotionCommandHandler {
     this.repository = repository;
   }
 
+  @CacheEvict(value = "promotions", key = "#command.promotionId()")
   @org.springframework.transaction.annotation.Transactional
   public void handle(DeactivatePromotionCommand command) {
     Promotion promotion =

@@ -3,6 +3,7 @@ package com.autolift.voucher.application.command;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
 import com.autolift.voucher.events.VoucherCreatedEvent;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class CreateVoucherCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
+  @CacheEvict(value = "vouchers", key = "#command.code()")
   @org.springframework.transaction.annotation.Transactional
   public CreateVoucherResult handle(CreateVoucherCommand command) {
     Voucher voucher =

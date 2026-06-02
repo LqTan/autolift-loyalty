@@ -15,7 +15,7 @@ public class CreateCampaignCommandHandler {
     this.repository = repository;
   }
 
-  @CacheEvict(value = "campaigns", allEntries = true)
+  @CacheEvict(value = "campaigns", key = "#result.id.getId().toString()")
   @org.springframework.transaction.annotation.Transactional
   public CampaignCreatedResult handle(CreateCampaignCommand command) {
     Budget budget = Budget.of(command.budgetAmount(), command.budgetCurrency());
