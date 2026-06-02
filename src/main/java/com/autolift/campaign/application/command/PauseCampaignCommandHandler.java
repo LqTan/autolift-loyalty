@@ -5,6 +5,7 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +17,10 @@ public class PauseCampaignCommandHandler {
     this.repository = repository;
   }
 
-  @CacheEvict(value = "campaigns", key = "#command.campaignId()")
+  @Caching(evict = {
+    @CacheEvict(value = "campaigns", key = "#command.campaignId()"),
+    @CacheEvict(value = "campaigns", key = "'all'")
+  })
   @org.springframework.transaction.annotation.Transactional
   public void handle(PauseCampaignCommand command) {
     Campaign campaign =

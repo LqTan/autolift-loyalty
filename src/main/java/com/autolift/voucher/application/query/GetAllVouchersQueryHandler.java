@@ -4,6 +4,7 @@ import com.autolift.voucher.api.query.VoucherResponse;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ public class GetAllVouchersQueryHandler {
     this.repository = repository;
   }
 
+  @Cacheable(value = "vouchers", key = "'all'")
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public List<VoucherResponse> handle(GetAllVouchersQuery query) {
     return repository.findAll().stream().map(this::toResponse).toList();

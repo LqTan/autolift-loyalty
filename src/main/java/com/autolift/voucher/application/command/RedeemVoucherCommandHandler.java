@@ -5,6 +5,7 @@ import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
 import com.autolift.voucher.events.VoucherRedeemedEvent;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,10 @@ public class RedeemVoucherCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
-  @CacheEvict(value = "vouchers", key = "#command.code()")
+  @Caching(evict = {
+    @CacheEvict(value = "vouchers", key = "#command.code()"),
+    @CacheEvict(value = "vouchers", key = "'all'")
+  })
   @org.springframework.transaction.annotation.Transactional
   public void handle(RedeemVoucherCommand command) {
     Voucher voucher =
