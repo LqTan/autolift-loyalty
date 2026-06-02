@@ -4,6 +4,7 @@ import com.autolift.promotion.domain.exception.PromotionNotFoundException;
 import com.autolift.promotion.domain.model.Promotion;
 import com.autolift.promotion.domain.repository.PromotionRepository;
 import com.autolift.promotion.domain.valueobject.PromotionId;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class GetPromotionQueryHandler {
     this.repository = repository;
   }
 
+  @Cacheable(value = "promotions", key = "#query.id()")
   public PromotionView handle(GetPromotionQuery query) {
     Promotion promotion =
         repository

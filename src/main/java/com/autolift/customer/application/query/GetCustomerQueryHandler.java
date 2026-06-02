@@ -4,6 +4,7 @@ import com.autolift.customer.api.query.CustomerResponse;
 import com.autolift.customer.domain.exception.CustomerNotFoundException;
 import com.autolift.customer.domain.repository.CustomerRepository;
 import com.autolift.customer.domain.valueobject.CustomerId;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class GetCustomerQueryHandler {
     this.repository = repository;
   }
 
+  @Cacheable(value = "customers", key = "#query.customerId()")
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public CustomerResponse handle(GetCustomerQuery query) {
     return repository

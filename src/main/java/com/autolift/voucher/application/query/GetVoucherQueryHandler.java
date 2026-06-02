@@ -4,6 +4,7 @@ import com.autolift.voucher.api.query.VoucherResponse;
 import com.autolift.voucher.domain.exception.VoucherNotFoundException;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class GetVoucherQueryHandler {
     this.repository = repository;
   }
 
+  @Cacheable(value = "vouchers", key = "#query.code()")
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public VoucherResponse handle(GetVoucherQuery query) {
     Voucher voucher =

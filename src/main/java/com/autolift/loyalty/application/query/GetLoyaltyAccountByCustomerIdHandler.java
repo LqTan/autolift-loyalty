@@ -2,6 +2,7 @@ package com.autolift.loyalty.application.query;
 
 import com.autolift.loyalty.domain.repository.LoyaltyAccountRepository;
 import java.util.Optional;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,6 +14,7 @@ public class GetLoyaltyAccountByCustomerIdHandler {
     this.repository = repository;
   }
 
+  @Cacheable(value = "loyaltyAccounts", key = "#query.customerId()")
   public Optional<LoyaltyAccountView> handle(GetLoyaltyAccountByCustomerIdQuery query) {
     return repository
         .findByCustomerId(query.customerId())

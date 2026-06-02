@@ -22,14 +22,12 @@ public class CustomerUpliftScoreRepositoryAdapter implements CustomerUpliftScore
   }
 
   @Override
-  @CacheEvict(value = "upliftScores", allEntries = true)
   public CustomerUpliftScore save(CustomerUpliftScore score) {
     return CustomerUpliftScoreMapper.toDomain(
         jpaRepository.save(CustomerUpliftScoreMapper.toEntity(score)));
   }
 
   @Override
-  @CacheEvict(value = "upliftScores", allEntries = true)
   public void saveAll(List<CustomerUpliftScore> scores) {
     jpaRepository.saveAll(
         scores.stream().map(CustomerUpliftScoreMapper::toEntity).collect(Collectors.toList()));

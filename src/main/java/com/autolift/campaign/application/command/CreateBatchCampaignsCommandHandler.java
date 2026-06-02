@@ -7,6 +7,7 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.Budget;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +19,7 @@ public class CreateBatchCampaignsCommandHandler {
     this.repository = repository;
   }
 
+  @CacheEvict(value = "campaigns", allEntries = true)
   @org.springframework.transaction.annotation.Transactional
   public CreateBatchCampaignsResponse handle(CreateBatchCampaignsCommand command) {
     List<BatchCampaignResult> results =

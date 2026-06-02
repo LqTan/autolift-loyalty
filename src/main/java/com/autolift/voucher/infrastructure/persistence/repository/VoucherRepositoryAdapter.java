@@ -6,16 +6,12 @@ import com.autolift.voucher.domain.valueobject.VoucherId;
 import com.autolift.voucher.infrastructure.persistence.mapper.VoucherPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class VoucherRepositoryAdapter implements VoucherRepository {
-
-  private static final String CACHE_NAME = "vouchers";
 
   private final VoucherJpaRepository jpaRepository;
   private final VoucherPersistenceMapper mapper;
@@ -27,7 +23,6 @@ public class VoucherRepositoryAdapter implements VoucherRepository {
   }
 
   @Override
-  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public Voucher save(Voucher voucher) {
     var entity = mapper.toEntity(voucher);
     entity = jpaRepository.save(entity);
@@ -35,13 +30,11 @@ public class VoucherRepositoryAdapter implements VoucherRepository {
   }
 
   @Override
-  @Cacheable(value = CACHE_NAME, key = "#id.getId().toString()")
   public Optional<Voucher> findById(VoucherId id) {
     return jpaRepository.findById(id.getId()).map(mapper::toDomain);
   }
 
   @Override
-  @Cacheable(value = CACHE_NAME, key = "#code")
   public Optional<Voucher> findByCode(String code) {
     return jpaRepository.findAll().stream()
         .map(mapper::toDomain)
@@ -68,7 +61,6 @@ public class VoucherRepositoryAdapter implements VoucherRepository {
   }
 
   @Override
-  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public void deleteById(VoucherId id) {
     jpaRepository.deleteById(id.getId());
   }

@@ -6,16 +6,12 @@ import com.autolift.customer.domain.valueobject.CustomerId;
 import com.autolift.customer.infrastructure.persistence.mapper.CustomerPersistenceMapper;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class CustomerRepositoryAdapter implements CustomerRepository {
-
-  private static final String CACHE_NAME = "customers";
 
   private final CustomerJpaRepository jpaRepository;
   private final CustomerPersistenceMapper mapper;
@@ -27,7 +23,6 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
   }
 
   @Override
-  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public Customer save(Customer customer) {
     var entity = mapper.toEntity(customer);
     entity = jpaRepository.save(entity);
@@ -35,7 +30,6 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
   }
 
   @Override
-  @Cacheable(value = CACHE_NAME, key = "#id.getId().toString()")
   public Optional<Customer> findById(CustomerId id) {
     return jpaRepository.findById(id.getId()).map(mapper::toDomain);
   }
@@ -59,7 +53,6 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
   }
 
   @Override
-  @CacheEvict(value = CACHE_NAME, allEntries = true)
   public void deleteById(CustomerId id) {
     jpaRepository.deleteById(id.getId());
   }

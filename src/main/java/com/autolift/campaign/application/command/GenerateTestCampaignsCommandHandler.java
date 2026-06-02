@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -60,6 +61,8 @@ public class GenerateTestCampaignsCommandHandler {
     this.repository = repository;
   }
 
+  @CacheEvict(value = "campaigns", allEntries = true)
+  @org.springframework.transaction.annotation.Transactional
   public GenerateTestCampaignsResponse handle(GenerateTestCampaignsCommand command) {
     List<TestCampaignResult> results =
         IntStream.range(0, command.count()).mapToObj(i -> createRandomCampaign()).toList();

@@ -63,7 +63,57 @@ public class CacheConfig {
                 RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
             .disableCachingNullValues();
 
-    RedisCacheConfiguration upliftCacheConfig =
+    RedisCacheConfiguration customerCacheConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(1))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
+
+    RedisCacheConfiguration promotionCacheConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(1))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
+
+    RedisCacheConfiguration voucherCacheConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofMinutes(30))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
+
+    RedisCacheConfiguration loyaltyAccountCacheConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(1))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
+
+    RedisCacheConfiguration mlJobCacheConfig =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofMinutes(30))
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+            .disableCachingNullValues();
+
+    RedisCacheConfiguration upliftScoreCacheConfig =
         RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofHours(24))
             .serializeKeysWith(
@@ -86,7 +136,12 @@ public class CacheConfig {
     RedisCacheManager manager =
         RedisCacheManager.builder(connectionFactory)
             .cacheDefaults(config)
-            .withCacheConfiguration("upliftScores", upliftCacheConfig)
+            .withCacheConfiguration("customers", customerCacheConfig)
+            .withCacheConfiguration("promotions", promotionCacheConfig)
+            .withCacheConfiguration("vouchers", voucherCacheConfig)
+            .withCacheConfiguration("loyaltyAccounts", loyaltyAccountCacheConfig)
+            .withCacheConfiguration("mlJobs", mlJobCacheConfig)
+            .withCacheConfiguration("upliftScores", upliftScoreCacheConfig)
             .withCacheConfiguration("campaigns", campaignCacheConfig)
             .build();
     log.info("RedisCacheManager created with caches: {}", manager.getCacheNames());

@@ -6,6 +6,7 @@ import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.events.CampaignActivatedEvent;
 import java.time.Instant;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ public class ActivateCampaignCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
+  @CacheEvict(value = "campaigns", allEntries = true)
   @org.springframework.transaction.annotation.Transactional
   public CampaignActivatedEvent handle(ActivateCampaignCommand command) {
     Campaign campaign =
