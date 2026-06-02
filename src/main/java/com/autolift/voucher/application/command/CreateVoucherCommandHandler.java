@@ -20,10 +20,11 @@ public class CreateVoucherCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
-  @Caching(evict = {
-    @CacheEvict(value = "vouchers", key = "#command.code()"),
-    @CacheEvict(value = "vouchers", key = "'all'")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "vouchers", key = "#command.code()"),
+        @CacheEvict(value = "vouchers", key = "'all'")
+      })
   @org.springframework.transaction.annotation.Transactional
   public CreateVoucherResult handle(CreateVoucherCommand command) {
     Voucher voucher =

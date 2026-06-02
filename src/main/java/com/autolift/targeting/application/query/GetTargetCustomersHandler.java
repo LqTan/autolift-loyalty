@@ -3,6 +3,7 @@ package com.autolift.targeting.application.query;
 import com.autolift.targeting.domain.model.CustomerUpliftScore;
 import com.autolift.targeting.domain.repository.CustomerUpliftScoreRepository;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,6 +15,7 @@ public class GetTargetCustomersHandler {
     this.repository = repository;
   }
 
+  @Cacheable(value = "upliftScores", key = "#query.campaignId() + ':' + #query.limit()")
   public List<TargetCustomerView> handle(GetTargetCustomersQuery query) {
     return repository.findByCampaignId(query.campaignId()).stream()
         .sorted((a, b) -> b.getUpliftScore().compareTo(a.getUpliftScore()))

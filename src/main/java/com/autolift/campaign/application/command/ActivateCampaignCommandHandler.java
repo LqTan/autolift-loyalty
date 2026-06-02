@@ -23,10 +23,11 @@ public class ActivateCampaignCommandHandler {
     this.eventPublisher = eventPublisher;
   }
 
-  @Caching(evict = {
-    @CacheEvict(value = "campaigns", key = "#command.campaignId()"),
-    @CacheEvict(value = "campaigns", key = "'all'")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "campaigns", key = "#command.campaignId()"),
+        @CacheEvict(value = "campaigns", key = "'all'")
+      })
   @org.springframework.transaction.annotation.Transactional
   public CampaignActivatedEvent handle(ActivateCampaignCommand command) {
     Campaign campaign =

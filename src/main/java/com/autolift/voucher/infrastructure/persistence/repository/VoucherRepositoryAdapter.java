@@ -36,10 +36,7 @@ public class VoucherRepositoryAdapter implements VoucherRepository {
 
   @Override
   public Optional<Voucher> findByCode(String code) {
-    return jpaRepository.findAll().stream()
-        .map(mapper::toDomain)
-        .filter(v -> v.getCode().equals(code))
-        .findFirst();
+    return jpaRepository.findByCode(code).map(mapper::toDomain);
   }
 
   @Override
@@ -54,10 +51,7 @@ public class VoucherRepositoryAdapter implements VoucherRepository {
 
   @Override
   public List<Voucher> findByCampaignId(String campaignId) {
-    return jpaRepository.findAll().stream()
-        .map(mapper::toDomain)
-        .filter(v -> v.getCampaignId().equals(campaignId))
-        .toList();
+    return jpaRepository.findByCampaignId(campaignId).stream().map(mapper::toDomain).toList();
   }
 
   @Override

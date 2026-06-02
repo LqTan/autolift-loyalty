@@ -17,10 +17,11 @@ public class CompleteCampaignCommandHandler {
     this.repository = repository;
   }
 
-  @Caching(evict = {
-    @CacheEvict(value = "campaigns", key = "#command.campaignId()"),
-    @CacheEvict(value = "campaigns", key = "'all'")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "campaigns", key = "#command.campaignId()"),
+        @CacheEvict(value = "campaigns", key = "'all'")
+      })
   @org.springframework.transaction.annotation.Transactional
   public void handle(CompleteCampaignCommand command) {
     Campaign campaign =

@@ -7,19 +7,20 @@ import com.autolift.loyalty.domain.model.PointTransaction.TransactionType;
 import com.autolift.loyalty.domain.repository.LoyaltyAccountRepository;
 import com.autolift.loyalty.domain.valueobject.LoyaltyAccountId;
 import com.autolift.loyalty.domain.valueobject.PointTransactionId;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AddPointsHandler {
 
   private final LoyaltyAccountRepository repository;
+  private final CacheManager cacheManager;
 
-  public AddPointsHandler(LoyaltyAccountRepository repository) {
+  public AddPointsHandler(LoyaltyAccountRepository repository, CacheManager cacheManager) {
     this.repository = repository;
+    this.cacheManager = cacheManager;
   }
 
-  @CacheEvict(value = "loyaltyAccounts", key = "#command.accountId()")
   @org.springframework.transaction.annotation.Transactional
   public void handle(AddPointsCommand command) {
     LoyaltyAccount account =
@@ -35,5 +36,14 @@ public class AddPointsHandler {
             TransactionType.EARN,
             command.referenceId());
     repository.saveTransaction(transaction);
+    evictCache(account);
+  }
+
+  private void evictCache(LoyaltyAccount account) {
+    var cache = cacheManager.getCache("loyaltyAccounts");
+    if (cache != null) {
+      cache.evict(account.getId().getId().toString());
+      cache.evict(account.getCustomerId());
+    }
   }
 }
