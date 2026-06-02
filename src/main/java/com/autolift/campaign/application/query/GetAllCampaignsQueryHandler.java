@@ -2,7 +2,6 @@ package com.autolift.campaign.application.query;
 
 import com.autolift.campaign.infrastructure.persistence.readmodel.CampaignReadRepository;
 import java.util.List;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
