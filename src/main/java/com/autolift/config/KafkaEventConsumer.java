@@ -1,11 +1,9 @@
-package com.autolift.infrastructure.kafka;
+package com.autolift.config;
 
-import com.autolift.config.KafkaConfig;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,6 +14,12 @@ public class KafkaEventConsumer {
 
   private static final Logger log = LoggerFactory.getLogger(KafkaEventConsumer.class);
 
+  private void logEvent(String eventName, String topic, int partition, long offset,
+      Map<String, Object> payload) {
+    log.info("{} event received: topic={}, partition={}, offset={}, payload={}",
+        eventName, topic, partition, offset, payload);
+  }
+
   @KafkaListener(
       topics = KafkaConfig.VOUCHER_REDEEMED_TOPIC,
       groupId = "autolift-group",
@@ -25,12 +29,7 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
-    log.info(
-        "Kafka event received: topic={}, partition={}, offset={}, payload={}",
-        topic,
-        partition,
-        offset,
-        payload);
+    logEvent("VoucherRedeemed", topic, partition, offset, payload);
   }
 
   @KafkaListener(
@@ -42,12 +41,7 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
-    log.info(
-        "Kafka event received: topic={}, partition={}, offset={}, payload={}",
-        topic,
-        partition,
-        offset,
-        payload);
+    logEvent("PointsAdded", topic, partition, offset, payload);
   }
 
   @KafkaListener(
@@ -59,12 +53,7 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
-    log.info(
-        "Kafka event received: topic={}, partition={}, offset={}, payload={}",
-        topic,
-        partition,
-        offset,
-        payload);
+    logEvent("PointsDeducted", topic, partition, offset, payload);
   }
 
   @KafkaListener(
@@ -76,11 +65,6 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
-    log.info(
-        "Kafka event received: topic={}, partition={}, offset={}, payload={}",
-        topic,
-        partition,
-        offset,
-        payload);
+    logEvent("CampaignActivated", topic, partition, offset, payload);
   }
 }

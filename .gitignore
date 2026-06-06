@@ -8,10 +8,13 @@ target/
 .apt_generated
 .classpath
 .factorypath
+.metadata/
 .project
-.settings
 .springBeans
 .sts4-cache
+
+### JDT Language Server ###
+jdt.ls-java-project/
 
 ### IntelliJ IDEA ###
 .idea

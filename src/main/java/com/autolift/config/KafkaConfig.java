@@ -34,7 +34,7 @@ public class KafkaConfig {
   private String bootstrapServers;
 
   @Bean
-  public ProducerFactory producerFactory() {
+  public ProducerFactory<String, Object> producerFactory() {
     Map<String, Object> configProps = new HashMap<>();
     configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -46,12 +46,12 @@ public class KafkaConfig {
   }
 
   @Bean
-  public KafkaTemplate kafkaTemplate() {
+  public KafkaTemplate<String, Object> kafkaTemplate() {
     return new KafkaTemplate<>(producerFactory());
   }
 
   @Bean
-  public ConsumerFactory consumerFactory() {
+  public ConsumerFactory<String, Object> consumerFactory() {
     Map<String, Object> configProps = new HashMap<>();
     configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "autolift-group");
@@ -65,8 +65,9 @@ public class KafkaConfig {
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory kafkaListenerContainerFactory() {
-    ConcurrentKafkaListenerContainerFactory factory = new ConcurrentKafkaListenerContainerFactory();
+  public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     factory.setConcurrency(3);
     return factory;

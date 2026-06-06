@@ -1,6 +1,5 @@
 package com.autolift.loyalty.events;
 
-import com.autolift.infrastructure.kafka.KafkaEventPublisher;
 import com.autolift.loyalty.domain.model.LoyaltyAccount;
 import com.autolift.loyalty.domain.model.PointTransaction;
 import com.autolift.loyalty.domain.model.PointTransaction.TransactionType;
@@ -22,15 +21,12 @@ public class VoucherRedeemedEventListener {
 
   private final LoyaltyAccountRepository loyaltyAccountRepository;
   private final ApplicationEventPublisher eventPublisher;
-  private final KafkaEventPublisher kafkaEventPublisher;
 
   public VoucherRedeemedEventListener(
       LoyaltyAccountRepository loyaltyAccountRepository,
-      ApplicationEventPublisher eventPublisher,
-      KafkaEventPublisher kafkaEventPublisher) {
+      ApplicationEventPublisher eventPublisher) {
     this.loyaltyAccountRepository = loyaltyAccountRepository;
     this.eventPublisher = eventPublisher;
-    this.kafkaEventPublisher = kafkaEventPublisher;
   }
 
   @ApplicationModuleListener
@@ -76,6 +72,5 @@ public class VoucherRedeemedEventListener {
     PointsAddedEvent pointsAddedEvent =
         new PointsAddedEvent(account.getId(), pointsEarned, event.getVoucherId());
     eventPublisher.publishEvent(pointsAddedEvent);
-    kafkaEventPublisher.publishPointsAdded(pointsAddedEvent);
   }
 }
