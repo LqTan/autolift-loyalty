@@ -4,8 +4,13 @@ import com.autolift.infrastructure.kafka.dto.CampaignActivatedKafkaEvent;
 import com.autolift.infrastructure.kafka.dto.PointsAddedKafkaEvent;
 import com.autolift.infrastructure.kafka.dto.PointsDeductedKafkaEvent;
 import com.autolift.infrastructure.kafka.dto.VoucherRedeemedKafkaEvent;
+import com.autolift.infrastructure.kafka.events.CampaignActivatedInternalEvent;
+import com.autolift.infrastructure.kafka.events.PointsAddedInternalEvent;
+import com.autolift.infrastructure.kafka.events.PointsDeductedInternalEvent;
+import com.autolift.infrastructure.kafka.events.VoucherRedeemedInternalEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -17,6 +22,12 @@ public class KafkaEventConsumer {
 
   private static final Logger log = LoggerFactory.getLogger(KafkaEventConsumer.class);
 
+  private final ApplicationEventPublisher eventPublisher;
+
+  public KafkaEventConsumer(ApplicationEventPublisher eventPublisher) {
+    this.eventPublisher = eventPublisher;
+  }
+
   @KafkaListener(
       topics = KafkaConfig.VOUCHER_REDEEMED_TOPIC,
       groupId = "autolift-group",
@@ -27,11 +38,20 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
     log.info(
-        "VoucherRedeemed event received: topic={}, partition={}, offset={}, event={}",
+        "VoucherRedeemed Kafka event received: topic={}, partition={}, offset={}",
         topic,
         partition,
-        offset,
-        event);
+        offset);
+
+    VoucherRedeemedInternalEvent internalEvent =
+        new VoucherRedeemedInternalEvent(
+            event.voucherId(),
+            event.code(),
+            event.campaignId(),
+            event.customerId(),
+            event.value(),
+            event.redeemedAt());
+    eventPublisher.publishEvent(internalEvent);
   }
 
   @KafkaListener(
@@ -44,11 +64,14 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
     log.info(
-        "PointsAdded event received: topic={}, partition={}, offset={}, event={}",
+        "PointsAdded Kafka event received: topic={}, partition={}, offset={}",
         topic,
         partition,
-        offset,
-        event);
+        offset);
+
+    PointsAddedInternalEvent internalEvent =
+        new PointsAddedInternalEvent(event.loyaltyAccountId(), event.points(), event.referenceId());
+    eventPublisher.publishEvent(internalEvent);
   }
 
   @KafkaListener(
@@ -61,11 +84,15 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
     log.info(
-        "PointsDeducted event received: topic={}, partition={}, offset={}, event={}",
+        "PointsDeducted Kafka event received: topic={}, partition={}, offset={}",
         topic,
         partition,
-        offset,
-        event);
+        offset);
+
+    PointsDeductedInternalEvent internalEvent =
+        new PointsDeductedInternalEvent(
+            event.loyaltyAccountId(), event.points(), event.referenceId());
+    eventPublisher.publishEvent(internalEvent);
   }
 
   @KafkaListener(
@@ -78,10 +105,13 @@ public class KafkaEventConsumer {
       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
       @Header(KafkaHeaders.OFFSET) long offset) {
     log.info(
-        "CampaignActivated event received: topic={}, partition={}, offset={}, event={}",
+        "CampaignActivated Kafka event received: topic={}, partition={}, offset={}",
         topic,
         partition,
-        offset,
-        event);
+        offset);
+
+    CampaignActivatedInternalEvent internalEvent =
+        new CampaignActivatedInternalEvent(event.campaignId(), event.name(), event.activatedAt());
+    eventPublisher.publishEvent(internalEvent);
   }
 }
