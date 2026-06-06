@@ -23,8 +23,7 @@ public class VoucherRedeemedEventListener {
   private final ApplicationEventPublisher eventPublisher;
 
   public VoucherRedeemedEventListener(
-      LoyaltyAccountRepository loyaltyAccountRepository,
-      ApplicationEventPublisher eventPublisher) {
+      LoyaltyAccountRepository loyaltyAccountRepository, ApplicationEventPublisher eventPublisher) {
     this.loyaltyAccountRepository = loyaltyAccountRepository;
     this.eventPublisher = eventPublisher;
   }

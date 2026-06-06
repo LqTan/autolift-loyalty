@@ -16,8 +16,7 @@ public class RedeemVoucherCommandHandler {
   private final ApplicationEventPublisher eventPublisher;
 
   public RedeemVoucherCommandHandler(
-      VoucherRepository repository,
-      ApplicationEventPublisher eventPublisher) {
+      VoucherRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }

@@ -73,12 +73,15 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-autolift}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-autolift2024}
       - REDIS_HOST=redis
+      - KAFKA_HOST=kafka
       - JWT_SECRET=${JWT_SECRET:-AutoliftLoyalty2024SecretKeyAtLeast256BitsLong!}
       - JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseG1GC
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health/liveness || exit 1"]

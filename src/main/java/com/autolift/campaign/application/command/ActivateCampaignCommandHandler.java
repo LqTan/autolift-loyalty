@@ -18,8 +18,7 @@ public class ActivateCampaignCommandHandler {
   private final ApplicationEventPublisher eventPublisher;
 
   public ActivateCampaignCommandHandler(
-      CampaignRepository repository,
-      ApplicationEventPublisher eventPublisher) {
+      CampaignRepository repository, ApplicationEventPublisher eventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
   }
