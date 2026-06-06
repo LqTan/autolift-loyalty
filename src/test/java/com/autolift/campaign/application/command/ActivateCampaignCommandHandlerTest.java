@@ -11,6 +11,7 @@ import com.autolift.campaign.domain.model.Campaign;
 import com.autolift.campaign.domain.repository.CampaignRepository;
 import com.autolift.campaign.domain.valueobject.CampaignId;
 import com.autolift.campaign.events.CampaignActivatedEvent;
+import com.autolift.infrastructure.kafka.KafkaEventPublisher;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,11 +28,13 @@ class ActivateCampaignCommandHandlerTest {
 
   @Mock private ApplicationEventPublisher eventPublisher;
 
+  @Mock private KafkaEventPublisher kafkaEventPublisher;
+
   private ActivateCampaignCommandHandler handler;
 
   @BeforeEach
   void setUp() {
-    handler = new ActivateCampaignCommandHandler(repository, eventPublisher);
+    handler = new ActivateCampaignCommandHandler(repository, eventPublisher, kafkaEventPublisher);
   }
 
   @Test

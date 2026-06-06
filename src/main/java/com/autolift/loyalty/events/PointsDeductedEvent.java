@@ -18,4 +18,16 @@ public class PointsDeductedEvent extends ApplicationEvent {
     this.points = points;
     this.referenceId = referenceId;
   }
+
+  public LoyaltyAccountId getLoyaltyAccountId() {
+    return loyaltyAccountId;
+  }
+
+  public BigDecimal getPoints() {
+    return points;
+  }
+
+  public String getReferenceId() {
+    return referenceId;
+  }
 }

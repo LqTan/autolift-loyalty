@@ -1,5 +1,6 @@
 package com.autolift.voucher.application.command;
 
+import com.autolift.infrastructure.kafka.KafkaEventPublisher;
 import com.autolift.voucher.domain.exception.VoucherNotFoundException;
 import com.autolift.voucher.domain.model.Voucher;
 import com.autolift.voucher.domain.repository.VoucherRepository;
@@ -14,11 +15,15 @@ public class RedeemVoucherCommandHandler {
 
   private final VoucherRepository repository;
   private final ApplicationEventPublisher eventPublisher;
+  private final KafkaEventPublisher kafkaEventPublisher;
 
   public RedeemVoucherCommandHandler(
-      VoucherRepository repository, ApplicationEventPublisher eventPublisher) {
+      VoucherRepository repository,
+      ApplicationEventPublisher eventPublisher,
+      KafkaEventPublisher kafkaEventPublisher) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
+    this.kafkaEventPublisher = kafkaEventPublisher;
   }
 
   @Caching(
@@ -34,12 +39,14 @@ public class RedeemVoucherCommandHandler {
             .orElseThrow(() -> VoucherNotFoundException.withCode(command.code()));
     voucher.redeem();
     repository.save(voucher);
-    eventPublisher.publishEvent(
+    VoucherRedeemedEvent event =
         new VoucherRedeemedEvent(
             voucher.getId().getId().toString(),
             voucher.getCode(),
             voucher.getCampaignId(),
             command.customerId(),
-            voucher.getValue()));
+            voucher.getValue());
+    eventPublisher.publishEvent(event);
+    kafkaEventPublisher.publishVoucherRedeemed(event);
   }
 }

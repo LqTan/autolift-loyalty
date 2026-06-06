@@ -55,6 +55,8 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: 6379
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:kafka}:9092
   batch:
     jdbc:
       initialize-schema: never
