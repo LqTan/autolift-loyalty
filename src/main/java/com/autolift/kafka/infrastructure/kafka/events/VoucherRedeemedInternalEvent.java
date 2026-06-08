@@ -1,4 +1,4 @@
-package com.autolift.infrastructure.kafka.events;
+package com.autolift.kafka.infrastructure.kafka.events;
 
 import java.math.BigDecimal;
 import java.time.Instant;

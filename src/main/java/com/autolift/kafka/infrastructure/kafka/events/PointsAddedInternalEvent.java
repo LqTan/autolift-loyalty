@@ -1,16 +1,16 @@
-package com.autolift.infrastructure.kafka.events;
+package com.autolift.kafka.infrastructure.kafka.events;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 import org.springframework.context.ApplicationEvent;
 
-public class PointsDeductedInternalEvent extends ApplicationEvent {
+public class PointsAddedInternalEvent extends ApplicationEvent {
 
   private final UUID loyaltyAccountId;
   private final BigDecimal points;
   private final String referenceId;
 
-  public PointsDeductedInternalEvent(UUID loyaltyAccountId, BigDecimal points, String referenceId) {
+  public PointsAddedInternalEvent(UUID loyaltyAccountId, BigDecimal points, String referenceId) {
     super(loyaltyAccountId);
     this.loyaltyAccountId = loyaltyAccountId;
     this.points = points;

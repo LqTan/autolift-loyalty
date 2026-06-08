@@ -1,6 +1,6 @@
 package com.autolift.notification.events;
 
-import com.autolift.infrastructure.kafka.events.PointsAddedInternalEvent;
+import com.autolift.kafka.infrastructure.kafka.events.PointsAddedInternalEvent;
 import com.autolift.notification.application.command.CreateNotificationCommand;
 import com.autolift.notification.application.command.CreateNotificationHandler;
 import com.autolift.notification.domain.valueobject.NotificationChannel;

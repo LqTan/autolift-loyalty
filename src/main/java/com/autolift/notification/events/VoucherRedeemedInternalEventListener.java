@@ -1,6 +1,6 @@
 package com.autolift.notification.events;
 
-import com.autolift.infrastructure.kafka.events.VoucherRedeemedInternalEvent;
+import com.autolift.kafka.infrastructure.kafka.events.VoucherRedeemedInternalEvent;
 import com.autolift.notification.application.command.CreateNotificationCommand;
 import com.autolift.notification.application.command.CreateNotificationHandler;
 import com.autolift.notification.domain.valueobject.NotificationChannel;

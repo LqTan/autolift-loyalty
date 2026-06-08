@@ -1,4 +1,4 @@
-package com.autolift.infrastructure.kafka.dto;
+package com.autolift.kafka.infrastructure.kafka.dto;
 
 import java.time.Instant;
 

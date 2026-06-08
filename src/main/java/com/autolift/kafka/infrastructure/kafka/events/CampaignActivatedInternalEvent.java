@@ -1,4 +1,4 @@
-package com.autolift.infrastructure.kafka.events;
+package com.autolift.kafka.infrastructure.kafka.events;
 
 import java.time.Instant;
 import org.springframework.context.ApplicationEvent;

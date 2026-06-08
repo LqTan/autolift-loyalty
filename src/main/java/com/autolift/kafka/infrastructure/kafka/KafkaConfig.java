@@ -1,4 +1,4 @@
-package com.autolift.config;
+package com.autolift.kafka.infrastructure.kafka;
 
 import java.util.HashMap;
 import java.util.Map;

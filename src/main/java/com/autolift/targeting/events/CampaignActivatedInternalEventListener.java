@@ -1,6 +1,6 @@
 package com.autolift.targeting.events;
 
-import com.autolift.infrastructure.kafka.events.CampaignActivatedInternalEvent;
+import com.autolift.kafka.infrastructure.kafka.events.CampaignActivatedInternalEvent;
 import com.autolift.targeting.application.query.GetTargetCustomersHandler;
 import com.autolift.targeting.application.query.GetTargetCustomersQuery;
 import com.autolift.targeting.application.query.TargetCustomerView;
