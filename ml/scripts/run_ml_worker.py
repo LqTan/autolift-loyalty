@@ -23,6 +23,72 @@ from autolift_ml.gp.train_gp_rules import train_gp_rules
 from autolift_ml.gp.export_gp_rules import export_gp_rules
 
 
+X5_FILES = {
+    "uplift_train.csv.gz": {
+        "url": "https://sklift.s3.eu-west-2.amazonaws.com/uplift_train.csv.gz",
+        "md5": "2720bbb659daa9e0989b2777b6a42d19",
+    },
+    "clients.csv.gz": {
+        "url": "https://sklift.s3.eu-west-2.amazonaws.com/clients.csv.gz",
+        "md5": "b9cdeb2806b732771de03e819b3354c5",
+    },
+    "purchases.csv.gz": {
+        "url": "https://sklift.s3.eu-west-2.amazonaws.com/purchases.csv.gz",
+        "md5": "48d2de13428e24e8b61d66fef02957a8",
+    },
+}
+
+
+def _ensure_data_files(data_dir: Path) -> bool:
+    """Check if X5 data files exist, download if missing. Returns True if data is ready."""
+    import hashlib
+    import urllib.request
+
+    data_dir = Path(data_dir)
+    train_file = data_dir / "uplift_train.csv.gz"
+    clients_file = data_dir / "clients.csv.gz"
+    purchases_file = data_dir / "purchases.csv.gz"
+
+    if all(f.exists() for f in [train_file, clients_file, purchases_file]):
+        return True
+
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] X5 dataset not found, downloading...", flush=True)
+
+    def file_md5(path: Path, chunk_size: int = 1024 * 1024) -> str:
+        md5 = hashlib.md5()
+        with path.open("rb") as file:
+            for chunk in iter(lambda: file.read(chunk_size), b""):
+                md5.update(chunk)
+        return md5.hexdigest()
+
+    for filename, meta in X5_FILES.items():
+        output_path = data_dir / filename
+        if output_path.exists():
+            current_md5 = file_md5(output_path)
+            if current_md5 == meta["md5"]:
+                print(f"  {filename}: already exists and verified")
+                continue
+            else:
+                print(f"  {filename}: MD5 mismatch, re-downloading")
+
+        url = meta["url"]
+        print(f"  Downloading {filename} from {url}...", flush=True)
+        try:
+            urllib.request.urlretrieve(url, output_path)
+        except Exception as e:
+            print(f"  Download failed: {e}")
+            return False
+
+        downloaded_md5 = file_md5(output_path)
+        if downloaded_md5 != meta["md5"]:
+            print(f"  ERROR: MD5 mismatch for {filename}")
+            return False
+        print(f"  {filename}: downloaded and verified")
+
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] X5 dataset ready", flush=True)
+    return True
+
+
 class MlJobWorker:
     def __init__(self, db_url: str, poll_interval: int = 10):
         self.db_url = db_url
@@ -94,6 +160,11 @@ class MlJobWorker:
         campaign_id = job['campaign_id']
         input_params = job['input_params'] or {}
         uplift_score_job_id = job['uplift_score_job_id']
+
+        ml_dir = Path(__file__).parent.parent
+        data_dir = ml_dir / "data"
+        if not _ensure_data_files(data_dir):
+            raise RuntimeError("Failed to prepare X5 dataset")
 
         print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Processing job: {job_id} (type={job_type}, campaign={campaign_id})")
 

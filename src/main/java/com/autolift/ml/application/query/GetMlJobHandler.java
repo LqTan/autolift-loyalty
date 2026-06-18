@@ -5,7 +5,6 @@ import com.autolift.ml.domain.valueobject.MlJobId;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,6 @@ public class GetMlJobHandler {
     this.mlJobRepository = mlJobRepository;
   }
 
-  @Cacheable(value = "mlJobs", key = "#query.getJobId()")
   public Optional<MlJobView> handleByJobId(GetMlJobQuery query) {
     if (query.getJobId() != null) {
       return mlJobRepository.findById(MlJobId.of(query.getJobId())).map(MlJobView::from);

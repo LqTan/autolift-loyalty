@@ -1,6 +1,9 @@
 spring:
   application:
     name: autolift
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/${POSTGRES_DB}
     username: ${POSTGRES_USER}
@@ -44,9 +47,14 @@ spring:
       flyway:
         enabled: false
     events:
-      jpa:
-        persistence:
-          enabled: false
+      enabled: true
+      externalization:
+        enabled: true
+        kafka:
+          enabled: true
+      jdbc:
+        schema-initialization:
+          enabled: true
   config:
     jwt:
       secret: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnlyNotForProductionUse123456789012345678}
@@ -56,7 +64,7 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: 6379
   kafka:
-    bootstrap-servers: ${KAFKA_HOST:kafka}:9092
+    bootstrap-servers: localhost:9092
   batch:
     jdbc:
       initialize-schema: never

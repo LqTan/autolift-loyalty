@@ -75,7 +75,7 @@ services:
       - REDIS_HOST=redis
       - KAFKA_HOST=kafka
       - JWT_SECRET=${JWT_SECRET:-AutoliftLoyalty2024SecretKeyAtLeast256BitsLong!}
-      - JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseG1GC
+      - JAVA_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC
     depends_on:
       postgres:
         condition: service_healthy
@@ -91,6 +91,26 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  ml-worker:
+    build:
+      context: ../../ml
+      dockerfile: Dockerfile
+    volumes:
+      - ../../ml/data:/opt/autolift/ml/data:rw
+      - ../../ml/artifacts:/opt/autolift/ml/artifacts:rw
+      - ../../ml/scripts:/opt/autolift/ml/scripts:ro
+    environment:
+      - ML_DB_HOST=postgres
+      - ML_DB_PORT=5432
+      - ML_DB_NAME=${POSTGRES_DB:-autolift}
+      - ML_DB_USER=${POSTGRES_USER:-autolift}
+      - ML_DB_PASSWORD=${POSTGRES_PASSWORD:-autolift2024}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-autolift}:${POSTGRES_PASSWORD:-autolift2024}@postgres:5432/${POSTGRES_DB:-autolift}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   postgres_data:
     name: autolift-dev-postgres-data
@@ -98,3 +118,5 @@ volumes:
     name: autolift-dev-redis-data
   kafka_data:
     name: autolift-dev-kafka-data
+  ml_worker_logs:
+    name: autolift-dev-ml-logs

@@ -9,9 +9,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.modulith.ApplicationModuleListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class CampaignEventListener {
@@ -28,7 +29,7 @@ public class CampaignEventListener {
   }
 
   @Async
-  @ApplicationModuleListener
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void onCampaignActivated(CampaignActivatedEvent event) {
     log.info("Received CampaignActivatedEvent for campaign: {}", event.campaignId());
     List<TargetCustomerView> candidates =

@@ -23,12 +23,9 @@ public class KafkaEventConsumer {
   private static final Logger log = LoggerFactory.getLogger(KafkaEventConsumer.class);
 
   private final ApplicationEventPublisher eventPublisher;
-  private final IdempotencyService idempotencyService;
 
-  public KafkaEventConsumer(
-      ApplicationEventPublisher eventPublisher, IdempotencyService idempotencyService) {
+  public KafkaEventConsumer(ApplicationEventPublisher eventPublisher) {
     this.eventPublisher = eventPublisher;
-    this.idempotencyService = idempotencyService;
   }
 
   @KafkaListener(
@@ -46,14 +43,6 @@ public class KafkaEventConsumer {
         partition,
         offset);
 
-    String eventId =
-        idempotencyService.buildVoucherRedeemedEventId(
-            event.voucherId(), event.redeemedAt().toString());
-    if (idempotencyService.isAlreadyProcessed(eventId)) {
-      log.warn("Duplicate VoucherRedeemed event skipped: eventId={}", eventId);
-      return;
-    }
-
     VoucherRedeemedInternalEvent internalEvent =
         new VoucherRedeemedInternalEvent(
             event.voucherId(),
@@ -63,8 +52,7 @@ public class KafkaEventConsumer {
             event.value(),
             event.redeemedAt());
     eventPublisher.publishEvent(internalEvent);
-    idempotencyService.markAsProcessed(eventId, "VoucherRedeemed");
-    log.info("VoucherRedeemed event processed and marked: eventId={}", eventId);
+    log.info("VoucherRedeemed event processed");
   }
 
   @KafkaListener(
@@ -82,18 +70,10 @@ public class KafkaEventConsumer {
         partition,
         offset);
 
-    String eventId =
-        idempotencyService.buildPointsAddedEventId(event.loyaltyAccountId(), event.referenceId());
-    if (idempotencyService.isAlreadyProcessed(eventId)) {
-      log.warn("Duplicate PointsAdded event skipped: eventId={}", eventId);
-      return;
-    }
-
     PointsAddedInternalEvent internalEvent =
         new PointsAddedInternalEvent(event.loyaltyAccountId(), event.points(), event.referenceId());
     eventPublisher.publishEvent(internalEvent);
-    idempotencyService.markAsProcessed(eventId, "PointsAdded");
-    log.info("PointsAdded event processed and marked: eventId={}", eventId);
+    log.info("PointsAdded event processed");
   }
 
   @KafkaListener(
@@ -111,20 +91,11 @@ public class KafkaEventConsumer {
         partition,
         offset);
 
-    String eventId =
-        idempotencyService.buildPointsDeductedEventId(
-            event.loyaltyAccountId(), event.referenceId());
-    if (idempotencyService.isAlreadyProcessed(eventId)) {
-      log.warn("Duplicate PointsDeducted event skipped: eventId={}", eventId);
-      return;
-    }
-
     PointsDeductedInternalEvent internalEvent =
         new PointsDeductedInternalEvent(
             event.loyaltyAccountId(), event.points(), event.referenceId());
     eventPublisher.publishEvent(internalEvent);
-    idempotencyService.markAsProcessed(eventId, "PointsDeducted");
-    log.info("PointsDeducted event processed and marked: eventId={}", eventId);
+    log.info("PointsDeducted event processed");
   }
 
   @KafkaListener(
@@ -142,16 +113,9 @@ public class KafkaEventConsumer {
         partition,
         offset);
 
-    String eventId = idempotencyService.buildCampaignActivatedEventId(event.campaignId());
-    if (idempotencyService.isAlreadyProcessed(eventId)) {
-      log.warn("Duplicate CampaignActivated event skipped: eventId={}", eventId);
-      return;
-    }
-
     CampaignActivatedInternalEvent internalEvent =
         new CampaignActivatedInternalEvent(event.campaignId(), event.name(), event.activatedAt());
     eventPublisher.publishEvent(internalEvent);
-    idempotencyService.markAsProcessed(eventId, "CampaignActivated");
-    log.info("CampaignActivated event processed and marked: eventId={}", eventId);
+    log.info("CampaignActivated event processed");
   }
 }

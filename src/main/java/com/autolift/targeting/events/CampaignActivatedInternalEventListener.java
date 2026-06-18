@@ -9,9 +9,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.modulith.ApplicationModuleListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class CampaignActivatedInternalEventListener {
@@ -29,7 +30,7 @@ public class CampaignActivatedInternalEventListener {
   }
 
   @Async
-  @ApplicationModuleListener
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void onCampaignActivated(CampaignActivatedInternalEvent event) {
     log.info(
         "Received CampaignActivatedInternalEvent for campaign: {} (from Kafka)",

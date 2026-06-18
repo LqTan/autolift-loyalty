@@ -1,9 +1,12 @@
 package com.autolift.config;
 
-import jakarta.servlet.Filter;
+import com.autolift.auth.JwtAuthenticationFilter;
+import com.autolift.auth.JwtTokenProvider;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -22,19 +25,25 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class SecurityConfig {
 
-  private final Filter jwtAuthenticationFilter;
+  private final JwtTokenProvider jwtTokenProvider;
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
 
   public SecurityConfig(
-      Filter jwtAuthenticationFilter,
+      JwtTokenProvider jwtTokenProvider,
       UserDetailsService userDetailsService,
       PasswordEncoder passwordEncoder) {
-    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    this.jwtTokenProvider = jwtTokenProvider;
     this.userDetailsService = userDetailsService;
     this.passwordEncoder = passwordEncoder;
+  }
+
+  @Bean
+  public JwtAuthenticationFilter jwtAuthenticationFilter() {
+    return new JwtAuthenticationFilter(jwtTokenProvider);
   }
 
   @Bean
@@ -45,8 +54,7 @@ public class SecurityConfig {
 
   @Bean
   public DaoAuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    provider.setUserDetailsService(userDetailsService);
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
     provider.setPasswordEncoder(passwordEncoder);
     return provider;
   }
@@ -86,7 +94,7 @@ public class SecurityConfig {
                     .authenticated()
                     .anyRequest()
                     .permitAll())
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
